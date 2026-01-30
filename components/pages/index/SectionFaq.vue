@@ -95,7 +95,7 @@ const faqs: FAQ[] = [
     id: 'periodo',
     icon: 'calendar',
     q: 'Período de Locação',
-    a: 'O aluguel normalmente é por diária. Se precisar de mais horas ou mais de um dia, chama no WhatsApp que montamos o melhor combo.'
+    a: 'O nosso período de locação é de 4 horas, com a possibilidade de adicionar horas extras, caso necessário. Para mais informações, é só chamar a gente no WhatsApp, que explicamos direitinho.'
   },
   {
     id: 'area',
@@ -117,7 +117,6 @@ const faqs: FAQ[] = [
   }
 ]
 
-/* ✅ map dos ícones para /images */
 function iconSrc(icon: FAQIcon) {
   switch (icon) {
     case 'calendar':
@@ -136,7 +135,6 @@ function toggle(id: string) {
   abertoId.value = abertoId.value === id ? '' : id
 }
 
-/* Reveal (seção inteira, estável) */
 const secEl = ref<HTMLElement | null>(null)
 let obs: IntersectionObserver | null = null
 
