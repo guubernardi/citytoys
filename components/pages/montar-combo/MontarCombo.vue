@@ -11,23 +11,18 @@
       </div>
 
       <div class="container cabecalho__conteudo">
-        <span class="selo-promocao animar-entrada" id="selo-promocao">
-          🎉 Promoção Segunda a Quinta
-        </span>
+        <span class="selo-promocao animar-entrada" id="selo-promocao"> 🎉 Promoção Segunda a Quinta </span>
 
         <h1 class="titulo-principal animar-entrada" id="titulo-pagina">
           Monte seu <span class="texto-destaque">Combo</span> da Semana
         </h1>
 
-        <p class="preco animar-entrada" id="preco-combo">
-          Combo fixo por {{ precoBRL }}
-        </p>
+        <p class="preco animar-entrada" id="preco-combo">Combo fixo por {{ precoBRL }}</p>
 
         <p class="descricao animar-entrada" id="descricao-combo">
-          Escolha primeiro um brinquedo <strong class="texto-destaque">Grande</strong>,
-          depois um <strong class="texto-destaque">Médio</strong> e por último um
-          <strong class="texto-destaque">Pequeno</strong>. Garantimos a melhor combinação
-          de diversão para sua festa!
+          Escolha primeiro um brinquedo <strong class="texto-destaque">Grande</strong>, depois um
+          <strong class="texto-destaque">Médio</strong> e por último um
+          <strong class="texto-destaque">Pequeno</strong>. Garantimos a melhor combinação de diversão para sua festa!
         </p>
 
         <div class="linha-data animar-entrada" id="linha-data">
@@ -109,15 +104,11 @@
         </div>
 
         <div class="passos animar-entrada" id="passos">
-          <div class="passo" :class="{ ativo: !comboCompleto }" id="passo-1">
-            1. Escolha os brinquedos
-          </div>
+          <div class="passo" :class="{ ativo: !comboCompleto }" id="passo-1">1. Escolha os brinquedos</div>
 
           <div class="linha-passo" aria-hidden="true"></div>
 
-          <div class="passo" :class="{ ativo: comboCompleto }" id="passo-2">
-            2. Finalizar no WhatsApp
-          </div>
+          <div class="passo" :class="{ ativo: comboCompleto }" id="passo-2">2. Finalizar no WhatsApp</div>
         </div>
       </div>
 
@@ -226,7 +217,8 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('grande')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" /> 1º Grande
+          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          1º Grande
         </button>
 
         <button
@@ -237,7 +229,8 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('medio')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" /> 2º Médio
+          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          2º Médio
         </button>
 
         <button
@@ -248,15 +241,14 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('pequeno')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" /> 3º Pequeno
+          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          3º Pequeno
         </button>
       </div>
 
       <div class="cabecalho-secao container" id="cabecalho-secao">
         <h2 class="titulo-secao">Escolha os brinquedos do seu combo</h2>
-        <p class="subtitulo-secao">
-          Selecione <strong>1</strong> brinquedo de cada categoria para completar o combo.
-        </p>
+        <p class="subtitulo-secao">Selecione <strong>1</strong> brinquedo de cada categoria para completar o combo.</p>
       </div>
 
       <div class="grade-brinquedos container" id="grade-brinquedos" role="tabpanel" aria-label="Lista de brinquedos">
@@ -274,9 +266,7 @@
               <img src="/images/check.svg" alt="Icone Check" />
             </div>
 
-            <span class="etiqueta" :class="b.etiquetaClass" aria-hidden="true">
-              {{ b.etiquetaLabel }}
-            </span>
+            <span class="etiqueta" :class="b.etiquetaClass" aria-hidden="true">{{ b.etiquetaLabel }}</span>
           </div>
 
           <div class="card__info">
@@ -348,10 +338,7 @@
 
     <div class="onda-rodape" aria-hidden="true">
       <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-        <path
-          d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,30 1440,40 L1440,80 L0,80 Z"
-          fill="#2D3A7A"
-        />
+        <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,30 1440,40 L1440,80 L0,80 Z" fill="#2D3A7A" />
       </svg>
     </div>
   </div>
@@ -361,7 +348,7 @@
 import { useHead } from 'nuxt/app'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-useHead ({
+useHead({
   title: 'Montar Combo - City Toys'
 })
 
@@ -370,21 +357,16 @@ type Categoria = 'grande' | 'medio' | 'pequeno'
 type Brinquedo = {
   id: string
   cat: Categoria
-
   etiquetaLabel: string
   etiquetaClass: string
-
   name: string
   schemaCategory: string
-
   ageIcon: string
   ageAlt: string
   ageText: string
-
   capIcon: string
   capAlt: string
   capText: string
-
   imageSrc: string
   imageAlt: string
 }
@@ -413,6 +395,27 @@ const calStyle = ref<Record<string, string>>({})
 
 const dataEvento = ref<string>('')
 
+/** OUTUBRO removido do calendário */
+const MES_OUTUBRO = 9
+function isOutubro(m0: number) {
+  return m0 === MES_OUTUBRO
+}
+
+/** soma meses pulando Outubro */
+function addMonthsSkippingOct(delta: number) {
+  // base
+  let d = new Date(viewYear.value, viewMonth.value, 1)
+  d.setMonth(d.getMonth() + delta)
+
+  // se cair em Outubro, pula pra frente ou pra trás
+  if (isOutubro(d.getMonth())) {
+    d.setMonth(d.getMonth() + (delta >= 0 ? 1 : -1))
+  }
+
+  viewMonth.value = d.getMonth()
+  viewYear.value = d.getFullYear()
+}
+
 const dataMinima = computed(() => {
   const hoje = new Date()
   const yyyy = hoje.getFullYear()
@@ -433,6 +436,10 @@ function isoFromYMD(y: number, m0: number, d: number) {
 
 function parseISO(iso: string) {
   return new Date(`${iso}T12:00:00`)
+}
+
+function monthFromISO(iso: string) {
+  return parseISO(iso).getMonth()
 }
 
 const dataLabel = computed(() => {
@@ -476,11 +483,26 @@ const semanaLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 const viewMonth = ref<number>(new Date().getMonth())
 const viewYear = ref<number>(new Date().getFullYear())
 
+function ensureNotOctoberOnView() {
+  if (isOutubro(viewMonth.value)) {
+    viewMonth.value = 10 // Novembro
+  }
+}
+
 function syncViewToSelected() {
   if (!dataEvento.value) return
+
+  // se alguém cair em Outubro por algum motivo, bloqueia
+  if (isOutubro(monthFromISO(dataEvento.value))) {
+    dataEvento.value = ''
+    ensureNotOctoberOnView()
+    return
+  }
+
   const d = parseISO(dataEvento.value)
   viewMonth.value = d.getMonth()
   viewYear.value = d.getFullYear()
+  ensureNotOctoberOnView()
 }
 
 watch(dataEvento, () => {
@@ -490,24 +512,12 @@ watch(dataEvento, () => {
 const mesLabel = computed(() => `${meses[viewMonth.value]} ${viewYear.value}`)
 
 function prevMonth() {
-  const m = viewMonth.value - 1
-  if (m < 0) {
-    viewMonth.value = 11
-    viewYear.value -= 1
-  } else {
-    viewMonth.value = m
-  }
+  addMonthsSkippingOct(-1)
   if (calAberto.value) nextTick(updateCalPos)
 }
 
 function nextMonth() {
-  const m = viewMonth.value + 1
-  if (m > 11) {
-    viewMonth.value = 0
-    viewYear.value += 1
-  } else {
-    viewMonth.value = m
-  }
+  addMonthsSkippingOct(1)
   if (calAberto.value) nextTick(updateCalPos)
 }
 
@@ -525,6 +535,9 @@ type CalCell = {
 const calendarCells = computed<(CalCell | null)[]>(() => {
   const y = viewYear.value
   const m = viewMonth.value
+
+  // segurança: se por algum bug cair em Outubro, volta vazio
+  if (isOutubro(m)) return Array.from({ length: 42 }, () => null)
 
   const first = new Date(y, m, 1)
   const daysInMonth = new Date(y, m + 1, 0).getDate()
@@ -547,7 +560,7 @@ const calendarCells = computed<(CalCell | null)[]>(() => {
     const iso = isoFromYMD(y, m, dayNum)
     const d = parseISO(iso)
 
-    const isDisabled = d.getTime() < minDateObj.value.getTime()
+    const isDisabled = d.getTime() < minDateObj.value.getTime() || isOutubro(d.getMonth())
     const dow = d.getDay()
     const isWeekdayOk = dow >= 1 && dow <= 4
 
@@ -567,12 +580,23 @@ const calendarCells = computed<(CalCell | null)[]>(() => {
 })
 
 function selecionarDia(iso: string) {
+  if (isOutubro(monthFromISO(iso))) return
   dataEvento.value = iso
   fecharCalendar()
 }
 
 function irHoje() {
   const now = new Date()
+
+  // se hoje for Outubro, joga pra 01/11
+  if (isOutubro(now.getMonth())) {
+    const iso = isoFromYMD(now.getFullYear(), 10, 1)
+    const d = parseISO(iso)
+    dataEvento.value = d.getTime() < minDateObj.value.getTime() ? dataMinima.value : iso
+    fecharCalendar()
+    return
+  }
+
   const iso = isoFromYMD(now.getFullYear(), now.getMonth(), now.getDate())
   const d = parseISO(iso)
   dataEvento.value = d.getTime() < minDateObj.value.getTime() ? dataMinima.value : iso
@@ -588,6 +612,7 @@ let rafId = 0
 
 function updateCalPos() {
   const btn = calendarBtn.value
+  const cal = calEl.value
   if (!btn) return
 
   const r = btn.getBoundingClientRect()
@@ -601,19 +626,21 @@ function updateCalPos() {
   if (left + width > vw - pad) left = vw - width - pad
   if (left < pad) left = pad
 
-  const estimatedH = 420
-  const downTop = r.bottom + 10
-  const willOverflowDown = downTop + estimatedH > vh - pad
-
-  const top = willOverflowDown ? r.top - 10 : downTop
+  const h = cal?.getBoundingClientRect().height || 420
+  const GAP_DOWN = 10
+  const GAP_UP = 2 
+  const downTop = r.bottom + GAP_DOWN
+  const upTop = r.top - GAP_UP - h
+  let top = downTop
+  if (downTop + h > vh - pad) top = upTop
+  top = Math.max(pad, Math.min(top, vh - pad - h))
 
   calStyle.value = {
     position: 'fixed',
     left: `${Math.round(left)}px`,
     top: `${Math.round(top)}px`,
     width: `${width}px`,
-    zIndex: '100000',
-    transform: willOverflowDown ? 'translateY(-100%)' : 'translateY(0)'
+    zIndex: '100000'
   }
 }
 
@@ -626,6 +653,8 @@ function onWinScrollResize() {
 function abrirCalendar() {
   if (calAberto.value) return
   calAberto.value = true
+
+  ensureNotOctoberOnView()
   syncViewToSelected()
 
   nextTick(() => {
@@ -661,6 +690,7 @@ function onDocKeyDown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+  ensureNotOctoberOnView()
   document.addEventListener('pointerdown', onDocPointerDown)
   document.addEventListener('keydown', onDocKeyDown)
 })
@@ -897,7 +927,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/pula-pula-3,05.webp',
+    imageSrc: '/images/pula-pula-305.webp',
     imageAlt: 'Pula-Pula 3,05 — aluguel para festa no Rio de Janeiro'
   },
   {
@@ -981,7 +1011,7 @@ const brinquedos = ref<Brinquedo[]>([
     capText: 'Até 1 criança',
     imageSrc: '/images/air-game.webp',
     imageAlt: 'Air Game — brinquedo pequeno para festas no Rio de Janeiro'
-  },
+  }
 ])
 
 const selecionados = ref<Record<Categoria, Brinquedo | null>>({
@@ -997,9 +1027,7 @@ const comboCompleto = computed(() => totalSelecionados.value === 3)
 
 const podeFinalizar = computed(() => comboCompleto.value && !!dataEvento.value && diaValido.value)
 
-const precoBRL = computed(() =>
-  PRECO_FIXO.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-)
+const precoBRL = computed(() => PRECO_FIXO.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }))
 
 const textoCarrinho = computed(() => {
   if (totalSelecionados.value === 0) return 'Selecione os Brinquedos'
@@ -1035,7 +1063,7 @@ function alternarSelecao(b: Brinquedo) {
 const linkWhats = computed(() => {
   const msg =
     `Olá! Gostaria de fechar o combo da semana.\n\n` +
-    `📅 Data do evento: ${dataEvento.value || '-'}\n\n` +
+    `📅 Data do evento: ${dataLabel.value || '-'}\n\n` +
     `🎈 Grande: ${selecionados.value.grande?.name || '-'}\n` +
     `🎈 Médio: ${selecionados.value.medio?.name || '-'}\n` +
     `🎈 Pequeno: ${selecionados.value.pequeno?.name || '-'}\n\n` +
@@ -1783,7 +1811,7 @@ function handleWhatsClick(e: MouseEvent) {
   display: inline-flex
   align-items: center
   gap: 8px
-  transition: all 0,3s
+  transition: all 0.3s
   background: #EAF0F6
   color: #5C6B86
   cursor: not-allowed
