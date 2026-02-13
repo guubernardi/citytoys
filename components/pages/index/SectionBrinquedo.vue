@@ -149,7 +149,9 @@ const idadeIcon = '/images/icone-idade-3+.svg'
 const capacidadeIcon = '/images/icone-capacidade.svg'
 
 const brinquedos = ref<Toy[]>([
-  // GRANDES
+  // =========================
+  // PEQUENOS
+  // =========================
   {
     id: 'toy-area-baby',
     cat: 'pequeno',
@@ -158,13 +160,13 @@ const brinquedos = ref<Toy[]>([
     name: 'Área Baby',
     schemaCategory: 'Brinquedo inflável - Pequeno',
     ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 0+',
+    ageAlt: 'Idade recomendada: até 5 anos',
     ageText: 'Até 5 anos',
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 6 crianças',
     capText: 'Até 6 crianças',
     imageSrc: '/images/area-baby.png',
-    imageAlt: 'Área Baby — brinquedo inflável grande para festas no Rio de Janeiro'
+    imageAlt: 'Área Baby — brinquedo inflável pequeno para festas no Rio de Janeiro'
   },
   {
     id: 'toy-castelinho',
@@ -174,14 +176,146 @@ const brinquedos = ref<Toy[]>([
     name: 'Castelinho',
     schemaCategory: 'Brinquedo inflável - Pequeno',
     ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 2+',
+    ageAlt: 'Idade recomendada: até 6 anos',
     ageText: 'Até 6 anos',
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 3 crianças',
     capText: 'Até 3 crianças',
     imageSrc: '/images/castelinho.webp',
-    imageAlt: 'Castelinho — brinquedo inflável grande para festa infantil no Rio de Janeiro'
+    imageAlt: 'Castelinho — brinquedo inflável pequeno para festa infantil no Rio de Janeiro'
   },
+  {
+    id: 'toy-mini-circuito',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Mini Circuito',
+    schemaCategory: 'Brinquedo inflável - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 6 anos',
+    ageText: 'Até 6 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/mini-circuito.webp',
+    imageAlt: 'Mini Circuito — brinquedo inflável pequeno para eventos e festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-tigrinho',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Tigrinho',
+    schemaCategory: 'Brinquedo inflável - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 6 anos',
+    ageText: 'Até 6 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/tigrinho.webp',
+    imageAlt: 'Tigrinho — brinquedo inflável pequeno para festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-pula-pula-244',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Pula-Pula 2,44',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 7 anos',
+    ageText: 'Até 7 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 2 crianças',
+    capText: 'Até 2 crianças',
+    imageSrc: '/images/pula-pula-244.webp',
+    imageAlt: 'Pula-Pula 2,44 — aluguel para festa infantil no Rio de Janeiro'
+  },
+  {
+    id: 'toy-pula-pula-305',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Pula-Pula 3,05',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 12 anos',
+    ageText: 'Até 12 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/pula-pula-3,05.webp',
+    imageAlt: 'Pula-Pula 3,05 — aluguel para festa no Rio de Janeiro'
+  },
+  {
+    id: 'toy-piscina-bolinha',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Piscina de Bolinha',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 5 anos',
+    ageText: 'Até 5 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/piscina-bolinha.webp',
+    imageAlt: 'Piscina de Bolinha — brinquedo pequeno para festa infantil no Rio de Janeiro'
+  },
+  {
+    id: 'toy-piscina-dino',
+    cat: 'pequeno', // <- era "Pequeno" e isso quebra o filtro
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Piscina Dino',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade recomendada: até 6 anos',
+    ageText: 'Até 6 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/dino.webp',
+    imageAlt: 'Piscina Dino — brinquedo pequeno para festa no Rio de Janeiro'
+  },
+  {
+    id: 'toy-toto',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Totó',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 3+',
+    ageText: '3+',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/toto.webp',
+    imageAlt: 'Totó — brinquedo pequeno para eventos e festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-air-game',
+    cat: 'pequeno',
+    etiquetaLabel: 'Pequeno',
+    etiquetaClass: 'etiqueta-pequeno',
+    name: 'Air Game',
+    schemaCategory: 'Brinquedo - Pequeno',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 3+',
+    ageText: '3+',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 2 crianças',
+    capText: 'Até 2 crianças',
+    imageSrc: '/images/air-game.webp',
+    imageAlt: 'Air Game — brinquedo pequeno para festas no Rio de Janeiro'
+  },
+
+  // =========================
+  // MÉDIOS
+  // =========================
   {
     id: 'toy-futebol-sabao-4x8',
     cat: 'medio',
@@ -196,8 +330,76 @@ const brinquedos = ref<Toy[]>([
     capAlt: 'Capacidade: até 6 crianças',
     capText: 'Até 6 crianças',
     imageSrc: '/images/futebol-sabao-4x8.webp',
-    imageAlt: 'Futebol de Sabão 4x8 — brinquedo inflável grande para eventos no Rio de Janeiro'
+    imageAlt: 'Futebol de Sabão 4x8 — brinquedo inflável médio para eventos no Rio de Janeiro'
   },
+  {
+    id: 'toy-guerra-cotonete',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Guerra de Cotonete',
+    schemaCategory: 'Brinquedo inflável - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 3+',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 2 crianças',
+    capText: 'Até 2 crianças',
+    imageSrc: '/images/guerra-cotonete.webp',
+    imageAlt: 'Guerra de Cotonete — brinquedo inflável médio para festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-toboga-colorex',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Tobogã Colorex',
+    schemaCategory: 'Brinquedo inflável - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 3+',
+    ageText: 'Até 10 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/colorex2.webp',
+    imageAlt: 'Tobogã Colorex — escorregador inflável médio para eventos no Rio de Janeiro'
+  },
+  {
+    id: 'toy-toboga-premium',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Tobogã Premium',
+    schemaCategory: 'Brinquedo inflável - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 3+',
+    ageText: 'Até 12 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 3 crianças',
+    capText: 'Até 3 crianças',
+    imageSrc: '/images/premium.webp',
+    imageAlt: 'Tobogã Premium — escorregador inflável médio para eventos no Rio de Janeiro'
+  },
+  {
+    id: 'toy-toboagua',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Toboágua',
+    schemaCategory: 'Brinquedo inflável - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade mínima: 5+',
+    ageText: 'Até 15 anos',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 1 criança',
+    capText: 'Até 1 criança',
+    imageSrc: '/images/toboagua.webp',
+    imageAlt: 'Toboágua — brinquedo inflável médio com água para festas no Rio de Janeiro'
+  },
+
+  // =========================
+  // GRANDES
+  // =========================
   {
     id: 'toy-futebol-sabao-10x5',
     cat: 'grande',
@@ -215,70 +417,6 @@ const brinquedos = ref<Toy[]>([
     imageAlt: 'Futebol de Sabão 10x5 — brinquedo inflável grande para festa e eventos no Rio de Janeiro'
   },
   {
-    id: 'toy-guerra-cotonete',
-    cat: 'medio',
-    etiquetaLabel: 'Médio',
-    etiquetaClass: 'etiqueta-medio',
-    name: 'Guerra de Cotonete',
-    schemaCategory: 'Brinquedo inflável - Médio',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: 'Livre',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 2 crianças',
-    capText: 'Até 2 crianças',
-    imageSrc: '/images/guerra-cotonete.webp',
-    imageAlt: 'Guerra de Cotonete — brinquedo inflável grande para festas no Rio de Janeiro'
-  },
-  {
-    id: 'toy-mini-circuito',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Mini Circuito',
-    schemaCategory: 'Brinquedo inflável - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 2+',
-    ageText: 'Até 6 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 crianças',
-    capText: 'Até 3 crianças',
-    imageSrc: '/images/mini-circuito.webp',
-    imageAlt: 'Mini Circuito — brinquedo inflável grande para eventos e festas no Rio de Janeiro'
-  },
-  {
-    id: 'toy-tigrinho',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Tigrinho',
-    schemaCategory: 'Brinquedo inflável - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 1+',
-    ageText: 'Até 6 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 4 crianças',
-    capText: 'Até 8 crianças',
-    imageSrc: '/images/tigrinho.webp',
-    imageAlt: 'Tigrinho — brinquedo inflável grande para festas no Rio de Janeiro'
-  },
-  {
-    id: 'toy-toboga-colorex',
-    cat: 'medio',
-    etiquetaLabel: 'Médio',
-    etiquetaClass: 'etiqueta-medio',
-    name: 'Tobogã Colorex',
-    schemaCategory: 'Brinquedo inflável - Médio',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: 'Até 10 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 criança',
-    capText: 'Até 3 criança',
-    imageSrc: '/images/colrex2.webp',
-    imageAlt: 'Tobogã Colorex — escorregador inflável grande para eventos no Rio de Janeiro'
-  },
-  {
     id: 'toy-toboga-gigante',
     cat: 'grande',
     etiquetaLabel: 'Grande',
@@ -289,42 +427,10 @@ const brinquedos = ref<Toy[]>([
     ageAlt: 'Idade mínima: 3+',
     ageText: 'Livre',
     capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 4 criança',
-    capText: 'Até 4 criança',
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
     imageSrc: '/images/gigante.webp',
     imageAlt: 'Tobogã Gigante — escorregador inflável grande para festas no Rio de Janeiro'
-  },
-  {
-    id: 'toy-toboga-premium',
-    cat: 'medio',
-    etiquetaLabel: 'médio',
-    etiquetaClass: 'etiqueta-medio',
-    name: 'Tobogã Premium',
-    schemaCategory: 'Brinquedo inflável - Médio',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: 'Até 12 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 criança',
-    capText: 'Até 3 criança',
-    imageSrc: '/images/premium.webp',
-    imageAlt: 'Tobogã Premium — escorregador inflável grande para eventos no Rio de Janeiro'
-  },
-  {
-    id: 'toy-toboagua',
-    cat: 'medio',
-    etiquetaLabel: 'Médio',
-    etiquetaClass: 'etiqueta-medio',
-    name: 'Toboágua',
-    schemaCategory: 'Brinquedo inflável - Médio',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 5+',
-    ageText: 'Até 15 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 1 criança',
-    capText: 'Até 1 criança',
-    imageSrc: '/images/toboagua.webp',
-    imageAlt: 'Toboágua — brinquedo inflável com água para festas no Rio de Janeiro'
   },
   {
     id: 'toy-touro-mecanico',
@@ -340,9 +446,8 @@ const brinquedos = ref<Toy[]>([
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
     imageSrc: '/images/touro-mecanico.webp',
-    imageAlt: 'Touro Mecânico — atração para festas e eventos no Rio de Janeiro'
+    imageAlt: 'Touro Mecânico — atração grande para festas e eventos no Rio de Janeiro'
   },
-
   {
     id: 'toy-legolandia',
     cat: 'grande',
@@ -354,110 +459,10 @@ const brinquedos = ref<Toy[]>([
     ageAlt: 'Idade mínima: 2+',
     ageText: 'Até 10 anos',
     capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 4 criança',
-    capText: 'Até 4 criança',
-    imageSrc: '/images/legolandia.webp',
-    imageAlt: 'Legolândia — brinquedo médio para festa infantil no Rio de Janeiro'
-  },
-
-  // MÉDIOS
-  {
-    id: 'toy-pula-pula-244',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Pula-Pula 2,44',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 0+',
-    ageText: 'Até 7 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 2 criança',
-    capText: 'Até 2 criança',
-    imageSrc: '/images/pula-pula-244.webp',
-    imageAlt: 'Pula-Pula 2,44 — aluguel para festa infantil no Rio de Janeiro'
-  },
-  {
-    id: 'toy-pula-pula-305',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Pula-Pula 3,05',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 0+',
-    ageText: 'Até 12 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 criança',
-    capText: 'Até 3 criança',
-    imageSrc: '/images/pula-pula-244.webp',
-    imageAlt: 'Pula-Pula 3,05 — aluguel para festa no Rio de Janeiro'
-  },
-  {
-    id: 'toy-piscina-bolinha',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Piscina de Bolinha',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 0+',
-    ageText: 'Até 5 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 criança',
-    capText: 'Até 3 criança',
-    imageSrc: '/images/piscina-bolinha.webp',
-    imageAlt: 'Piscina de Bolinha — brinquedo médio para festa infantil no Rio de Janeiro'
-  },
-  {
-    id: 'toy-piscina-dino',
-    cat: 'Pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Piscina Dino',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 0+',
-    ageText: 'Até 6 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 criança',
-    capText: 'Até 3 criança',
-    imageSrc: '/images/dino.webp',
-    imageAlt: 'Piscina Dino — brinquedo médio para festa no Rio de Janeiro'
-  },
-
-  // PEQUENOS
-  {
-    id: 'toy-toto',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Totó',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: '3+',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 4 criança',
-    capText: 'Até 4 criança',
-    imageSrc: '/images/toto.webp',
-    imageAlt: 'Totó — brinquedo pequeno para eventos e festas no Rio de Janeiro'
-  },
-  {
-    id: 'toy-air-game',
-    cat: 'pequeno',
-    etiquetaLabel: 'Pequeno',
-    etiquetaClass: 'etiqueta-pequeno',
-    name: 'Air Game',
-    schemaCategory: 'Brinquedo - Pequeno',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: '3+',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 2 criança',
-    capText: 'Até 2 criança',
-    imageSrc: '/images/air-game.webp',
-    imageAlt: 'Air Game — brinquedo pequeno para festas no Rio de Janeiro'
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/legolandia.jpg', // <- você commitou .jpg
+    imageAlt: 'Legolândia — brinquedo grande para festa infantil no Rio de Janeiro'
   }
 ])
 

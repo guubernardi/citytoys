@@ -101,6 +101,12 @@
           <p class="microtexto" v-if="dataEvento && !diaValido">
             Esse combo é válido apenas de <strong>segunda a quinta</strong>. Troca a data e fechou 😄
           </p>
+
+          <!-- Aviso específico do Touro (Junho/Julho) -->
+          <p class="microtexto" v-if="dataEvento && touroBloqueadoNoMes">
+            Observação: o <strong>Touro Mecânico</strong> fica indisponível em <strong>Junho</strong> e
+            <strong>Julho</strong>.
+          </p>
         </div>
 
         <div class="passos animar-entrada" id="passos">
@@ -256,7 +262,10 @@
           v-for="(b, idx) in brinquedosFiltrados"
           :key="b.id"
           class="card"
-          :class="{ selecionado: estaSelecionado(b) }"
+          :class="{
+            selecionado: estaSelecionado(b),
+            'is-bloqueado': brinquedoIndisponivel(b)
+          }"
           :style="{ animationDelay: `${idx * 0.05}s` }"
         >
           <div class="card__imagem">
@@ -293,11 +302,14 @@
               class="btn-selecionar"
               :class="{ remover: estaSelecionado(b) }"
               type="button"
+              :disabled="brinquedoIndisponivel(b)"
               @click="alternarSelecao(b)"
             >
               <template v-if="estaSelecionado(b)">❌ Remover</template>
               <template v-else>Selecionar</template>
             </button>
+
+            <p v-if="brinquedoIndisponivel(b)" class="card__aviso">Indisponível em Junho e Julho</p>
           </div>
         </article>
       </div>
@@ -395,7 +407,6 @@ const calStyle = ref<Record<string, string>>({})
 
 const dataEvento = ref<string>('')
 
-/** OUTUBRO removido do calendário */
 const MES_OUTUBRO = 9
 function isOutubro(m0: number) {
   return m0 === MES_OUTUBRO
@@ -403,11 +414,9 @@ function isOutubro(m0: number) {
 
 /** soma meses pulando Outubro */
 function addMonthsSkippingOct(delta: number) {
-  // base
   let d = new Date(viewYear.value, viewMonth.value, 1)
   d.setMonth(d.getMonth() + delta)
 
-  // se cair em Outubro, pula pra frente ou pra trás
   if (isOutubro(d.getMonth())) {
     d.setMonth(d.getMonth() + (delta >= 0 ? 1 : -1))
   }
@@ -492,7 +501,6 @@ function ensureNotOctoberOnView() {
 function syncViewToSelected() {
   if (!dataEvento.value) return
 
-  // se alguém cair em Outubro por algum motivo, bloqueia
   if (isOutubro(monthFromISO(dataEvento.value))) {
     dataEvento.value = ''
     ensureNotOctoberOnView()
@@ -536,13 +544,11 @@ const calendarCells = computed<(CalCell | null)[]>(() => {
   const y = viewYear.value
   const m = viewMonth.value
 
-  // segurança: se por algum bug cair em Outubro, volta vazio
   if (isOutubro(m)) return Array.from({ length: 42 }, () => null)
 
   const first = new Date(y, m, 1)
   const daysInMonth = new Date(y, m + 1, 0).getDate()
 
-  // semana começa em segunda
   const shift = (first.getDay() + 6) % 7
   const total = 42
 
@@ -588,7 +594,6 @@ function selecionarDia(iso: string) {
 function irHoje() {
   const now = new Date()
 
-  // se hoje for Outubro, joga pra 01/11
   if (isOutubro(now.getMonth())) {
     const iso = isoFromYMD(now.getFullYear(), 10, 1)
     const d = parseISO(iso)
@@ -627,10 +632,11 @@ function updateCalPos() {
   if (left < pad) left = pad
 
   const h = cal?.getBoundingClientRect().height || 420
-  const GAP_DOWN = 10
-  const GAP_UP = 2 
+  const GAP_DOWN = 14 // mais embaixo (era 10)
+  const GAP_UP = 2
   const downTop = r.bottom + GAP_DOWN
   const upTop = r.top - GAP_UP - h
+
   let top = downTop
   if (downTop + h > vh - pad) top = upTop
   top = Math.max(pad, Math.min(top, vh - pad - h))
@@ -700,6 +706,30 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', onDocKeyDown)
   window.removeEventListener('scroll', onWinScrollResize)
   window.removeEventListener('resize', onWinScrollResize)
+})
+
+const MESES_BLOQUEADOS_TOURO = new Set([5, 6])
+
+const mesSelecionado = computed<number | null>(() => {
+  if (!dataEvento.value) return null
+  return parseISO(dataEvento.value).getMonth()
+})
+
+const touroBloqueadoNoMes = computed(() => {
+  return mesSelecionado.value !== null && MESES_BLOQUEADOS_TOURO.has(mesSelecionado.value)
+})
+
+function brinquedoIndisponivel(b: Brinquedo) {
+  if (b.id !== 'toy-touro-mecanico') return false
+  return touroBloqueadoNoMes.value
+}
+
+watch([dataEvento, touroBloqueadoNoMes], () => {
+  if (!dataEvento.value) return
+  if (touroBloqueadoNoMes.value && selecionados.value.grande?.id === 'toy-touro-mecanico') {
+    selecionados.value.grande = null
+    if (filtroAtivo.value !== 'grande') filtroAtivo.value = 'grande'
+  }
 })
 
 const brinquedos = ref<Brinquedo[]>([
@@ -829,7 +859,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/toboga-colorex.webp',
+    imageSrc: '/images/colorex2.webp',
     imageAlt: 'Tobogã Colorex — escorregador inflável grande para eventos no Rio de Janeiro'
   },
   {
@@ -845,7 +875,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/toboga-gigante.webp',
+    imageSrc: '/images/gigante.webp',
     imageAlt: 'Tobogã Gigante — escorregador inflável grande para festas no Rio de Janeiro'
   },
   {
@@ -861,7 +891,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/toboga-premium.webp',
+    imageSrc: '/images/premium.webp',
     imageAlt: 'Tobogã Premium — escorregador inflável grande para eventos no Rio de Janeiro'
   },
   {
@@ -959,7 +989,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/piscina-dino.webp',
+    imageSrc: '/images/dino.webp',
     imageAlt: 'Piscina Dino — brinquedo médio para festa no Rio de Janeiro'
   },
   {
@@ -975,7 +1005,7 @@ const brinquedos = ref<Brinquedo[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 1 criança',
     capText: 'Até 1 criança',
-    imageSrc: '/images/legolandia.webp',
+    imageSrc: '/images/legolandia.jpg',
     imageAlt: 'Legolândia — brinquedo médio para festa infantil no Rio de Janeiro'
   },
 
@@ -1044,6 +1074,8 @@ function estaSelecionado(b: Brinquedo) {
 }
 
 function alternarSelecao(b: Brinquedo) {
+  if (brinquedoIndisponivel(b)) return
+
   const ja = estaSelecionado(b)
 
   if (ja) {
@@ -1765,6 +1797,19 @@ function handleWhatsClick(e: MouseEvent) {
   animation: subir-barra .5s ease-out .4s forwards
   opacity: 0
   font-family: var(--fonte)
+
+.card.is-bloqueado 
+  opacity: 0.55
+  pointer-events: auto
+
+.card.is-bloqueado .btn-selecionar 
+  cursor: not-allowed
+  opacity: 0.7
+
+.card__aviso 
+  margin-top: 10px
+  font-size: 12px
+  opacity: 0.9
 
 .carrinho__info
   display: flex
