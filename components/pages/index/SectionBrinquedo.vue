@@ -266,7 +266,7 @@ const brinquedos = ref<Toy[]>([
   },
   {
     id: 'toy-piscina-dino',
-    cat: 'pequeno', // <- era "Pequeno" e isso quebra o filtro
+    cat: 'pequeno', 
     etiquetaLabel: 'Pequeno',
     etiquetaClass: 'etiqueta-pequeno',
     name: 'Piscina Dino',
@@ -461,7 +461,7 @@ const brinquedos = ref<Toy[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 4 crianças',
     capText: 'Até 4 crianças',
-    imageSrc: '/images/legolandia.jpg', // <- você commitou .jpg
+    imageSrc: '/images/legolandia.jpg', 
     imageAlt: 'Legolândia — brinquedo grande para festa infantil no Rio de Janeiro'
   }
 ])
