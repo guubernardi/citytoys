@@ -461,7 +461,7 @@ const brinquedos = ref<Toy[]>([
     capIcon: capacidadeIcon,
     capAlt: 'Capacidade: até 4 crianças',
     capText: 'Até 4 crianças',
-    imageSrc: '/images/legolandia.jpg', 
+    imageSrc: '/images/legolandia.webp', 
     imageAlt: 'Legolândia — brinquedo grande para festa infantil no Rio de Janeiro'
   }
 ])
