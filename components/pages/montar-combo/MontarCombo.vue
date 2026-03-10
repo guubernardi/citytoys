@@ -102,7 +102,6 @@
             Esse combo é válido apenas de <strong>segunda a quinta</strong>. Troca a data e fechou 😄
           </p>
 
-          <!-- Aviso específico do Touro (Junho/Julho) -->
           <p class="microtexto" v-if="dataEvento && touroBloqueadoNoMes">
             Observação: o <strong>Touro Mecânico</strong> fica indisponível em <strong>Junho</strong> e
             <strong>Julho</strong>.
