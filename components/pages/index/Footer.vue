@@ -20,7 +20,7 @@
               <span class="text">citytoyslocacoesdebrinquedos@gmail.com</span>
             </a>
 
-            <a href="https://wa.me/5521984848699" target="_blank" rel="noopener" class="contact-item">
+            <a href="https://wa.me/5521984848699?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20City%20Toys%20e%20quero%20fazer%20um%20or%C3%A7amento%20%F0%9F%8E%89" target="_blank" rel="noopener" class="contact-item">
               <span class="icon">
                 <img src="/images/whatsapp.svg" alt="Icone WhatsApp" width="20" height="20" />
               </span>
@@ -56,7 +56,7 @@
     </footer>
 
     <NuxtLink
-      to="https://wa.me/5521984848699"
+      to="https://wa.me/5521984848699?text=Ol%C3%A1!%20Vi%20o%20site%20da%20City%20Toys%20e%20quero%20fazer%20um%20or%C3%A7amento%20%F0%9F%8E%89"
       class="whatsapp-float"
       target="_blank"
       rel="noopener"

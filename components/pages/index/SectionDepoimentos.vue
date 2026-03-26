@@ -107,7 +107,7 @@
   const secEl = ref<HTMLElement | null>(null)
   
   const whatsNumero = '5521984848699'
-  const whatsMsg = 'Olá! Quero fazer meu orçamento para alugar brinquedos!'
+  const whatsMsg = 'Olá! Vim pelo site da City Toys, e quero fazer um orçamento 🎉'
   
   const whatsLink = computed(() => {
     return `https://wa.me/${whatsNumero}?text=${encodeURIComponent(whatsMsg)}`
