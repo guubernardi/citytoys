@@ -26,7 +26,12 @@
         </li>
       </ul>
 
-      <NuxtLink class="logo-menu" :to="logoTo" aria-label="City Toys - voltar ao início">
+      <NuxtLink
+        class="logo-menu"
+        :to="logoTo"
+        aria-label="City Toys - voltar ao início"
+        @click="onClickLogo"
+      >
         <img :src="logoSrc" :alt="logoAlt" loading="eager" decoding="async" />
       </NuxtLink>
 
@@ -55,8 +60,9 @@
 
       <button
         class="btn-mobile"
+        :class="{ 'is-open': mobileOpen }"
         type="button"
-        aria-label="Abrir menu"
+        :aria-label="mobileOpen ? 'Fechar menu' : 'Abrir menu'"
         :aria-expanded="mobileOpen"
         aria-controls="drawer-menu"
         @click="toggleMobile"
@@ -85,7 +91,12 @@
         aria-label="Menu mobile"
       >
         <div class="drawer__top">
-          <NuxtLink class="drawer__logo" :to="logoTo" @click="closeMobile" aria-label="Home">
+          <NuxtLink
+            class="drawer__logo"
+            :to="logoTo"
+            aria-label="City Toys - voltar ao início"
+            @click="onClickLogo"
+          >
             <img :src="logoSrc" :alt="logoAlt" loading="eager" decoding="async" />
           </NuxtLink>
 
@@ -217,6 +228,23 @@ function onClickLink(e: MouseEvent, href: string, closeAfter = false) {
   if (closeAfter) closeMobile()
 }
 
+async function onClickLogo(e: MouseEvent) {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+  e.preventDefault()
+  closeMobile()
+
+  if (route.path !== props.logoTo) {
+    await router.push(props.logoTo)
+    await nextTick()
+  } else if (route.hash) {
+    await router.replace({ path: props.logoTo, hash: '' })
+    await nextTick()
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+}
+
 function closeMobile() {
   mobileOpen.value = false
 }
@@ -239,9 +267,16 @@ watch(mobileOpen, (v) => {
   document.body.style.overflow = v ? 'hidden' : ''
 })
 
+watch(
+  () => route.fullPath,
+  () => closeMobile()
+)
+
 function onResize() {
   measureHeader()
   updateScrolled()
+
+  if (window.innerWidth > 980 && mobileOpen.value) closeMobile()
 }
 
 onMounted(() => {
@@ -254,6 +289,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  document.documentElement.classList.remove('is-menu-open')
+  document.body.style.overflow = ''
   window.removeEventListener('scroll', updateScrolled)
   window.removeEventListener('resize', onResize)
   document.removeEventListener('keydown', onKeyDown)
@@ -372,6 +409,17 @@ onBeforeUnmount(() => {
     height: 2px
     background: rgba(255,255,255,.92)
     border-radius: 2px
+    transition: transform .25s ease, opacity .2s ease
+
+  .btn-mobile.is-open
+    .btn-mobile__line:nth-child(1)
+      transform: translateY(7px) rotate(45deg)
+
+    .btn-mobile__line:nth-child(2)
+      opacity: 0
+
+    .btn-mobile__line:nth-child(3)
+      transform: translateY(-7px) rotate(-45deg)
   
   @media (max-width: 980px)
     .links-menu
@@ -497,4 +545,3 @@ onBeforeUnmount(() => {
     font-size: 12px
     color: rgba(92,107,134,.95)
   </style>
-  
