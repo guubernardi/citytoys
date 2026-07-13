@@ -11,6 +11,7 @@
     >
       <div class="container">
         <header class="cabecalho-depoimentos" data-anim>
+          <p class="kicker-depoimentos">O que os pais dizem</p>
           <h2 class="titulo-secao">🎉 Depoimentos dos pais felizes</h2>
           <p class="subtitulo-secao">
             Brinquedo alugado! Mais de 3 mil festas realizadas com alegria e segurança.
@@ -230,9 +231,9 @@
     font-family: var(--fonte)
   
     .container
-      max-width: 1100px
+      max-width: var(--largura-max)
       margin: 0 auto
-      padding: 0 20px
+      padding: 0 var(--container-px)
       position: relative
       z-index: 2
   
@@ -240,6 +241,14 @@
     text-align: center
     max-width: 820px
     margin: 0 auto 34px
+
+  .kicker-depoimentos
+    text-transform: uppercase
+    font-weight: 900
+    font-size: 13px
+    letter-spacing: .6px
+    color: #2b74eb
+    margin: 0 0 8px
   
   .titulo-secao
     font-size: clamp(1.7rem, 2.4vw, 2.4rem)
@@ -268,29 +277,15 @@
   .cartao-depoimento
     position: relative
     border-radius: 22px
-    background: rgba(255,255,255,.92)
-    border: 1px solid rgba(255,255,255,.70)
-    box-shadow: 0 18px 45px rgba(18,48,98,.12), 0 6px 16px rgba(18,48,98,.08)
+    background: #fff
+    border: 1px solid #eef2f7
+    box-shadow: 0 12px 30px rgba(18,48,98,.08)
     padding: 22px 20px 18px
-    overflow: hidden
-    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease
-  
-    &::after
-      content: ""
-      position: absolute
-      inset: -2px
-      pointer-events: none
-      opacity: 0
-      transition: opacity .25s ease
-      background: radial-gradient(520px 240px at 50% -30%, rgba(255,255,255,.26), rgba(255,255,255,0) 60%)
-  
+    transition: box-shadow .24s ease, border-color .24s ease
+
     &:hover
-      transform: translateY(-8px)
-      box-shadow: 0 22px 60px rgba(18,48,98,.16), 0 8px 22px rgba(18,48,98,.10)
-      border-color: rgba(255,255,255,.85)
-  
-      &::after
-        opacity: 1
+      box-shadow: 0 20px 44px rgba(18,48,98,.14)
+      border-color: #e3ebf5
   
   .emoji-decorativo
     position: absolute
@@ -314,7 +309,7 @@
   .estrelas
     display: inline-flex
     gap: 3px
-    color: yellow
+    color: #ffd23f
   
   .estrela
     font-size: 14px
@@ -344,7 +339,6 @@
     font-weight: 800
   
   .borda-verde
-    box-shadow: 0 18px 45px rgba(18,48,98,.12), 0 6px 16px rgba(18,48,98,.08)
     border-left: 6px solid rgba(57, 188, 134, .95)
   
   .borda-amarela
@@ -368,24 +362,22 @@
     display: inline-flex
     align-items: center
     gap: 10px
-    padding: 14px 18px
-    border-radius: 20px
-    background: #009676
+    padding: 15px 28px
+    border-radius: 999px
+    background: #43d38d
     color: #fff
     text-decoration: none
     font-weight: 900
-    box-shadow: 0 16px 40px rgba(0,0,0,.16)
-    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease
-  
+    transition: background .2s ease
+
     svg
       width: 22px
       height: 22px
       flex: 0 0 auto
-  
+      fill: #fff
+
     &:hover
-      transform: translateY(-3px)
-      box-shadow: 0 20px 55px rgba(0,0,0,.20)
-      filter: saturate(1.05)
+      background: #ff3b3b
   
   .decoracoes-flutuantes
     position: absolute

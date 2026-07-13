@@ -38,6 +38,7 @@
             :class="{ 'cta-menu': item.isCta }"
             @click="closeMobile"
           >
+            <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="16" />
             {{ item.label }}
           </NuxtLink>
           <a
@@ -46,6 +47,7 @@
             :class="{ 'cta-menu': item.isCta }"
             @click="onClickLink($event, item.href)"
           >
+            <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="16" />
             {{ item.label }}
           </a>
         </li>
@@ -141,7 +143,7 @@ const props = withDefaults(
     headerId: 'hero-topo',
     navId: 'menu-principal',
     logoTo: '/',
-    logoSrc: '/images/logo-citytoys-sem-fundo.svg',
+    logoSrc: '/images/logo-citytoys.svg',
     logoAlt: 'City Toys - aluguel de brinquedos para festas',
     left: () => [
       { label: 'Início', href: '#inicio' },
@@ -267,24 +269,29 @@ onBeforeUnmount(() => {
     font-family: var(--fonte)
     background: transparent
     pointer-events: none
-  
+    padding: 0
+    transition: padding 0.35s ease
+
+  /* ao rolar, o topo ganha respiro e a barra vira uma pílula flutuante */
+  .topo-hero.is-scrolled
+    padding: 12px 16px 0
+
   .menu-hero
     pointer-events: auto
+    width: 100%
+    max-width: var(--largura-max)
+    margin: 0 auto
     display: flex
     align-items: center
     justify-content: space-between
     gap: 16px
-    padding: 14px 20px
-    background: transparent !important
-    backdrop-filter: none
-    -webkit-backdrop-filter: none
-    box-shadow: none
-    transition: all 0.3s
-  
+    padding: 10px var(--container-px)
+    border-radius: 999px
+    transition: all 0.35s ease
+
   .topo-hero.is-scrolled .menu-hero
-    background: rgba(255,255,255,.94) !important
-    border-bottom-color: rgba(19,26,59,.10) !important
-    box-shadow: 0 14px 40px rgba(0,0,0,.10) !important
+    background: #052a54
+    box-shadow: 0 18px 45px rgba(5,20,50,.30)
     backdrop-filter: blur(12px)
     -webkit-backdrop-filter: blur(12px)
   
@@ -308,12 +315,6 @@ onBeforeUnmount(() => {
     &:hover
       color: #FFC93A
   
-  .topo-hero.is-scrolled .links-menu :deep(a)
-    color: rgba(19,26,59,.88)
-  
-    &:hover
-      color: #2B74EB
-
   .links-menu :deep(.router-link-active)
     text-decoration: underline
     text-underline-offset: 6px
@@ -329,21 +330,24 @@ onBeforeUnmount(() => {
   
     &:hover
       transform: scale(1.03)
-  
+
     img
-      height: 80px
-      width: 120px
+      height: 56px
+      width: auto
       display: block
   
   .cta-menu
-    background: linear-gradient(135deg, #FFC93A 0%, #FFB238 100%)
-    color: #121A3B !important
-    box-shadow: 0 10px 24px -14px rgba(255,201,58,.55)
-    transition: all 0.3s
-  
+    display: inline-flex
+    align-items: center
+    gap: 8px
+    background: #ffd23f
+    color: #052a54 !important
+    padding: 10px 20px !important
+    transition: all 0.4s ease
+
     &:hover
-      background: linear-gradient(135deg, #FFD35A 0%, #FFBE52 100%)
-      transform: translateY(-1px) scale(1.03)
+      background: #2b74eb
+      color: #ffffff !important
   
   .btn-mobile
     display: none
@@ -363,13 +367,6 @@ onBeforeUnmount(() => {
       transform: scale(1.04)
       background: rgba(255,255,255,.14)
   
-  .topo-hero.is-scrolled .btn-mobile
-    border-color: rgba(19,26,59,.12)
-    background: rgba(45,58,122,.06)
-  
-  .topo-hero.is-scrolled .btn-mobile__line
-    background: rgba(19,26,59,.82)
-  
   .btn-mobile__line
     width: 18px
     height: 2px
@@ -384,7 +381,7 @@ onBeforeUnmount(() => {
       display: inline-flex
   
     .logo-menu img
-      height: 80px
+      height: 56px
       width: auto
   
   .overlay

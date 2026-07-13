@@ -222,7 +222,7 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('grande')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          <SvgIcone nome="original" :tamanho="22" />
           1º Grande
         </button>
 
@@ -234,7 +234,7 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('medio')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          <SvgIcone nome="original" :tamanho="22" />
           2º Médio
         </button>
 
@@ -246,7 +246,7 @@
           aria-controls="grade-brinquedos"
           @click="definirFiltro('pequeno')"
         >
-          <img src="/images/box.svg" alt="Icone Caixa" width="25px" />
+          <SvgIcone nome="original" :tamanho="22" />
           3º Pequeno
         </button>
       </div>
@@ -271,7 +271,7 @@
             <img :src="b.imageSrc" :alt="b.imageAlt" loading="lazy" decoding="async" />
 
             <div v-if="estaSelecionado(b)" class="card__check" aria-label="Selecionado">
-              <img src="/images/check.svg" alt="Icone Check" />
+              <SvgIcone nome="check" :tamanho="22" />
             </div>
 
             <span class="etiqueta" :class="b.etiquetaClass" aria-hidden="true">{{ b.etiquetaLabel }}</span>
@@ -282,17 +282,17 @@
 
             <div class="card__meta">
               <span class="tag tag-idade">
-                <img class="tag__icone" :src="b.ageIcon" :alt="b.ageAlt" loading="lazy" />
+                <SvgIcone nome="bebe" :tamanho="16" />
                 {{ b.ageText }}
               </span>
 
               <span class="tag tag-capacidade">
-                <img class="tag__icone" :src="b.capIcon" :alt="b.capAlt" loading="lazy" />
+                <SvgIcone nome="usuarios" :tamanho="16" />
                 {{ b.capText }}
               </span>
 
               <span class="tag tag-tamanho">
-                <img src="/images/regua.svg" alt="Icone Régua" />
+                <SvgIcone nome="regua" :tamanho="16" />
                 {{ rotuloCategoria[b.cat] }}
               </span>
             </div>
@@ -318,7 +318,7 @@
       <aside class="barra-carrinho" id="barra-carrinho" aria-label="Resumo do combo">
         <div class="carrinho__info">
           <span class="carrinho__contador" id="contador-carrinho">
-            <img src="/images/carrinho.svg" alt="" width="25px" height="30px" />
+            <SvgIcone nome="carrinho" :tamanho="24" />
             {{ textoCarrinho }}
           </span>
 
@@ -339,7 +339,7 @@
           @click="handleWhatsClick"
         >
           <template v-if="podeFinalizar">
-            <img src="/images/whatsapp.svg" alt="Icone WhastsApp" width="20px" />
+            <SvgIcone nome="whatsapp" :tamanho="20" />
             Finalizar no WhatsApp
           </template>
           <template v-else>Aguardando seleção...</template>
@@ -349,7 +349,7 @@
 
     <div class="onda-rodape" aria-hidden="true">
       <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-        <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,30 1440,40 L1440,80 L0,80 Z" fill="#2D3A7A" />
+        <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,30 1440,40 L1440,80 L0,80 Z" fill="#052a54" />
       </svg>
     </div>
   </div>
@@ -1170,7 +1170,7 @@ function handleWhatsClick(e: MouseEvent) {
   padding: 0 24px
 
 .texto-destaque
-  color: #00C2CC
+  color: #2b74eb
 
 .animar-entrada
   opacity: 0
@@ -1180,7 +1180,7 @@ function handleWhatsClick(e: MouseEvent) {
   position: relative
   padding: calc(var(--menu-h, 76px) + 44px) 0 88px
   overflow: hidden
-  background: #2D3A7A
+  background: #052a54
   color: #FFFFFF
 
 .cabecalho__clip
@@ -1193,7 +1193,7 @@ function handleWhatsClick(e: MouseEvent) {
 .cabecalho__fundo
   position: absolute
   inset: 0
-  background-image: radial-gradient(circle at 20% 30%, rgba(0, 194, 204, .10) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 201, 58, .10) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(122, 98, 181, .06) 0%, transparent 70%)
+  background-image: radial-gradient(circle at 20% 30%, rgba(43, 116, 235, .10) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 210, 63, .10) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(122, 98, 181, .06) 0%, transparent 70%)
   pointer-events: none
 
 .cabecalho__decoracoes
@@ -1211,14 +1211,14 @@ function handleWhatsClick(e: MouseEvent) {
   left: 28px
   width: 72px
   height: 72px
-  background: rgba(255, 201, 58, .20)
+  background: rgba(255, 210, 63, .20)
 
 .decoracao-2
   bottom: 24px
   right: 24px
   width: 120px
   height: 120px
-  background: rgba(0, 194, 204, .20)
+  background: rgba(43, 116, 235, .20)
 
 .cabecalho__conteudo
   position: relative
@@ -1230,7 +1230,7 @@ function handleWhatsClick(e: MouseEvent) {
 .selo-promocao
   display: inline-block
   padding: 8px 16px
-  background: #FFC93A
+  background: #ffd23f
   color: #131A3B
   border-radius: 999px
   font-size: 14px
@@ -1246,7 +1246,7 @@ function handleWhatsClick(e: MouseEvent) {
 .preco
   font-size: 18px
   font-weight: 800
-  color: #00C2CC
+  color: #2b74eb
   margin-bottom: 10px
 
 .descricao
@@ -1303,7 +1303,7 @@ function handleWhatsClick(e: MouseEvent) {
   display: inline-flex
   align-items: center
   justify-content: center
-  color: #2D3A7A
+  color: #052a54
 
   svg
     width: 22px
@@ -1363,9 +1363,9 @@ function handleWhatsClick(e: MouseEvent) {
   width: 38px
   height: 38px
   border-radius: 12px
-  border: 2px solid rgba(0, 194, 204, .20)
-  background: rgba(0, 194, 204, .08)
-  color: #00C2CC
+  border: 2px solid rgba(43, 116, 235, .20)
+  background: rgba(43, 116, 235, .08)
+  color: #2b74eb
   cursor: pointer
   display: inline-flex
   align-items: center
@@ -1379,8 +1379,8 @@ function handleWhatsClick(e: MouseEvent) {
 
   &:hover
     transform: scale(1.05)
-    background: rgba(0, 194, 204, .12)
-    border-color: rgba(0, 194, 204, .35)
+    background: rgba(43, 116, 235, .12)
+    border-color: rgba(43, 116, 235, .35)
 
 .cal__mes
   display: flex
@@ -1427,7 +1427,7 @@ function handleWhatsClick(e: MouseEvent) {
   height: 38px
   border-radius: 12px
   border: 2px solid transparent
-  background: rgba(45, 58, 122, .04)
+  background: rgba(5, 42, 84, .04)
   color: #131A3B
   font-weight: 1000
   cursor: pointer
@@ -1438,17 +1438,17 @@ function handleWhatsClick(e: MouseEvent) {
 
   &:hover
     transform: translateY(-1px)
-    background: rgba(0, 194, 204, .12)
-    border-color: rgba(0, 194, 204, .35)
-    color: #00C2CC
+    background: rgba(43, 116, 235, .12)
+    border-color: rgba(43, 116, 235, .35)
+    color: #2b74eb
 
   &.is-today
-    border-color: rgba(255, 201, 58, .55)
-    background: rgba(255, 201, 58, .12)
+    border-color: rgba(255, 210, 63, .55)
+    background: rgba(255, 210, 63, .12)
 
   &.is-selected
-    background: #00C2CC
-    border-color: #00C2CC
+    background: #2b74eb
+    border-color: #2b74eb
     color: #FFFFFF
 
   &.is-invalid
@@ -1482,20 +1482,20 @@ function handleWhatsClick(e: MouseEvent) {
   font-weight: 1000
   border-radius: 12px
   padding: 10px 12px
-  background: rgba(0, 194, 204, .12)
-  color: #00C2CC
+  background: rgba(43, 116, 235, .12)
+  color: #2b74eb
   transition: transform .16s ease, background .16s ease
 
   &:hover
     transform: translateY(-1px)
-    background: rgba(0, 194, 204, .16)
+    background: rgba(43, 116, 235, .16)
 
 .cal__btn--ghost
-  background: rgba(45, 58, 122, .08)
-  color: #2D3A7A
+  background: rgba(5, 42, 84, .08)
+  color: #052a54
 
   &:hover
-    background: rgba(45, 58, 122, .12)
+    background: rgba(5, 42, 84, .12)
 
 .chip-data
   padding: 10px 12px
@@ -1554,9 +1554,9 @@ function handleWhatsClick(e: MouseEvent) {
   transition: all .3s ease
 
   &.ativo
-    background: linear-gradient(135deg, #FFC93A 0%, #FFB238 100%)
+    background: linear-gradient(135deg, #ffd23f 0%, #f0b400 100%)
     color: #131A3B
-    box-shadow: 0 8px 25px -8px rgba(255, 201, 58, .45)
+    box-shadow: 0 8px 25px -8px rgba(255, 210, 63, .45)
 
 .linha-passo
   width: 32px
@@ -1603,17 +1603,17 @@ function handleWhatsClick(e: MouseEvent) {
   color: #5C6B86
 
   &:hover
-    background: rgba(0, 194, 204, .10)
-    color: #00C2CC
+    background: rgba(43, 116, 235, .10)
+    color: #2b74eb
     transform: scale(1.05)
 
   &.ativa
-    background: #00C2CC
+    background: #2b74eb
     color: #FFFFFF
-    box-shadow: 0 8px 25px -8px rgba(0, 194, 204, .45)
+    box-shadow: 0 8px 25px -8px rgba(43, 116, 235, .45)
 
   &.concluida
-    background: #2ECC71
+    background: #43d38d
     color: #FFFFFF
 
 .cabecalho-secao
@@ -1646,15 +1646,14 @@ function handleWhatsClick(e: MouseEvent) {
   opacity: 0
 
   &:hover
-    transform: translateY(-4px)
     box-shadow: 0 8px 30px -8px rgba(19, 26, 59, .16)
 
   &:hover .card__imagem img
     animation: gelatina .7s ease-in-out
 
   &.selecionado
-    border-color: #00C2CC
-    box-shadow: 0 8px 25px -8px rgba(0, 194, 204, .45)
+    border-color: #2b74eb
+    box-shadow: 0 8px 25px -8px rgba(43, 116, 235, .45)
 
 .card__imagem
   position: relative
@@ -1677,9 +1676,10 @@ function handleWhatsClick(e: MouseEvent) {
   display: flex
   align-items: center
   justify-content: center
-  box-shadow: 0 8px 25px -8px rgba(0, 194, 204, .55)
+  box-shadow: 0 8px 25px -8px rgba(43, 116, 235, .55)
   animation: quicar .5s ease-out
-  background: rgba(0, 194, 204, .92)
+  background: rgba(43, 116, 235, .92)
+  color: #fff
 
   img
     width: 22px
@@ -1697,11 +1697,11 @@ function handleWhatsClick(e: MouseEvent) {
   border: 2px solid rgba(255,255,255,.35)
 
 .etiqueta-amarela
-  background: rgba(255, 201, 58, .92)
+  background: rgba(255, 210, 63, .92)
   color: #131A3B
 
 .etiqueta-azul
-  background: rgba(45, 58, 122, .92)
+  background: rgba(5, 42, 84, .92)
   color: #FFFFFF
 
 .etiqueta-roxa
@@ -1741,15 +1741,15 @@ function handleWhatsClick(e: MouseEvent) {
 
 .tag-capacidade
   background: #FBFCFD
-  color: #007D86
+  color: #4a5b70
 
 .tag-tamanho
-  color: #2D3A7A
+  color: #052a54
 
 .btn-selecionar
   width: 100%
   padding: 12px 14px
-  border: 2px solid #00C2CC
+  border: 2px solid #2b74eb
   border-radius: 999px
   font: inherit
   font-size: 14px
@@ -1761,10 +1761,10 @@ function handleWhatsClick(e: MouseEvent) {
   justify-content: center
   gap: 8px
   background: transparent
-  color: #00C2CC
+  color: #2b74eb
 
   &:hover
-    background: rgba(0, 194, 204, .10)
+    background: rgba(43, 116, 235, .10)
     transform: scale(1.02)
 
   &.remover
@@ -1791,7 +1791,7 @@ function handleWhatsClick(e: MouseEvent) {
   align-items: center
   justify-content: space-between
   gap: 16px
-  border: 2px solid #00C2CC
+  border: 2px solid #2b74eb
   box-shadow: 0 8px 30px -8px rgba(19, 26, 59, .18), 0 0 0 4px #F8FAFC
   animation: subir-barra .5s ease-out .4s forwards
   opacity: 0
@@ -1838,10 +1838,10 @@ function handleWhatsClick(e: MouseEvent) {
   transition: all .25s ease
 
   &.preenchido
-    background: #00C2CC
+    background: #2b74eb
     color: #FFFFFF
-    border-color: #00C2CC
-    box-shadow: 0 8px 25px -8px rgba(0, 194, 204, .45)
+    border-color: #2b74eb
+    box-shadow: 0 8px 25px -8px rgba(43, 116, 235, .45)
 
     &::before
       content: "✓ "
@@ -1863,7 +1863,7 @@ function handleWhatsClick(e: MouseEvent) {
   white-space: nowrap
 
   &.pronto
-    background: #2ECC71
+    background: #43d38d
     color: #FFFFFF
     cursor: pointer
     pointer-events: auto

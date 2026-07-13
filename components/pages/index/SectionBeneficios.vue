@@ -3,7 +3,7 @@
     <div class="onda-divisoria top" aria-hidden="true">
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
         <path
-          d="M0,60 C320,140 640,20 960,80 C1180,120 1340,100 1440,60 L1440,0 L0,0 Z"
+          d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z"
           fill="#0B4AA2"
         />
       </svg>
@@ -26,7 +26,9 @@
           :class="{ 'is-active': activeIndex === index }"
           :ref="(el) => setCardRef(el as HTMLElement | null, index)"
         >
-          <div class="icon-box" v-html="item.svg"></div>
+          <div class="icon-box">
+            <SvgIcone :nome="item.icone" :tamanho="24" />
+          </div>
           <div class="content">
             <h3>{{ item.titulo }}</h3>
             <p>{{ item.desc }}</p>
@@ -51,8 +53,8 @@
     <div class="onda-divisoria bottom" aria-hidden="true">
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
         <path
-          d="M0,60 C320,140 640,20 960,80 C1180,120 1340,100 1440,60 L1440,120 L0,120 Z"
-          fill="#0B4AA2"
+          d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z"
+          fill="#f7fbff"
         />
       </svg>
     </div>
@@ -77,32 +79,32 @@ const beneficios = [
   {
     titulo: 'Higienização Total',
     desc: 'Tudo lavado e desinfetado. Zero sujeira, zero preocupação.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>`
+    icone: 'gota'
   },
   {
     titulo: 'Entrega e retirada no horário',
     desc: 'Chegamos no combinado pra sua festa começar sem correria.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    icone: 'relogio'
   },
   {
     titulo: 'Montagem sem dor de cabeça',
     desc: 'Nossa equipe monta tudo rapidinho e deixa pronto pro uso.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
+    icone: 'ferramenta'
   },
   {
     titulo: 'Segurança Garantida',
     desc: 'Brinquedos revisados antes de cada festa.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
+    icone: 'escudo'
   },
   {
     titulo: 'Suporte',
     desc: 'Precisou? Você chama e a gente resolve rápido.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`
+    icone: 'headset'
   },
   {
     titulo: 'Variedade',
     desc: 'Mais de 20 brinquedos disponíveis.',
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"/><path d="M7 6v12"/><path d="M17 6v12"/><path d="M4 18h16"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>`
+    icone: 'quadrados'
   }
 ]
 
@@ -171,9 +173,9 @@ $cor-card-border: rgba(255, 255, 255, 0.15)
 
   .container
     width: 100%
-    max-width: 1200px
+    max-width: var(--largura-max)
     margin: 0 auto
-    padding: 0 20px
+    padding: 0 var(--container-px)
     position: relative
     z-index: 2
     display: flex
@@ -242,7 +244,7 @@ $cor-card-border: rgba(255, 255, 255, 0.15)
 
     @media (min-width: 900px)
       display: grid
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+      grid-template-columns: repeat(3, 1fr)
       overflow-x: visible
       scroll-snap-type: none
       justify-content: center
