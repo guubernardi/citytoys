@@ -275,9 +275,9 @@ onBeforeUnmount(() => {
     justify-content: space-between
     gap: 16px
     padding: 14px 20px
-    background: rgba(255,255,255,.06) !important
-    backdrop-filter: saturate(160%)
-    -webkit-backdrop-filter: saturate(160%)
+    background: transparent !important
+    backdrop-filter: none
+    -webkit-backdrop-filter: none
     box-shadow: none
     transition: all 0.3s
   

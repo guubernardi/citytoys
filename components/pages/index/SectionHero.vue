@@ -1,74 +1,55 @@
 <template>
   <section class="hero" id="inicio" aria-label="Seção principal" :class="{ 'is-loaded': loaded }">
-    <div class="decoracoes-hero" aria-hidden="true">
-      <img
-        class="imagem-brinquedo"
-        src="/images/brinquedo-astrounata.png"
-        alt=""
-        loading="eager"
-        decoding="async"
-      />
-
-      <img class="imagem-foguete" src="/images/foguete.png" alt="" loading="eager" decoding="async" />
-    </div>
+    <div class="fundo-hero" aria-hidden="true"></div>
+    <div class="scrim-hero" aria-hidden="true"></div>
 
     <div class="conteudo-hero" id="hero-conteudo">
-      <p class="chamada-hero" id="hero-chamada">A diversão decola aqui</p>
+      <span class="selo-hero" id="hero-selo">
+        <SvgIcone nome="localizacao" :tamanho="16" />
+        Aluguel de brinquedos infláveis · Rio de Janeiro
+      </span>
 
       <h1 class="titulo-hero" id="hero-titulo">
-        <span class="sr-only">{{ fullText }}</span>
-
-        <span class="titulo-digitado" id="hero-typewriter" aria-hidden="true">
-          {{ typedText }}
-        </span>
-        <span class="cursor-digitando" id="hero-cursor" aria-hidden="true"></span>
+        A diversão
+        <span class="destaque">decola aqui</span>
       </h1>
+
+      <p class="subtitulo-hero" id="hero-subtitulo">
+        <span class="sr-only">{{ fullText }}</span>
+        <span class="subtitulo-digitado" aria-hidden="true">{{ typedText }}</span>
+        <span class="cursor-digitando" aria-hidden="true"></span>
+      </p>
 
       <div class="acoes-hero" id="hero-acoes">
         <a
-          class="botao-whats"
+          class="botao botao-whats"
           id="hero-cta-whats"
           target="_blank"
           rel="noopener noreferrer"
           href="https://wa.me/5521984848699?text=Oi%21%20Quero%20um%20or%C3%A7amento%20%F0%9F%98%8A%0AData%3A%20____%0ABairro%3A%20____%0ABrinquedo%3A%20____"
           aria-label="Fazer orçamento no WhatsApp"
         >
-          <svg
-            fill="currentColor"
-            viewBox="0 0 32 32"
-            xmlns="http://www.w3.org/2000/svg"
-            class="icone-whats"
-            aria-hidden="true"
-          >
-            <path
-              d="M26.576 5.363c-2.69-2.69-6.406-4.354-10.511-4.354-8.209 0-14.865 6.655-14.865 14.865 0 2.732 0.737 5.291 2.022 7.491l-0.038-0.070-2.109 7.702 7.879-2.067c2.051 1.139 4.498 1.809 7.102 1.809h0.006c8.209-0.003 14.862-6.659 14.862-14.868 0-4.103-1.662-7.817-4.349-10.507l0 0zM16.062 28.228h-0.005c-0 0-0.001 0-0.001 0-2.319 0-4.489-0.64-6.342-1.753l0.056 0.031-0.451-0.267-4.675 1.227 1.247-4.559-0.294-0.467c-1.185-1.862-1.889-4.131-1.889-6.565 0-6.822 5.531-12.353 12.353-12.353s12.353 5.531 12.353 12.353c0 6.822-5.53 12.353-12.353 12.353h-0zM22.838 18.977c-0.371-0.186-2.197-1.083-2.537-1.208-0.341-0.124-0.589-0.185-0.837 0.187-0.246 0.371-0.958 1.207-1.175 1.455-0.216 0.249-0.434 0.279-0.805 0.094-1.15-0.466-2.138-1.087-2.997-1.852l0.010 0.009c-0.799-0.74-1.484-1.587-2.037-2.521l-0.028-0.052c-0.216-0.371-0.023-0.572 0.162-0.757 0.167-0.166 0.372-0.434 0.557-0.65 0.146-0.179 0.271-0.384 0.366-0.604l0.006-0.017c0.043-0.087 0.068-0.188 0.068-0.296 0-0.131-0.037-0.253-0.101-0.357l0.002 0.003c-0.094-0.186-0.836-2.014-1.145-2.758-0.302-0.724-0.609-0.625-0.836-0.637-0.216-0.010-0.464-0.012-0.712-0.012-0.395 0.010-0.746 0.188-0.988 0.463l-0.001 0.002c-0.802 0.761-1.3 1.834-1.3 3.023 0 0.026 0 0.053 0.001 0.079l-0-0.004c0.131 1.467 0.681 2.784 1.527 3.857l-0.012-0.015c1.604 2.379 3.742 4.282 6.251 5.564l0.094 0.043c0.548 0.248 1.25 0.513 1.968 0.74l0.149 0.041c0.442 0.14 0.951 0.221 1.479 0.221 0.303 0 0.601-0.027 0.889-0.078l-0.031 0.004c1.069-0.223 1.956-0.868 2.497-1.749l0.009-0.017c0.165-0.366 0.261-0.793 0.261-1.242 0-0.185-0.016-0.366-0.047-0.542l0.003 0.019c-0.092-0.155-0.34-0.247-0.712-0.434z"
-            />
-          </svg>
+          <SvgIcone nome="whatsapp" :tamanho="24" />
           Fazer orçamento
         </a>
 
         <button
           type="button"
-          class="botao-combo"
+          class="botao botao-combo"
           id="hero-cta-combo"
           @click="irParaCombo"
           aria-label="Monte seu combo"
         >
-          <img
-            class="icone-combo"
-            src="/images/foguete.png"
-            alt=""
-            width="36"
-            height="36"
-            loading="lazy"
-            decoding="async"
-            aria-hidden="true"
-          />
-
-          <span class="now">monte seu combo</span>
-          <span class="play">monte seu combo</span>
+          <SvgIcone nome="foguete" :tamanho="22" />
+          Monte seu combo
         </button>
       </div>
+
+      <ul class="provas-hero" aria-label="Diferenciais">
+        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Higienizado</li>
+        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Montagem inclusa</li>
+        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Entrega em todo o RJ</li>
+      </ul>
     </div>
 
     <div class="divisoria-nuvem" id="hero-nuvem" aria-hidden="true">
@@ -168,45 +149,50 @@ onBeforeUnmount(() => {
   align-items: center
   justify-content: center
 
+.fundo-hero
+  position: absolute
+  inset: 0
+  background-image: url("/images/fundo-hero.webp")
+  background-size: cover
+  background-position: center
+  background-repeat: no-repeat
+  z-index: 0
+
+.scrim-hero
+  position: absolute
+  inset: 0
+  z-index: 1
+  pointer-events: none
+  /* topo levemente escurecido pro menu, respiro no meio, base pros botões */
+  background: linear-gradient(180deg, rgba(4,22,60,.34) 0%, rgba(4,22,60,.10) 22%, rgba(4,22,60,0) 46%, rgba(4,22,60,.16) 78%, rgba(4,22,60,.30) 100%)
+
   &::after
     content: ""
     position: absolute
-    inset: -40px
-    background-image: url("/images/fundo-header.png")
-    background-size: cover
-    background-position: center
-    background-repeat: no-repeat
-    transform: translate3d(0, 0px, 0) scale(1.05)
-    will-change: transform
-    z-index: 0
-
-  &::before
-    content: ""
-    position: absolute
     inset: 0
-    background: linear-gradient(180deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,.08) 40%, rgba(0,0,0,0) 100%)
-    pointer-events: none
-    z-index: 1
+    /* leve foco atrás do texto sem apagar a imagem */
+    background: radial-gradient(60% 55% at 50% 46%, rgba(2,18,52,.28) 0%, rgba(2,18,52,0) 70%)
 
-.conteudo-hero,
-.decoracoes-hero
+/* ---- animação de entrada ---- */
+.conteudo-hero
   opacity: 0
   transform: translateY(14px) scale(.995)
   transition: opacity .55s ease, transform .55s ease
 
-.hero.is-loaded .conteudo-hero,
-.hero.is-loaded .decoracoes-hero
+.hero.is-loaded .conteudo-hero
   opacity: 1
   transform: translateY(0) scale(1)
 
-.chamada-hero,
+.selo-hero,
 .titulo-hero,
-.acoes-hero
+.subtitulo-hero,
+.acoes-hero,
+.provas-hero
   opacity: 0
   transform: translateY(12px)
   transition: opacity .55s ease, transform .55s ease
 
-.hero.is-loaded .chamada-hero
+.hero.is-loaded .selo-hero
   opacity: 1
   transform: translateY(0)
   transition-delay: .05s
@@ -214,88 +200,86 @@ onBeforeUnmount(() => {
 .hero.is-loaded .titulo-hero
   opacity: 1
   transform: translateY(0)
-  transition-delay: .14s
+  transition-delay: .12s
+
+.hero.is-loaded .subtitulo-hero
+  opacity: 1
+  transform: translateY(0)
+  transition-delay: .20s
 
 .hero.is-loaded .acoes-hero
   opacity: 1
   transform: translateY(0)
-  transition-delay: .22s
+  transition-delay: .28s
+
+.hero.is-loaded .provas-hero
+  opacity: 1
+  transform: translateY(0)
+  transition-delay: .36s
 
 @media (prefers-reduced-motion: reduce)
   .conteudo-hero,
-  .decoracoes-hero,
-  .chamada-hero,
+  .selo-hero,
   .titulo-hero,
-  .acoes-hero
+  .subtitulo-hero,
+  .acoes-hero,
+  .provas-hero
     transition: none !important
     transform: none !important
     opacity: 1 !important
 
-.decoracoes-hero
-  position: absolute
-  inset: 0
-  z-index: 2
-  pointer-events: none
-
-.imagem-brinquedo
-  position: absolute
-  left: 60px
-  bottom: 35px
-  width: min(520px, 52vw)
-  height: auto
-  filter: drop-shadow(0 22px 30px rgba(0,0,0,.20))
-  transform: rotate(-2deg)
-  animation: float 4s ease-in-out infinite
-
-.imagem-foguete
-  position: absolute
-  right: 40px
-  bottom: 90px
-  width: min(260px, 24vw)
-  height: auto
-  filter: drop-shadow(0 18px 26px rgba(0,0,0,.18))
-  transform: rotate(10deg)
-  animation: float-foguete 3s ease-in-out infinite
-
-@keyframes float
-  0%, 100%
-    transform: translateY(0) rotate(-2deg)
-  50%
-    transform: translateY(-10px) rotate(-2deg)
-
-@keyframes float-foguete
-  0%, 100%
-    transform: translateY(0) rotate(10deg)
-  50%
-    transform: translateY(-15px) rotate(10deg)
-
+/* ---- conteúdo ---- */
 .conteudo-hero
   position: relative
   z-index: 3
-  width: min(980px, 92vw)
-  padding: clamp(28px, 4vw, 54px) 16px clamp(86px, 10vw, 120px)
+  width: min(920px, 92vw)
+  padding: clamp(28px, 4vw, 54px) 16px clamp(96px, 11vw, 132px)
   text-align: center
 
   display: flex
   flex-direction: column
   align-items: center
-  gap: 14px
+  gap: 18px
 
-.chamada-hero
-  margin: 0
+.selo-hero
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  padding: 8px 16px
+  border-radius: 999px
+  background: rgba(255,255,255,.16)
+  border: 1px solid rgba(255,255,255,.34)
+  backdrop-filter: blur(6px)
+  -webkit-backdrop-filter: blur(6px)
   color: #ffffff
-  font-weight: 1000
-  font-size: clamp(18px, 2.2vw, 32px)
-  text-shadow: 0 12px 24px rgba(0,0,0,.18)
+  font-weight: 700
+  font-size: clamp(12px, 1.4vw, 14px)
+  letter-spacing: .2px
+  text-shadow: 0 1px 8px rgba(3,18,50,.35)
 
 .titulo-hero
-  margin: 4px 0 0
+  margin: 0
   color: #ffffff
-  font-weight: 1000
-  font-size: clamp(18px, 2.1vw, 26px)
-  line-height: 1.25
-  text-shadow: 0 14px 26px rgba(0,0,0,.18)
-  max-width: 760px
+  font-weight: 800
+  font-size: clamp(38px, 7vw, 82px)
+  line-height: 1.02
+  letter-spacing: -0.5px
+  text-shadow: 0 6px 26px rgba(3,20,54,.38)
+
+  .destaque
+    display: block
+    color: #ffd23f
+    text-shadow: 0 4px 18px rgba(0,0,0,.30), 0 2px 2px rgba(120,72,0,.28)
+
+.subtitulo-hero
+  margin: 2px 0 0
+  color: rgba(255,255,255,.96)
+  font-weight: 600
+  font-size: clamp(16px, 2.3vw, 22px)
+  line-height: 1.35
+  max-width: 560px
+  min-height: 1.35em
+  text-shadow: 0 2px 12px rgba(3,20,54,.45)
 
 .sr-only
   position: absolute
@@ -305,17 +289,17 @@ onBeforeUnmount(() => {
   height: 1px
   overflow: hidden
 
-.titulo-digitado
+.subtitulo-digitado
   white-space: normal
 
 .cursor-digitando
   display: inline-block
-  width: 10px
-  height: 1.1em
-  margin-left: 6px
-  background: rgba(255,255,255,.9)
+  width: 3px
+  height: 1.05em
+  margin-left: 4px
+  background: rgba(255,255,255,.92)
   border-radius: 2px
-  transform: translateY(2px)
+  transform: translateY(3px)
   animation: piscar .9s steps(1) infinite
 
 @keyframes piscar
@@ -326,106 +310,110 @@ onBeforeUnmount(() => {
   .cursor-digitando
     animation: none
 
+/* ---- botões (sistema único) ---- */
 .acoes-hero
-  margin-top: 14px
-  display: grid
+  margin-top: 6px
+  display: flex
+  flex-wrap: wrap
   gap: 14px
-  justify-items: center
+  justify-content: center
 
-.botao-whats
+.botao
   display: inline-flex
   align-items: center
   justify-content: center
-  gap: 12px
-  min-height: 54px
-  padding: 0 clamp(18px, 5vw, 54px)
-  border-radius: 18px
-  background: #2b74eb
-  color: #ffffff
-  font-weight: 1000
-  text-decoration: none
-  box-shadow: 0 20px 50px rgba(0,0,0,.18)
-  font-size: clamp(16px, 2vw, 20px)
-  transition: transform .2s ease, box-shadow .2s ease, background .2s ease
-  max-width: 92vw
-
-  &:hover
-    background: #004dc9
-    transform: translateY(-2px)
-    box-shadow: 0 25px 60px rgba(0,0,0,.25)
-
-.icone-whats
-  width: 28px
-  height: 28px
-
-.botao-combo
-  display: flex
-  align-items: center
-  justify-content: center
   gap: 10px
-  padding: 0px 40px
-  min-height: 54px
-  max-width: 92vw
-  color: #ffffff
-  text-shadow: 2px 2px rgb(116, 116, 116)
-  text-transform: uppercase
+  min-height: 56px
+  padding: 0 clamp(22px, 3vw, 34px)
+  border: none
+  border-radius: 16px
+  font-family: var(--fonte)
+  font-weight: 800
+  font-size: clamp(15px, 1.9vw, 18px)
+  letter-spacing: .2px
   cursor: pointer
-  border: solid 2px #000
-  letter-spacing: 1px
-  font-weight: 1000
-  font-size: 16px
-  background-color: hsl(49deg 98% 60%)
-  border-radius: 18px
-  position: relative
-  overflow: hidden
-  transition: all 0.5s ease
-  box-shadow: 0 20px 50px rgba(0,0,0,.18)
+  text-decoration: none
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, filter .2s ease
 
   &:active
-    transform: scale(0.95)
-    transition: all 100ms ease
+    transform: translateY(0) scale(.98)
 
-  .icone-combo
-    width: 36px
-    height: 36px
-    object-fit: contain
-    transition: all 0.5s ease
-    z-index: 2
-    filter: drop-shadow(0 8px 14px rgba(0,0,0,.18))
+.botao-whats
+  background: #2b74eb
+  color: #ffffff
+  box-shadow: 0 14px 32px rgba(20,70,170,.42)
 
-  .play
-    transition: all 0.5s ease
-    transition-delay: 300ms
+  &:hover
+    background: #1b5fd0
+    box-shadow: 0 18px 40px rgba(20,70,170,.5)
 
-  &:hover .icone-combo
-    transform: scale(3) translate(50%)
+.botao-combo
+  background: #ffd23f
+  color: #052a54
+  box-shadow: 0 14px 32px rgba(120,80,0,.30)
 
-  .now
-    position: absolute
-    left: 0
-    transform: translateX(-100%)
-    transition: all 0.5s ease
-    z-index: 2
-    padding-left: 18px
+  &:hover
+    filter: brightness(1.05)
+    transform: translateY(-2px)
+    box-shadow: 0 18px 40px rgba(120,80,0,.38)
 
-  &:hover .now
-    transform: translateX(10px)
-    transition-delay: 300ms
+/* ---- provas sociais ---- */
+.provas-hero
+  margin: 6px 0 0
+  padding: 0
+  list-style: none
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  gap: 8px 22px
 
-  &:hover .play
-    transform: translateX(200%)
-    transition-delay: 300ms
+  li
+    display: inline-flex
+    align-items: center
+    gap: 6px
+    color: rgba(255,255,255,.94)
+    font-weight: 700
+    font-size: clamp(13px, 1.5vw, 15px)
+    text-shadow: 0 1px 8px rgba(3,18,50,.4)
 
-@media (max-width: 980px)
-  .imagem-brinquedo,
-  .imagem-foguete
-    display: none
+    :deep(svg)
+      color: #46e39b
+
+/* ---- nuvem divisória ---- */
+.divisoria-nuvem
+  position: absolute
+  left: 0
+  right: 0
+  bottom: -1px
+  z-index: 2
+  line-height: 0
+  pointer-events: none
+
+.nuvem-svg
+  display: block
+  width: 100%
+  height: clamp(60px, 9vw, 130px)
+
+  path
+    fill: #ffffff
+
+/* ---- responsivo ---- */
+@media (max-width: 768px)
+  .fundo-hero
+    background-position: 50% 42%
+
+  .titulo-hero
+    font-size: clamp(36px, 12vw, 60px)
+
+  .acoes-hero
+    width: 100%
+    flex-direction: column
+
+  .botao
+    width: min(340px, 88vw)
 
 @media (max-width: 480px)
   .conteudo-hero
-    padding-bottom: 96px
-
-  .icone-whats
-    width: 24px
-    height: 24px
+    padding-bottom: 104px
+    gap: 14px
 </style>
