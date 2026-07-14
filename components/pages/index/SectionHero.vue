@@ -320,6 +320,7 @@ onBeforeUnmount(() => {
   flex-wrap: wrap
   gap: 14px
   justify-content: center
+  align-items: center
 
 .botao
   display: inline-flex
