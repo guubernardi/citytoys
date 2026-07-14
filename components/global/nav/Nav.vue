@@ -74,22 +74,25 @@
     </nav>
 
     <Teleport to="body">
-      <button
-        v-if="mobileOpen"
-        class="overlay"
-        type="button"
-        aria-label="Fechar menu"
-        @click="closeMobile"
-      ></button>
+      <Transition name="nav-fade">
+        <button
+          v-if="mobileOpen"
+          class="overlay"
+          type="button"
+          aria-label="Fechar menu"
+          @click="closeMobile"
+        ></button>
+      </Transition>
 
-      <aside
-        v-if="mobileOpen"
-        id="drawer-menu"
-        class="drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu mobile"
-      >
+      <Transition name="nav-drawer">
+        <aside
+          v-if="mobileOpen"
+          id="drawer-menu"
+          class="drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu mobile"
+        >
         <div class="drawer__top">
           <NuxtLink
             class="drawer__logo"
@@ -115,6 +118,7 @@
               :class="['drawer__link', { 'drawer__link--cta': item.isCta }]"
               @click="closeMobile"
             >
+              <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="18" />
               {{ item.label }}
             </NuxtLink>
 
@@ -129,7 +133,20 @@
           </div>
         </div>
 
+        <div class="drawer__footer">
+          <a
+            class="drawer__whats"
+            href="https://wa.me/5521984848699?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20City%20Toys%20e%20quero%20fazer%20um%20or%C3%A7amento%20%F0%9F%8E%89"
+            target="_blank"
+            rel="noopener"
+            @click="closeMobile"
+          >
+            <SvgIcone nome="whatsapp" :tamanho="20" />
+            Falar no WhatsApp
+          </a>
+        </div>
       </aside>
+      </Transition>
     </Teleport>
   </header>
 </template>
@@ -480,10 +497,10 @@ onBeforeUnmount(() => {
     height: 42px
     border-radius: 14px
     border: 1px solid rgba(19,26,59,.10)
-    background: rgba(45,58,122,.08)
+    background: rgba(5,42,84,.08)
     cursor: pointer
     font-weight: 1000
-    color: #2D3A7A
+    color: #052a54
   
   .drawer__links
     padding: 23px 14px
@@ -517,20 +534,21 @@ onBeforeUnmount(() => {
     line-height: 1.1
     min-height: 48px
   
-    transition: transform .2s ease, background .2s ease, border-color .2s ease
-  
+    transition: background .2s ease, border-color .2s ease
+
     &:hover
-      transform: translateY(-1px)
-      background: rgba(0,194,204,.12)
+      background: rgba(43,116,235,.10)
+      border-color: rgba(43,116,235,.20)
 
   .drawer__link--cta
-    background: linear-gradient(135deg, #FFC93A 0%, #FFB238 100%)
-    border-color: rgba(255,201,58,.34)
-    color: #121A3B
-  
+    justify-content: center
+    background: #ffd23f
+    border-color: rgba(255,210,63,.4)
+    color: #052a54
+
     &:hover
-      transform: translateY(-1px) scale(1.01)
-      background: linear-gradient(135deg, #FFD35A 0%, #FFBE52 100%)
+      background: #2b74eb
+      color: #ffffff
 
   .drawer__links > div:not(:last-child) .drawer__link
     box-shadow: 0 1px 0 rgba(19,26,59,.04)
@@ -544,4 +562,35 @@ onBeforeUnmount(() => {
     font-weight: 800
     font-size: 12px
     color: rgba(92,107,134,.95)
+
+  .drawer__whats
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 10px
+    width: 100%
+    padding: 14px
+    border-radius: 999px
+    background: #43d38d
+    color: #fff
+    font-weight: 900
+    text-decoration: none
+    transition: background .2s ease
+
+    &:hover
+      background: #35c47e
+
+  /* animações do drawer mobile */
+  .nav-fade-enter-active, .nav-fade-leave-active
+    transition: opacity .3s ease
+
+  .nav-fade-enter-from, .nav-fade-leave-to
+    opacity: 0
+
+  .nav-drawer-enter-active, .nav-drawer-leave-active
+    transition: transform .38s cubic-bezier(.16, 1, .3, 1), opacity .3s ease
+
+  .nav-drawer-enter-from, .nav-drawer-leave-to
+    transform: translateX(24px)
+    opacity: 0
   </style>
