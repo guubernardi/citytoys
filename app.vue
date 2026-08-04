@@ -6,20 +6,33 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
 
-  
+
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import {
+  DESCRICAO_PADRAO,
+  IMAGEM_COMPARTILHAMENTO,
+  NOME_EMPRESA,
+  jsonLdSiteGlobal,
+  scriptJsonLd,
+  urlAbsoluta
+} from '~/helpers/seo.js'
 
 const route = useRoute()
 
+// Canonical e og:url acompanham a rota atual, sem query nem hash.
+const urlCanonica = computed(() => urlAbsoluta(route.path))
+
 useHead({
   htmlAttrs: { lang: 'pt-BR' },
+
+  titleTemplate: titulo => (titulo ? `${titulo} | ${NOME_EMPRESA}` : `${NOME_EMPRESA} | Aluguel de Brinquedos Infláveis no Rio de Janeiro`),
 
   script: [
   {
@@ -31,15 +44,16 @@ useHead({
     })(window,document,'script','dataLayer','GTM-PB65JQK3');`,
     type: 'text/javascript',
     tagPosition: 'head'
-  }
+  },
+  scriptJsonLd(jsonLdSiteGlobal(), 'ld-site-global')
 ],
 
 
-  
+
   meta: [
     { charset: 'utf-8' },
     { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1.0, viewport-fit=cover' },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'HandheldFriendly', content: 'true' },
 
@@ -54,43 +68,57 @@ useHead({
     { name: 'apple-mobile-web-app-title', content: 'City Toys' },
     { name: 'application-name', content: 'City Toys' },
 
-    { name: 'robots', content: 'index, follow' },
-    { name: 'googlebot', content: 'index, follow, max-image-preview:large' },
+    { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+    { name: 'googlebot', content: 'index, follow, max-image-preview:large, max-snippet:-1' },
 
     { name: 'author', content: 'City Toys' },
+    { name: 'publisher', content: 'City Toys' },
 
-    {
-      name: 'description',
-      content:
-        'City Toys — aluguel de brinquedos para festas no RJ. Monte seu combo, escolha a data e finalize no WhatsApp com praticidade e segurança.'
-    },
+    // Sinais geográficos — reforçam a relevância local no Rio de Janeiro.
+    { name: 'geo.region', content: 'BR-RJ' },
+    { name: 'geo.placename', content: 'Rio de Janeiro' },
+
+    { name: 'description', content: DESCRICAO_PADRAO },
 
     { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'City Toys' },
+    { property: 'og:site_name', content: NOME_EMPRESA },
     { property: 'og:locale', content: 'pt_BR' },
-    { property: 'og:title', content: 'City Toys | Aluguel de Brinquedos para Festas no RJ' },
-    {
-      property: 'og:description',
-      content:
-        'Aluguel de brinquedos para festas no RJ. Monte seu combo e finalize no WhatsApp. Prático, seguro e no capricho!'
-    },
-    { property: 'og:url', content: 'https://citytoys.com.br' },
-    { property: 'og:image', content: '/share.png' }, 
+    { property: 'og:title', content: 'City Toys | Aluguel de Brinquedos Infláveis no Rio de Janeiro' },
+    { property: 'og:description', content: DESCRICAO_PADRAO },
+    { property: 'og:url', content: () => urlCanonica.value },
+    { property: 'og:image', content: IMAGEM_COMPARTILHAMENTO },
+    { property: 'og:image:secure_url', content: IMAGEM_COMPARTILHAMENTO },
     { property: 'og:image:type', content: 'image/png' },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
-    { property: 'og:image:alt', content: 'City Toys — Aluguel de Brinquedos' },
+    { property: 'og:image:alt', content: 'City Toys — Aluguel de Brinquedos Infláveis para Festas' },
 
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'City Toys | Aluguel de Brinquedos no RJ' },
-    {
-      name: 'twitter:description',
-      content: 'Monte seu combo e alugue brinquedos para festa no RJ com a City Toys.'
-    },
-    { name: 'twitter:image', content: '/share.png' }
+    { name: 'twitter:title', content: 'City Toys | Aluguel de Brinquedos Infláveis no RJ' },
+    { name: 'twitter:description', content: DESCRICAO_PADRAO },
+    { name: 'twitter:image', content: IMAGEM_COMPARTILHAMENTO },
+    { name: 'twitter:image:alt', content: 'City Toys — Aluguel de Brinquedos Infláveis para Festas' }
   ],
   link: [
-    { rel: 'icon', type: 'image/x-icon', href: '/favicons/favicon.ico' }
+    { rel: 'canonical', href: () => urlCanonica.value },
+
+    { rel: 'icon', type: 'image/x-icon', href: '/favicons/favicon.ico' },
+    { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicons/android-chrome-192x192.png' },
+    { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicons/apple-touch-icon.png' },
+    { rel: 'manifest', href: '/manifest.webmanifest' },
+
+    // Abre a conexão com o GTM antes do script ser baixado — economiza ~100-300ms.
+    { rel: 'preconnect', href: 'https://www.googletagmanager.com', crossorigin: '' },
+    { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
+
+    // Fonte principal do site: pré-carregada para não atrasar o LCP do hero.
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/ttf',
+      href: '/fonts/nunito-bold.ttf',
+      crossorigin: 'anonymous'
+    }
   ]
 })
 

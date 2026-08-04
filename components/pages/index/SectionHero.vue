@@ -63,12 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from 'nuxt/app'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-useHead ({
-  title: 'City Toys Locação de Brinquedos'
-})
+// O título da página é definido em pages/index.vue — um componente de seção
+// não deve sobrescrever o <title> do documento.
 
 const loaded = ref(false)
 

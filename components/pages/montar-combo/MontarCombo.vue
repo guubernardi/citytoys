@@ -268,7 +268,14 @@
           :style="{ animationDelay: `${idx * 0.05}s` }"
         >
           <div class="card__imagem">
-            <img :src="b.imageSrc" :alt="b.imageAlt" loading="lazy" decoding="async" />
+            <img
+              :src="b.imageSrc"
+              :alt="b.imageAlt"
+              :width="dimensaoImagem(b.imageSrc).largura"
+              :height="dimensaoImagem(b.imageSrc).altura"
+              loading="lazy"
+              decoding="async"
+            />
 
             <div v-if="estaSelecionado(b)" class="card__check" aria-label="Selecionado">
               <img src="/images/check.svg" alt="Icone Check" />
@@ -356,12 +363,10 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from 'nuxt/app'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { dimensaoImagem } from '~/helpers/dimensoesImagens.js'
 
-useHead({
-  title: 'Montar Combo - City Toys'
-})
+// O título da página é definido em pages/montar-combo/index.vue.
 
 type Categoria = 'grande' | 'medio' | 'pequeno'
 
