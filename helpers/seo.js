@@ -8,7 +8,9 @@
 // aviso no Search Console. O caminho para estrelinha na busca é o Google
 // Business Profile, não structured data no site.
 
-export const URL_BASE = 'https://citytoys.com.br'
+// Versão canônica confirmada: http, https e a forma sem "www" redirecionam
+// todas para https://www.citytoysbrinquedos.com/.
+export const URL_BASE = 'https://www.citytoysbrinquedos.com'
 export const NOME_EMPRESA = 'City Toys'
 export const WHATS_NUMERO = '5521984848699'
 export const TELEFONE_E164 = '+5521984848699'

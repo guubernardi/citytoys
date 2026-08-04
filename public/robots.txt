@@ -7,7 +7,7 @@ Disallow: /*?utm_
 Disallow: /*?fbclid=
 Disallow: /*?gclid=
 
-Sitemap: https://citytoys.com.br/sitemap.xml
+Sitemap: https://www.citytoysbrinquedos.com/sitemap.xml
 
 # Resumo estruturado do negócio para assistentes de IA:
-# https://citytoys.com.br/llms.txt
+# https://www.citytoysbrinquedos.com/llms.txt
