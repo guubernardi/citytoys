@@ -3,7 +3,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: true,
-  debug: true,
+  debug: false,
   css: ['~/assets/css/index.sass'],
   components: {
     dirs: ['~/components/global', '~/components/pages']

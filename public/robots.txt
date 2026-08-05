@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dominio.com/sitemap.xml
+# Bloqueia rastreamento de parâmetros de campanha, que geram
+# URLs duplicadas do mesmo conteúdo.
+Disallow: /*?utm_
+Disallow: /*?fbclid=
+Disallow: /*?gclid=
+
+Sitemap: https://www.citytoysbrinquedos.com/sitemap.xml
+
+# Resumo estruturado do negócio para assistentes de IA:
+# https://www.citytoysbrinquedos.com/llms.txt

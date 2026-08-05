@@ -63,7 +63,15 @@
           <meta itemprop="areaServed" content="Rio de Janeiro" />
 
           <div class="foto-card">
-            <img :src="toy.imageSrc" :alt="toy.imageAlt" loading="lazy" decoding="async" itemprop="image" />
+            <img
+              :src="toy.imageSrc"
+              :alt="toy.imageAlt"
+              :width="dimensaoImagem(toy.imageSrc).largura"
+              :height="dimensaoImagem(toy.imageSrc).altura"
+              loading="lazy"
+              decoding="async"
+              itemprop="image"
+            />
             <span class="etiqueta" :class="toy.etiquetaClass">{{ toy.etiquetaLabel }}</span>
             <span v-if="toy.destaque" class="selo-destaque">
               <SvgIcone nome="estrela" :tamanho="14" />
@@ -119,6 +127,8 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { dimensaoImagem } from '~/helpers/dimensoesImagens.js'
+import { jsonLdCatalogoBrinquedos, scriptJsonLd } from '~/helpers/seo.js'
 
 type CategoriaId = 'todos' | 'grande' | 'medio' | 'pequeno'
 
@@ -477,6 +487,12 @@ const brinquedos = ref<Toy[]>([
     imageAlt: 'Legolândia — brinquedo grande para festa infantil no Rio de Janeiro'
   }
 ])
+
+// Catálogo completo em JSON-LD — independente do filtro visível na tela,
+// para o Google enxergar todos os brinquedos e não só a categoria ativa.
+useHead({
+  script: [scriptJsonLd(jsonLdCatalogoBrinquedos(brinquedos.value), 'ld-catalogo-brinquedos')]
+})
 
 const brinquedosFiltrados = computed(() => {
   if (activeCat.value === 'todos') return brinquedos.value

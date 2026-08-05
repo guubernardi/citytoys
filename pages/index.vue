@@ -23,12 +23,18 @@ definePageMeta({
   layout: 'web'
 })
 
+const tituloPagina = 'Aluguel de Brinquedos Infláveis no RJ'
+const descricaoPagina =
+  'Alugue pula-pula, tobogã, piscina de bolinhas e touro mecânico para festas infantis no Rio de Janeiro. Entrega, montagem e higienização inclusas. Orçamento na hora pelo WhatsApp.'
+
 useHead({
-  title: 'City Toys',
+  title: tituloPagina,
   meta: [
-    { name: 'description', content: 'Alugue Brinquedos Inflavéis atendemos todo o Rio de Janeiro, Aproveite o melhor preço' },
-    { property: 'og:title', content: 'City Toys Locação de Brinquedos' },
-    { property: 'og:description', content: 'Alugue brinquedos inflaveis para sua festa com a melhor locadora de Brinquedos do Rio de Janeiro' }
+    { name: 'description', content: descricaoPagina },
+    { property: 'og:title', content: `${tituloPagina} | City Toys` },
+    { property: 'og:description', content: descricaoPagina },
+    { name: 'twitter:title', content: `${tituloPagina} | City Toys` },
+    { name: 'twitter:description', content: descricaoPagina }
   ]
 })
 </script>
