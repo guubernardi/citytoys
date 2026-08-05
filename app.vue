@@ -127,5 +127,10 @@ if (process.client) {
     () => route.fullPath,
     () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   )
+
+  // bloqueia arrastar imagens (reforço p/ Firefox, que ignora user-drag no CSS)
+  document.addEventListener('dragstart', (e) => {
+    if (e.target && e.target.tagName === 'IMG') e.preventDefault()
+  })
 }
 </script>

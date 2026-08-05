@@ -46,17 +46,15 @@
       </div>
 
       <ul class="provas-hero" aria-label="Diferenciais">
-        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Higienizado</li>
-        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Montagem inclusa</li>
-        <li><SvgIcone nome="check-circulo" :tamanho="16" /> Entrega em todo o RJ</li>
+        <li><SvgIcone nome="check" :tamanho="16" /> Higienizado</li>
+        <li><SvgIcone nome="check" :tamanho="16" /> Montagem inclusa</li>
+        <li><SvgIcone nome="check" :tamanho="16" /> Entrega em todo o RJ</li>
       </ul>
     </div>
 
-    <div class="divisoria-nuvem" id="hero-nuvem" aria-hidden="true">
-      <svg class="nuvem-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-        <path
-          d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        />
+    <div class="onda-hero" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z" fill="#ffffff" />
       </svg>
     </div>
   </section>
@@ -136,12 +134,16 @@ onBeforeUnmount(() => {
   overflow: hidden
   font-family: var(--fonte)
 
-  /* espaço pro menu overlay */
-  padding-top: var(--menu-h, 76px)
+  /* altura da onda de transição (reaproveitada no <svg> abaixo) */
+  --onda-h: clamp(56px, 8vw, 110px)
 
+  /* espaço pro menu overlay (topo) e pra faixa da onda (base) */
+  padding-top: var(--menu-h, 76px)
+  padding-bottom: var(--onda-h)
+
+  /* imagem enquadrada em 100vh na dobra; a onda fica na faixa abaixo (só no scroll) */
   min-height: 100vh
-  min-height: 100svh
-  min-height: 100dvh
+  height: calc(100vh + var(--onda-h))
 
   display: flex
   align-items: center
@@ -152,7 +154,8 @@ onBeforeUnmount(() => {
   inset: 0
   background-image: url("/images/fundo-hero.webp")
   background-size: cover
-  background-position: center
+  /* desloca pra cima metade da faixa da onda -> enquadra como se fosse 100vh na dobra */
+  background-position: center calc(50% - var(--onda-h) / 2)
   background-repeat: no-repeat
   z-index: 0
 
@@ -231,7 +234,7 @@ onBeforeUnmount(() => {
   position: relative
   z-index: 3
   width: min(920px, 92vw)
-  padding: clamp(28px, 4vw, 54px) 16px clamp(96px, 11vw, 132px)
+  padding: clamp(28px, 4vw, 54px) 16px
   text-align: center
 
   display: flex
@@ -315,6 +318,7 @@ onBeforeUnmount(() => {
   flex-wrap: wrap
   gap: 14px
   justify-content: center
+  align-items: center
 
 .botao
   display: inline-flex
@@ -322,16 +326,16 @@ onBeforeUnmount(() => {
   justify-content: center
   gap: 10px
   min-height: 56px
-  padding: 0 clamp(22px, 3vw, 34px)
+  padding: 0 clamp(28px, 3.5vw, 40px)
   border: none
-  border-radius: 16px
+  border-radius: 999px
   font-family: var(--fonte)
   font-weight: 800
   font-size: clamp(15px, 1.9vw, 18px)
   letter-spacing: .2px
   cursor: pointer
   text-decoration: none
-  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, filter .2s ease
+  transition: all 0.4s ease
 
   &:active
     transform: translateY(0) scale(.98)
@@ -339,21 +343,17 @@ onBeforeUnmount(() => {
 .botao-whats
   background: #2b74eb
   color: #ffffff
-  box-shadow: 0 14px 32px rgba(20,70,170,.42)
 
   &:hover
-    background: #1b5fd0
-    box-shadow: 0 18px 40px rgba(20,70,170,.5)
+    background: #ff3b3b
 
 .botao-combo
   background: #ffd23f
   color: #052a54
-  box-shadow: 0 14px 32px rgba(120,80,0,.30)
 
   &:hover
-    filter: brightness(1.05)
-    transform: translateY(-2px)
-    box-shadow: 0 18px 40px rgba(120,80,0,.38)
+    background: #2b74eb
+    color: #ffffff
 
 /* ---- provas sociais ---- */
 .provas-hero
@@ -377,8 +377,8 @@ onBeforeUnmount(() => {
     :deep(svg)
       color: #46e39b
 
-/* ---- nuvem divisória ---- */
-.divisoria-nuvem
+/* ---- onda de transição pra seção de brinquedos ---- */
+.onda-hero
   position: absolute
   left: 0
   right: 0
@@ -387,18 +387,15 @@ onBeforeUnmount(() => {
   line-height: 0
   pointer-events: none
 
-.nuvem-svg
-  display: block
-  width: 100%
-  height: clamp(60px, 9vw, 130px)
-
-  path
-    fill: #ffffff
+  svg
+    display: block
+    width: 100%
+    height: var(--onda-h)
 
 /* ---- responsivo ---- */
 @media (max-width: 768px)
   .fundo-hero
-    background-position: 50% 42%
+    background-position: 50% calc(42% - var(--onda-h) / 2)
 
   .titulo-hero
     font-size: clamp(36px, 12vw, 60px)
@@ -412,6 +409,5 @@ onBeforeUnmount(() => {
 
 @media (max-width: 480px)
   .conteudo-hero
-    padding-bottom: 104px
     gap: 14px
 </style>

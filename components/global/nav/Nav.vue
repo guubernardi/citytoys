@@ -26,7 +26,12 @@
         </li>
       </ul>
 
-      <NuxtLink class="logo-menu" :to="logoTo" aria-label="City Toys - voltar ao início">
+      <NuxtLink
+        class="logo-menu"
+        :to="logoTo"
+        aria-label="City Toys - voltar ao início"
+        @click="onClickLogo"
+      >
         <img :src="logoSrc" :alt="logoAlt" loading="eager" decoding="async" />
       </NuxtLink>
 
@@ -38,6 +43,7 @@
             :class="{ 'cta-menu': item.isCta }"
             @click="closeMobile"
           >
+            <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="16" />
             {{ item.label }}
           </NuxtLink>
           <a
@@ -46,6 +52,7 @@
             :class="{ 'cta-menu': item.isCta }"
             @click="onClickLink($event, item.href)"
           >
+            <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="16" />
             {{ item.label }}
           </a>
         </li>
@@ -53,8 +60,9 @@
 
       <button
         class="btn-mobile"
+        :class="{ 'is-open': mobileOpen }"
         type="button"
-        aria-label="Abrir menu"
+        :aria-label="mobileOpen ? 'Fechar menu' : 'Abrir menu'"
         :aria-expanded="mobileOpen"
         aria-controls="drawer-menu"
         @click="toggleMobile"
@@ -66,24 +74,32 @@
     </nav>
 
     <Teleport to="body">
-      <button
-        v-if="mobileOpen"
-        class="overlay"
-        type="button"
-        aria-label="Fechar menu"
-        @click="closeMobile"
-      ></button>
+      <Transition name="nav-fade">
+        <button
+          v-if="mobileOpen"
+          class="overlay"
+          type="button"
+          aria-label="Fechar menu"
+          @click="closeMobile"
+        ></button>
+      </Transition>
 
-      <aside
-        v-if="mobileOpen"
-        id="drawer-menu"
-        class="drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu mobile"
-      >
+      <Transition name="nav-drawer">
+        <aside
+          v-if="mobileOpen"
+          id="drawer-menu"
+          class="drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu mobile"
+        >
         <div class="drawer__top">
-          <NuxtLink class="drawer__logo" :to="logoTo" @click="closeMobile" aria-label="Home">
+          <NuxtLink
+            class="drawer__logo"
+            :to="logoTo"
+            aria-label="City Toys - voltar ao início"
+            @click="onClickLogo"
+          >
             <img :src="logoSrc" :alt="logoAlt" loading="eager" decoding="async" />
           </NuxtLink>
 
@@ -102,6 +118,7 @@
               :class="['drawer__link', { 'drawer__link--cta': item.isCta }]"
               @click="closeMobile"
             >
+              <SvgIcone v-if="item.isCta" nome="foguete" :tamanho="18" />
               {{ item.label }}
             </NuxtLink>
 
@@ -116,7 +133,20 @@
           </div>
         </div>
 
+        <div class="drawer__footer">
+          <a
+            class="drawer__whats"
+            href="https://wa.me/5521984848699?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20City%20Toys%20e%20quero%20fazer%20um%20or%C3%A7amento%20%F0%9F%8E%89"
+            target="_blank"
+            rel="noopener"
+            @click="closeMobile"
+          >
+            <SvgIcone nome="whatsapp" :tamanho="20" />
+            Falar no WhatsApp
+          </a>
+        </div>
       </aside>
+      </Transition>
     </Teleport>
   </header>
 </template>
@@ -141,7 +171,7 @@ const props = withDefaults(
     headerId: 'hero-topo',
     navId: 'menu-principal',
     logoTo: '/',
-    logoSrc: '/images/logo-citytoys-sem-fundo.svg',
+    logoSrc: '/images/logo-citytoys.svg',
     logoAlt: 'City Toys - aluguel de brinquedos para festas',
     left: () => [
       { label: 'Início', href: '#inicio' },
@@ -215,6 +245,23 @@ function onClickLink(e: MouseEvent, href: string, closeAfter = false) {
   if (closeAfter) closeMobile()
 }
 
+async function onClickLogo(e: MouseEvent) {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+  e.preventDefault()
+  closeMobile()
+
+  if (route.path !== props.logoTo) {
+    await router.push(props.logoTo)
+    await nextTick()
+  } else if (route.hash) {
+    await router.replace({ path: props.logoTo, hash: '' })
+    await nextTick()
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+}
+
 function closeMobile() {
   mobileOpen.value = false
 }
@@ -237,9 +284,16 @@ watch(mobileOpen, (v) => {
   document.body.style.overflow = v ? 'hidden' : ''
 })
 
+watch(
+  () => route.fullPath,
+  () => closeMobile()
+)
+
 function onResize() {
   measureHeader()
   updateScrolled()
+
+  if (window.innerWidth > 980 && mobileOpen.value) closeMobile()
 }
 
 onMounted(() => {
@@ -252,6 +306,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  document.documentElement.classList.remove('is-menu-open')
+  document.body.style.overflow = ''
   window.removeEventListener('scroll', updateScrolled)
   window.removeEventListener('resize', onResize)
   document.removeEventListener('keydown', onKeyDown)
@@ -267,24 +323,29 @@ onBeforeUnmount(() => {
     font-family: var(--fonte)
     background: transparent
     pointer-events: none
-  
+    padding: 0
+    transition: padding 0.35s ease
+
+  /* ao rolar, o topo ganha respiro e a barra vira uma pílula flutuante */
+  .topo-hero.is-scrolled
+    padding: 12px 16px 0
+
   .menu-hero
     pointer-events: auto
+    width: 100%
+    max-width: var(--largura-max)
+    margin: 0 auto
     display: flex
     align-items: center
     justify-content: space-between
     gap: 16px
-    padding: 14px 20px
-    background: transparent !important
-    backdrop-filter: none
-    -webkit-backdrop-filter: none
-    box-shadow: none
-    transition: all 0.3s
-  
+    padding: 10px var(--container-px)
+    border-radius: 999px
+    transition: all 0.35s ease
+
   .topo-hero.is-scrolled .menu-hero
-    background: rgba(255,255,255,.94) !important
-    border-bottom-color: rgba(19,26,59,.10) !important
-    box-shadow: 0 14px 40px rgba(0,0,0,.10) !important
+    background: #052a54
+    box-shadow: 0 18px 45px rgba(5,20,50,.30)
     backdrop-filter: blur(12px)
     -webkit-backdrop-filter: blur(12px)
   
@@ -308,12 +369,6 @@ onBeforeUnmount(() => {
     &:hover
       color: #FFC93A
   
-  .topo-hero.is-scrolled .links-menu :deep(a)
-    color: rgba(19,26,59,.88)
-  
-    &:hover
-      color: #2B74EB
-
   .links-menu :deep(.router-link-active)
     text-decoration: underline
     text-underline-offset: 6px
@@ -329,21 +384,24 @@ onBeforeUnmount(() => {
   
     &:hover
       transform: scale(1.03)
-  
+
     img
-      height: 80px
-      width: 120px
+      height: 56px
+      width: auto
       display: block
   
   .cta-menu
-    background: linear-gradient(135deg, #FFC93A 0%, #FFB238 100%)
-    color: #121A3B !important
-    box-shadow: 0 10px 24px -14px rgba(255,201,58,.55)
-    transition: all 0.3s
-  
+    display: inline-flex
+    align-items: center
+    gap: 8px
+    background: #ffd23f
+    color: #052a54 !important
+    padding: 10px 20px !important
+    transition: all 0.4s ease
+
     &:hover
-      background: linear-gradient(135deg, #FFD35A 0%, #FFBE52 100%)
-      transform: translateY(-1px) scale(1.03)
+      background: #2b74eb
+      color: #ffffff !important
   
   .btn-mobile
     display: none
@@ -363,18 +421,22 @@ onBeforeUnmount(() => {
       transform: scale(1.04)
       background: rgba(255,255,255,.14)
   
-  .topo-hero.is-scrolled .btn-mobile
-    border-color: rgba(19,26,59,.12)
-    background: rgba(45,58,122,.06)
-  
-  .topo-hero.is-scrolled .btn-mobile__line
-    background: rgba(19,26,59,.82)
-  
   .btn-mobile__line
     width: 18px
     height: 2px
     background: rgba(255,255,255,.92)
     border-radius: 2px
+    transition: transform .25s ease, opacity .2s ease
+
+  .btn-mobile.is-open
+    .btn-mobile__line:nth-child(1)
+      transform: translateY(7px) rotate(45deg)
+
+    .btn-mobile__line:nth-child(2)
+      opacity: 0
+
+    .btn-mobile__line:nth-child(3)
+      transform: translateY(-7px) rotate(-45deg)
   
   @media (max-width: 980px)
     .links-menu
@@ -384,7 +446,7 @@ onBeforeUnmount(() => {
       display: inline-flex
   
     .logo-menu img
-      height: 80px
+      height: 56px
       width: auto
   
   .overlay
@@ -435,10 +497,10 @@ onBeforeUnmount(() => {
     height: 42px
     border-radius: 14px
     border: 1px solid rgba(19,26,59,.10)
-    background: rgba(45,58,122,.08)
+    background: rgba(5,42,84,.08)
     cursor: pointer
     font-weight: 1000
-    color: #2D3A7A
+    color: #052a54
   
   .drawer__links
     padding: 23px 14px
@@ -472,20 +534,21 @@ onBeforeUnmount(() => {
     line-height: 1.1
     min-height: 48px
   
-    transition: transform .2s ease, background .2s ease, border-color .2s ease
-  
+    transition: background .2s ease, border-color .2s ease
+
     &:hover
-      transform: translateY(-1px)
-      background: rgba(0,194,204,.12)
+      background: rgba(43,116,235,.10)
+      border-color: rgba(43,116,235,.20)
 
   .drawer__link--cta
-    background: linear-gradient(135deg, #FFC93A 0%, #FFB238 100%)
-    border-color: rgba(255,201,58,.34)
-    color: #121A3B
-  
+    justify-content: center
+    background: #ffd23f
+    border-color: rgba(255,210,63,.4)
+    color: #052a54
+
     &:hover
-      transform: translateY(-1px) scale(1.01)
-      background: linear-gradient(135deg, #FFD35A 0%, #FFBE52 100%)
+      background: #2b74eb
+      color: #ffffff
 
   .drawer__links > div:not(:last-child) .drawer__link
     box-shadow: 0 1px 0 rgba(19,26,59,.04)
@@ -499,5 +562,35 @@ onBeforeUnmount(() => {
     font-weight: 800
     font-size: 12px
     color: rgba(92,107,134,.95)
+
+  .drawer__whats
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 10px
+    width: 100%
+    padding: 14px
+    border-radius: 999px
+    background: #43d38d
+    color: #fff
+    font-weight: 900
+    text-decoration: none
+    transition: background .2s ease
+
+    &:hover
+      background: #35c47e
+
+  /* animações do drawer mobile */
+  .nav-fade-enter-active, .nav-fade-leave-active
+    transition: opacity .3s ease
+
+  .nav-fade-enter-from, .nav-fade-leave-to
+    opacity: 0
+
+  .nav-drawer-enter-active, .nav-drawer-leave-active
+    transition: transform .38s cubic-bezier(.16, 1, .3, 1), opacity .3s ease
+
+  .nav-drawer-enter-from, .nav-drawer-leave-to
+    transform: translateX(24px)
+    opacity: 0
   </style>
-  

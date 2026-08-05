@@ -3,3 +3,12 @@
 @use './normalize.sass'
 @use './animations.sass'
 @use './scrollbar.sass'
+
+// impedir arrastar imagens (ghost drag) em toda a LP
+img
+  -webkit-user-drag: none
+  -khtml-user-drag: none
+  -moz-user-drag: none
+  user-drag: none
+  -webkit-user-select: none
+  user-select: none

@@ -17,6 +17,7 @@
 
     <div class="container">
       <header class="cabecalho-funciona" id="como-funciona-cabecalho" data-reveal>
+        <p class="kicker-funciona">Passo a passo</p>
         <h2 class="titulo-funciona" id="como-funciona-titulo">Alugar com a City Toys é muito fácil!</h2>
         <p class="subtitulo-funciona" id="como-funciona-subtitulo">Escolha, agende e a gente cuida do resto 😉</p>
       </header>
@@ -50,22 +51,46 @@
             </div>
 
             <div class="passo-ilustra">
-              <img
-                v-if="!s.temCaminhao"
-                :src="s.imageSrc"
-                :alt="s.imageAlt"
-                loading="lazy"
-                decoding="async"
-                itemprop="image"
-              />
-              
-              <div v-else class="caminhao-scene" aria-hidden="true">
+              <div v-if="s.temChat" class="chat-mockup" aria-hidden="true">
+                <div class="chat-top">
+                  <span class="chat-avatar">
+                    <img src="/images/logo-citytoys.svg" alt="" />
+                  </span>
+                  <div class="chat-id">
+                    <span class="chat-nome">City Toys</span>
+                    <span class="chat-status">online</span>
+                  </div>
+                </div>
+
+                <div class="chat-body">
+                  <div class="bolha bolha-out">
+                    Oi! Tem Castelinho pro dia 12? 🎉
+                    <span class="bolha-hora">09:41 ✓✓</span>
+                  </div>
+                  <div class="bolha bolha-in">Temos sim! Já reservei a data pra você 🎈</div>
+                  <div class="bolha bolha-out">
+                    Perfeito, muito obrigada! 🥳
+                    <span class="bolha-hora">09:42 ✓✓</span>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else-if="s.temCaminhao" class="caminhao-scene" aria-hidden="true">
                 <div class="road">
                   <span class="dash"></span>
                 </div>
 
                 <img class="caminhao" src="/images/caminhao-citytoys.webp" alt="" loading="lazy" decoding="async" />
               </div>
+
+              <img
+                v-else
+                :src="s.imageSrc"
+                :alt="s.imageAlt"
+                loading="lazy"
+                decoding="async"
+                itemprop="image"
+              />
             </div>
           </div>
 
@@ -75,10 +100,10 @@
     </div>
 
     <div class="onda-transicao" aria-hidden="true">
-      <svg viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <path
           class="onda-fill"
-          d="M0,96 C240,160 480,32 720,96 C960,160 1200,32 1440,96 L1440,160 L0,160 Z"
+          d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z"
         />
       </svg>
     </div>
@@ -97,6 +122,7 @@ type Passo = {
   imageSrc?: string
   imageAlt?: string
   temCaminhao?: boolean
+  temChat?: boolean
 }
 
 const secEl = ref<HTMLElement | null>(null)
@@ -117,8 +143,7 @@ const passos = ref<Passo[]>([
     passoClass: 'passo--verde',
     titulo: 'Agende a data',
     desc: 'Confirmamos a disponibilidade rapidinho pelo WhatsApp.',
-    imageSrc: '/images/passo-whats.webp',
-    imageAlt: 'Agendamento e confirmação do aluguel pelo WhatsApp'
+    temChat: true
   },
   {
     id: 'passo-3-entrega',
@@ -172,23 +197,32 @@ onBeforeUnmount(() => {
 <style lang="sass" scoped>
 .secao-como-funciona
   position: relative
-  background: #f4f7fb
+  background: #eaf1fb
   overflow: hidden
   padding: 76px 0
-  padding-bottom: calc(80px + 160px)
+  padding-bottom: calc(80px + 100px)
   font-family: var(--fonte)
 
   .container
     position: relative
     z-index: 2
-    max-width: 1100px
+    max-width: var(--largura-max)
     margin: 0 auto
-    padding: 0 20px
+    padding: 0 var(--container-px)
 
 .cabecalho-funciona
   text-align: left
   max-width: 860px
   margin: 0 auto 26px
+
+.kicker-funciona
+  text-align: center
+  text-transform: uppercase
+  font-weight: 900
+  font-size: 13px
+  letter-spacing: .6px
+  color: #2b74eb
+  margin: 0 0 8px
 
 .titulo-funciona
   font-size: clamp(1.6rem, 2.1vw, 2.2rem)
@@ -214,88 +248,65 @@ onBeforeUnmount(() => {
 
 .passo
   position: relative
-  border-radius: 22px
-  background: rgba(255, 255, 255, 0.92)
-  box-shadow: 0 18px 45px rgba(18, 48, 98, 0.16), 0 6px 16px rgba(18, 48, 98, 0.10)
-  overflow: hidden
-  border: 1px solid rgba(255, 255, 255, 0.7)
+  display: flex
+  align-items: center
+  gap: 22px
+  padding: 26px 30px
+  border-radius: 24px
+  background: #fff
+  border: 1px solid #e3ebf5
+  border-left-width: 5px
+  box-shadow: 0 12px 28px rgba(18, 48, 98, .08)
 
-  &::before
-    content: ""
-    position: absolute
-    left: 14px
-    right: 14px
-    top: 10px
-    height: 10px
-    border-radius: 999px
-    opacity: 0.95
-    background: #ffc94a
-
-  &::after
-    content: ""
-    position: absolute
-    left: 18px
-    right: 18px
-    bottom: -16px
-    height: 28px
-    border-radius: 999px
-    background: #feffff
-    filter: blur(0.2px)
-    z-index: 0
-    pointer-events: none
+.passo-agua
+  display: none
 
 .passo--amarelo
-  &::before
-    background: #ffc94a
+  border-left-color: #ffd23f
   .passo-num
-    background: #ffc94a
+    background: #ffd23f
+    color: #052a54
 
 .passo--verde
-  &::before
-    background: #7ad6b4
+  border-left-color: #43d38d
   .passo-num
-    background: #7ad6b4
+    background: #43d38d
 
 .passo--azul
-  &::before
-    background: #6fb7ff
+  border-left-color: #2b74eb
   .passo-num
-    background: #6fb7ff
-
-.passo-grid
-  position: relative
-  z-index: 1
-  display: grid
-  grid-template-columns: 1.2fr 0.8fr
-  gap: 18px
-  align-items: center
-  padding: 38px 36px 34px
+    background: #2b74eb
 
 .passo-num
-  position: absolute
-  left: 18px
-  top: 30px
-  width: 42px
-  height: 42px
+  flex: 0 0 auto
+  width: 54px
+  height: 54px
   display: grid
   place-items: center
   border-radius: 999px
   color: #fff
-  font-weight: 900
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12)
-  z-index: 2
-  background: #ffc94a
+  font-weight: 1000
+  font-size: 1.45rem
+  background: #ffd23f
+
+.passo-grid
+  flex: 1
+  min-width: 0
+  display: grid
+  grid-template-columns: 1.3fr 0.8fr
+  gap: 20px
+  align-items: center
 
 .passo-textos
-  padding-left: 52px
+  min-width: 0
 
 .passo-titulo
-  font-size: 1.25rem
-  font-weight: 800
+  font-size: 1.35rem
+  font-weight: 900
   color: #15264b
 
 .passo-desc
-  margin-top: 8px
+  margin-top: 6px
   color: rgba(21, 38, 75, 0.78)
   line-height: 1.5
   max-width: 420px
@@ -306,7 +317,7 @@ onBeforeUnmount(() => {
   align-items: center
 
   img
-    max-width: 260px
+    max-width: 240px
     width: 100%
     height: auto
     filter: drop-shadow(0 12px 18px rgba(10, 40, 90, 0.12))
@@ -327,11 +338,89 @@ onBeforeUnmount(() => {
   opacity: 1 !important
   transform: none !important
 
+/* ---- mockup de conversa (passo 2) ---- */
+.chat-mockup
+  width: 100%
+  max-width: 250px
+  border-radius: 26px
+  overflow: hidden
+  background: #ece5dd
+  border: 5px solid #10233d
+  box-shadow: 0 16px 30px rgba(10, 40, 90, .2)
+
+.chat-top
+  display: flex
+  align-items: center
+  gap: 8px
+  padding: 11px 12px
+  background: #128c7e
+  color: #fff
+
+.chat-avatar
+  width: 34px
+  height: 34px
+  border-radius: 50%
+  background: #fff
+  display: grid
+  place-items: center
+  overflow: hidden
+
+  img
+    width: 84%
+    height: 84%
+    object-fit: contain
+
+.chat-id
+  display: flex
+  flex-direction: column
+  line-height: 1.15
+
+.chat-nome
+  font-weight: 800
+  font-size: .82rem
+
+.chat-status
+  font-size: .64rem
+  opacity: .85
+
+.chat-body
+  display: flex
+  flex-direction: column
+  gap: 8px
+  padding: 14px 12px
+  min-height: 150px
+
+.bolha
+  max-width: 84%
+  padding: 7px 10px
+  border-radius: 12px
+  font-size: .74rem
+  line-height: 1.35
+  color: #111b21
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .08)
+
+.bolha-in
+  align-self: flex-start
+  background: #fff
+  border-top-left-radius: 3px
+
+.bolha-out
+  align-self: flex-end
+  background: #d9fdd3
+  border-top-right-radius: 3px
+
+.bolha-hora
+  display: block
+  text-align: right
+  font-size: .56rem
+  color: #5b7083
+  margin-top: 2px
+
 .caminhao-scene
   position: relative
   width: 100%
   max-width: 320px
-  height: 120px
+  height: 150px
   border-radius: 18px
   overflow: hidden
   background: linear-gradient(180deg, rgba(230, 245, 255, 0.75), rgba(230, 245, 255, 0))
@@ -393,35 +482,32 @@ onBeforeUnmount(() => {
   svg
     display: block
     width: 100%
-    height: 160px
+    height: 100px
 
 .onda-fill
   fill: #0b4aa2
 
-@media (max-width: 860px)
+@media (max-width: 700px)
+  .passo
+    align-items: flex-start
+    gap: 16px
+    padding: 22px 20px
+
   .passo-grid
     grid-template-columns: 1fr
-    gap: 14px
+    gap: 16px
+
+  .passo-num
+    width: 46px
+    height: 46px
+    font-size: 1.25rem
 
   .passo-ilustra
     justify-content: flex-start
 
+  .passo-ilustra img
+    max-width: 200px
+
   .caminhao-scene
     max-width: 100%
-
-@media (max-width: 520px)
-  .passo-grid
-    padding: 24px 18px 28px
-
-  .passo-num
-    left: 14px
-    top: 26px
-    width: 40px
-    height: 40px
-
-  .passo-textos
-    padding-left: 50px
-
-  .passo-ilustra img
-    max-width: 230px
 </style>

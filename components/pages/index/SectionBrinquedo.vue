@@ -9,7 +9,7 @@
     <div class="container">
       <header class="cabecalho-secao" id="brinquedos-cabecalho" data-anim="fade-up">
         <p class="mini-texto" id="brinquedos-kicker">
-          <span class="pontinho">•</span> A Diversão Decola Aqui! <span class="pontinho">•</span>
+          <span class="pontinho">•</span> Os queridinhos da festa <span class="pontinho">•</span>
         </p>
 
         <h2 class="titulo-secao" id="brinquedos-titulo">Veja nossos brinquedos mais alugados</h2>
@@ -47,7 +47,7 @@
         data-anim="stagger-cards"
       >
         <article
-          v-for="(toy, idx) in brinquedosFiltrados"
+          v-for="(toy, idx) in brinquedosVisiveis"
           :key="toy.id"
           class="card-brinquedo"
           :id="toy.id"
@@ -62,57 +62,65 @@
           <meta itemprop="brand" content="City Toys" />
           <meta itemprop="areaServed" content="Rio de Janeiro" />
 
-          <div class="etiqueta" :class="toy.etiquetaClass">{{ toy.etiquetaLabel }}</div>
-
-          <div class="miolo-card">
-            <div class="textos-card">
-              <h3 class="nome-brinquedo" itemprop="name">{{ toy.name }}</h3>
-              <div class="separador-card" aria-hidden="true"></div>
-
-              <ul class="infos-brinquedo" aria-label="Informações do brinquedo">
-                <li>
-                  <span class="icone">
-                    <img :src="toy.ageIcon" :alt="toy.ageAlt" loading="lazy" decoding="async" />
-                  </span>
-                  <span>{{ toy.ageText }}</span>
-                </li>
-
-                <li>
-                  <span class="icone">
-                    <img :src="toy.capIcon" :alt="toy.capAlt" loading="lazy" decoding="async" />
-                  </span>
-                  <span>{{ toy.capText }}</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="thumb-brinquedo">
-              <img
-                :src="toy.imageSrc"
-                :alt="toy.imageAlt"
-                :width="dimensaoImagem(toy.imageSrc).largura"
-                :height="dimensaoImagem(toy.imageSrc).altura"
-                loading="lazy"
-                decoding="async"
-                itemprop="image"
-              />
-            </div>
+          <div class="foto-card">
+            <img
+              :src="toy.imageSrc"
+              :alt="toy.imageAlt"
+              :width="dimensaoImagem(toy.imageSrc).largura"
+              :height="dimensaoImagem(toy.imageSrc).altura"
+              loading="lazy"
+              decoding="async"
+              itemprop="image"
+            />
+            <span class="etiqueta" :class="toy.etiquetaClass">{{ toy.etiquetaLabel }}</span>
+            <span v-if="toy.destaque" class="selo-destaque">
+              <SvgIcone nome="estrela" :tamanho="14" />
+              Mais alugado
+            </span>
           </div>
 
-          <a
-            class="btn-card-whats"
-            :id="`cta-${toy.id}`"
-            :href="buildWhatsLink(toy.name)"
-            target="_blank"
-            rel="noopener"
-            :aria-label="`Quero ${toy.name} no WhatsApp`"
-            data-anim="cta-pop"
-          >
-            <img class="icone-whats" src="/images/whatsapp.svg" alt="" aria-hidden="true" />
-            Quero esse no WhatsApp
-          </a>
+          <div class="corpo-card">
+            <h3 class="nome-brinquedo" itemprop="name">{{ toy.name }}</h3>
+
+            <ul class="infos-brinquedo" aria-label="Informações do brinquedo">
+              <li>
+                <SvgIcone class="icone-info" nome="bebe" :tamanho="18" />
+                <span>{{ toy.ageText }}</span>
+              </li>
+
+              <li>
+                <SvgIcone class="icone-info" nome="usuarios" :tamanho="18" />
+                <span>{{ toy.capText }}</span>
+              </li>
+            </ul>
+
+            <a
+              class="btn-card-whats"
+              :id="`cta-${toy.id}`"
+              :href="buildWhatsLink(toy.name)"
+              target="_blank"
+              rel="noopener"
+              :aria-label="`Quero alugar ${toy.name} no WhatsApp`"
+              data-anim="cta-pop"
+            >
+              <SvgIcone class="icone-whats" nome="whatsapp" :tamanho="22" />
+              Quero alugar
+            </a>
+          </div>
         </article>
       </div>
+
+      <div v-if="temMais && !mostrarTodos" class="ver-todos-wrap">
+        <button type="button" class="btn-ver-todos" @click="mostrarTodos = true">
+          Ver todos os brinquedos ({{ brinquedosOrdenados.length }})
+        </button>
+      </div>
+    </div>
+
+    <div class="onda-brinquedo" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z" fill="#eaf1fb" />
+      </svg>
     </div>
   </section>
 </template>
@@ -131,6 +139,7 @@ type Toy = {
   etiquetaClass: 'etiqueta-grande' | 'etiqueta-medio' | 'etiqueta-pequeno'
   name: string
   schemaCategory: string
+  destaque?: boolean
 
   ageIcon: string
   ageAlt: string
@@ -184,6 +193,7 @@ const brinquedos = ref<Toy[]>([
     etiquetaLabel: 'Pequeno',
     etiquetaClass: 'etiqueta-pequeno',
     name: 'Castelinho',
+    destaque: true,
     schemaCategory: 'Brinquedo inflável - Pequeno',
     ageIcon: idadeIcon,
     ageAlt: 'Idade recomendada: até 6 anos',
@@ -364,6 +374,7 @@ const brinquedos = ref<Toy[]>([
     etiquetaLabel: 'Médio',
     etiquetaClass: 'etiqueta-medio',
     name: 'Tobogã Colorex',
+    destaque: true,
     schemaCategory: 'Brinquedo inflável - Médio',
     ageIcon: idadeIcon,
     ageAlt: 'Idade mínima: 3+',
@@ -432,6 +443,7 @@ const brinquedos = ref<Toy[]>([
     etiquetaLabel: 'Grande',
     etiquetaClass: 'etiqueta-grande',
     name: 'Tobogã Gigante',
+    destaque: true,
     schemaCategory: 'Brinquedo inflável - Grande',
     ageIcon: idadeIcon,
     ageAlt: 'Idade mínima: 3+',
@@ -487,6 +499,25 @@ const brinquedosFiltrados = computed(() => {
   return brinquedos.value.filter((t) => t.cat === activeCat.value)
 })
 
+// destaques primeiro -> vitrine inicial ganha variedade e prova social
+const brinquedosOrdenados = computed(() =>
+  [...brinquedosFiltrados.value].sort((a, b) => Number(b.destaque ?? false) - Number(a.destaque ?? false))
+)
+
+const LIMITE_INICIAL = 6
+const mostrarTodos = ref(false)
+
+const brinquedosVisiveis = computed(() =>
+  mostrarTodos.value ? brinquedosOrdenados.value : brinquedosOrdenados.value.slice(0, LIMITE_INICIAL)
+)
+
+const temMais = computed(() => brinquedosOrdenados.value.length > LIMITE_INICIAL)
+
+// ao trocar de categoria, recolhe de volta pros 6 iniciais
+watch(activeCat, () => {
+  mostrarTodos.value = false
+})
+
 function buildWhatsLink(nomeBrinquedo: string) {
   const numero = '5521984848699'
   const msg = `Olá, vim pelo site e quero alugar o brinquedo: ${nomeBrinquedo}`
@@ -537,7 +568,7 @@ onMounted(async () => {
   observeReveals()
 })
 
-watch(brinquedosFiltrados, async () => {
+watch(brinquedosVisiveis, async () => {
   await nextTick()
   observeReveals()
 })
@@ -561,26 +592,30 @@ $ct-navy: #002f55
   z-index: 5
   margin-top: -1px
   font-family: var(--fonte)
-  padding: 70px 0
-  background-image: url("/images/fundo-brinquedo.svg")
-  background-repeat: repeat-y
-  background-size: 100% auto
-  background-position: top center
+  --onda-h: clamp(56px, 8vw, 110px)
+  padding: 70px 0 calc(30px + var(--onda-h))
   background-color: #ffffff
 
-  &::before
-    content: ""
-    position: absolute
-    inset: 0
-    background: rgba(255,255,255,.62)
-    z-index: 0
+.onda-brinquedo
+  position: absolute
+  left: 0
+  right: 0
+  bottom: -1px
+  z-index: 1
+  line-height: 0
+  pointer-events: none
+
+  svg
+    display: block
+    width: 100%
+    height: var(--onda-h)
 
 .container
   position: relative
   z-index: 1
-  max-width: 1100px
+  max-width: var(--largura-max)
   margin: 0 auto
-  padding: 0 20px
+  padding: 0 var(--container-px)
 
 .cabecalho-secao
   text-align: center
@@ -618,7 +653,6 @@ $ct-navy: #002f55
   border-radius: 999px
   background: rgba(255, 255, 255, .80)
   border: 1px solid rgba(0,0,0,.05)
-  box-shadow: 0 10px 25px rgba(0, 0, 0, .06)
 
 .chip
   border: 0
@@ -635,8 +669,8 @@ $ct-navy: #002f55
   background: rgba(0,0,0,.06)
 
   &:hover
-    transform: translateY(-2px)
-    filter: saturate(1.05)
+    transform: scale(1.05)
+    filter: brightness(.96) saturate(1.06)
 
   &:focus-visible
     box-shadow: 0 0 0 4px rgba(43, 116, 235, .25)
@@ -649,46 +683,48 @@ $ct-navy: #002f55
 .chip--grande
   background: $ct-teal
   color: #ffffff
-  box-shadow: 0 10px 18px rgba(0, 194, 199, .25)
 
 .chip--medio
   background: $ct-red
   color: #ffffff
-  box-shadow: 0 10px 18px rgba(255, 59, 59, .20)
 
 .chip--pequeno
   background: $ct-orange
   color: #ffffff
-  box-shadow: 0 10px 18px rgba(255, 152, 0, .22)
 
 .chip-ativo
-  transform: translateY(-2px) scale(1.02)
-  box-shadow: 0 16px 30px rgba(0,0,0,.12) !important
+  transform: scale(1.04)
   filter: brightness(1.02) saturate(1.06)
 
 .grade-brinquedos
   display: grid
-  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr))
-  gap: 40px
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr))
+  gap: 28px
   margin-top: 34px
 
 .card-brinquedo
-  background: #fff
-  border-radius: 30px
-  padding: 30px
   position: relative
-  box-shadow: 0 15px 30px rgba(0, 0, 0, .08), 0 12px 0px #d9e8ff
+  display: flex
+  flex-direction: column
+  background: #fff
+  border: 1px solid #eef2f7
+  border-radius: 24px
+  overflow: hidden
+  box-shadow: 0 12px 30px rgba(18, 48, 98, .08)
 
   --rx: 0px
   --ry: 0px
   transform: translateX(var(--rx)) translateY(var(--ry))
   opacity: 1
   will-change: transform, opacity
-  transition: transform .55s ease, opacity .55s ease, box-shadow .3s ease
+  transition: transform .55s ease, opacity .55s ease, box-shadow .3s ease, border-color .3s ease
 
   &:hover
-    --ry: -8px
-    box-shadow: 0 20px 40px rgba(0, 0, 0, .12), 0 16px 0px #d1e2ff
+    box-shadow: 0 22px 44px rgba(18, 48, 98, .16)
+    border-color: #e3ebf5
+
+    .foto-card img
+      transform: scale(1.05)
 
 [data-reveal]
   opacity: 0
@@ -707,114 +743,144 @@ $ct-navy: #002f55
     --rx: 0px !important
     transition: none !important
 
+.foto-card
+  position: relative
+  width: 100%
+  aspect-ratio: 16 / 11
+  overflow: hidden
+  background: #f4f7fb
+
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
+    display: block
+    transition: transform .4s ease
+
 .etiqueta
   position: absolute
-  top: -15px
-  left: -10px
+  top: 14px
+  left: 14px
   color: #fff
-  padding: 10px 30px
+  padding: 7px 16px
   font-weight: 900
-  font-size: 1rem
-  border-radius: 20px 20px 20px 0
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, .15)
+  font-size: .82rem
+  letter-spacing: .3px
+  border-radius: 999px
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .18)
   z-index: 2
 
-/* ✅ nomes de classe agora batem com a categoria */
+/* cores da etiqueta batem com os chips de categoria */
 .etiqueta-grande
-  background: #00C4C9
+  background: $ct-teal
 
 .etiqueta-medio
-  background: #FF3B3B
+  background: $ct-red
 
 .etiqueta-pequeno
-  background: #FF9A00
+  background: $ct-orange
 
-.miolo-card
-  display: grid
-  grid-template-columns: 1.4fr 1fr
-  gap: 20px
-  margin-bottom: 30px
-  align-items: start
+.selo-destaque
+  position: absolute
+  top: 14px
+  right: 14px
+  z-index: 2
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  background: #ffd23f
+  color: #052a54
+  font-weight: 900
+  font-size: .76rem
+  letter-spacing: .2px
+  padding: 6px 12px
+  border-radius: 999px
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .18)
 
-.textos-card
-  padding-top: 35px
+.corpo-card
+  display: flex
+  flex-direction: column
+  gap: 16px
+  padding: 22px 22px 24px
+  flex: 1
 
 .nome-brinquedo
-  font-size: 1.6rem
+  font-size: 1.4rem
   font-weight: 1000
   color: $ct-navy
-  margin-bottom: 15px
-  line-height: 1.2
-
-.separador-card
-  height: 2px
-  background: #eef2f7
-  margin-bottom: 15px
-  width: 100%
-  border-radius: 2px
+  line-height: 1.15
+  margin: 0
 
 .infos-brinquedo
   list-style: none
   padding: 0
   margin: 0
+  display: flex
+  flex-wrap: wrap
+  gap: 10px
 
   li
-    display: flex
+    display: inline-flex
     align-items: center
-    gap: 12px
-    color: #555
+    gap: 8px
+    background: #f4f7fb
+    color: #4a5b70
     font-weight: 800
-    font-size: 1rem
-    margin-bottom: 10px
+    font-size: .9rem
+    padding: 8px 12px
+    border-radius: 999px
 
-  .icone
-    display: flex
-    align-items: center
-    gap: 12px
-
-    img
-      width: 20px
-      height: 20px
-
-.thumb-brinquedo
-  display: flex
-  justify-content: center
-  align-items: center
-  position: relative
-
-  img
-    max-width: 115%
-    height: auto
-    display: block
-    filter: drop-shadow(0 15px 20px rgba(40, 100, 150, .25))
-    transform: translate(10px, -25px)
-    border-radius: 30px
+  .icone-info
+    color: $ct-navy
+    flex: 0 0 auto
 
 .btn-card-whats
+  margin-top: auto
   display: flex
   align-items: center
   justify-content: center
-  gap: 12px
+  gap: 10px
   width: 100%
-  padding: 16px
-  background: #00a884
+  padding: 14px
+  background: #43d38d
   color: #fff
   font-weight: 900
-  font-size: 1.1rem
+  font-size: 1.05rem
   text-decoration: none
-  border-radius: 50px
-  box-shadow: 0 6px 15px rgba(0, 168, 132, .25)
-  transition: all .2s ease
+  border-radius: 999px
+  transition: background .2s ease, transform .2s ease
 
   &:hover
-    background: #009676
-    transform: translateY(-3px)
-    box-shadow: 0 10px 20px rgba(0, 168, 132, .35)
+    background: #ff3b3b
 
 .icone-whats
   width: 22px
   height: 22px
   display: inline-block
+  color: #fff
+
+.ver-todos-wrap
+  display: flex
+  justify-content: center
+  margin-top: 44px
+
+.btn-ver-todos
+  cursor: pointer
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  border: 2px solid $ct-blue
+  background: #fff
+  color: $ct-blue
+  font-weight: 900
+  font-size: 1rem
+  padding: 14px 32px
+  border-radius: 999px
+  transition: background .2s ease, color .2s ease
+
+  &:hover
+    background: $ct-blue
+    color: #fff
 
 @media (max-width: 640px)
   .chips-categorias
@@ -825,20 +891,11 @@ $ct-navy: #002f55
     width: 100%
     max-width: 260px
 
-  .card-brinquedo
-    padding: 22px
-    border-radius: 24px
+  .corpo-card
+    padding: 18px 18px 20px
 
-  .miolo-card
-    grid-template-columns: 1fr
-    gap: 12px
-
-  .textos-card
-    padding-top: 26px
-
-  .thumb-brinquedo img
-    max-width: 100%
-    transform: translate(0, -10px)
+  .nome-brinquedo
+    font-size: 1.25rem
 
   .btn-card-whats
     font-size: 1rem

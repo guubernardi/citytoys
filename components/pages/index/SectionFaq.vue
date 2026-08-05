@@ -8,6 +8,12 @@
     itemscope
     itemtype="https://schema.org/FAQPage"
   >
+    <div class="onda-faq-topo" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z" fill="#f7fbff" />
+      </svg>
+    </div>
+
     <div class="faq-shell" data-reveal>
       <div class="faq-content container">
         <header class="faq-header" data-reveal>
@@ -36,15 +42,7 @@
               @click="toggle(f.id)"
             >
               <span class="faq-leftIcon" aria-hidden="true">
-                <img
-                  class="faq-leftIcon__img"
-                  :src="iconSrc(f.icon)"
-                  alt=""
-                  width="24"
-                  height="24"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <SvgIcone :nome="iconeLib(f.icon)" :tamanho="24" />
               </span>
 
               <span class="faq-bar">
@@ -117,16 +115,16 @@ const faqs: FAQ[] = [
   }
 ]
 
-function iconSrc(icon: FAQIcon) {
+function iconeLib(icon: FAQIcon) {
   switch (icon) {
     case 'calendar':
-      return '/images/calendario.svg'
+      return 'calendario'
     case 'pin':
-      return '/images/localizacao.svg'
+      return 'localizacao'
     case 'spray':
-      return '/images/limpeza.svg'
+      return 'gota'
     default:
-      return '/images/caminhao.svg'
+      return 'caminhao'
   }
 }
 
@@ -180,39 +178,40 @@ $ct-text: rgba(0,0,0,.82)
 .secao-faq
   position: relative
   min-height: 100vh
-  height: 100vh
-  overflow: auto
+  display: flex
+  flex-direction: column
+  justify-content: center
   padding: clamp(64px, 7vh, 96px) 0
   font-family: var(--fonte)
   overflow: hidden
   scroll-margin-top: 90px
+  background: #fff4d6
 
-  &::before
-    content: ""
-    position: absolute
-    inset: 0
-    background-image: url("/images/faq.svg")
-    background-size: cover
-    background-position: center
-    background-repeat: no-repeat
-    z-index: 0
+/* onda de transição Depoimentos -> FAQ (cor clara do Depoimentos descendo) */
+.onda-faq-topo
+  position: absolute
+  left: 0
+  top: -1px
+  width: 100%
+  line-height: 0
+  z-index: 1
+  pointer-events: none
+  transform: rotate(180deg)
 
-  &::after
-    content: ""
-    position: absolute
-    inset: 0
-    background: radial-gradient(circle at 40% 30%, rgba(255,255,255,.10), rgba(255,255,255,.00) 55%), rgba(255, 216, 90, .35)
-    z-index: 0
+  svg
+    display: block
+    width: 100%
+    height: 90px
 
 .faq-shell
   position: relative
-  z-index: 1
+  z-index: 2
   width: 100%
 
 .container
-  max-width: 1200px
+  max-width: var(--largura-max)
   margin: 0 auto
-  padding: 0 24px
+  padding: 0 var(--container-px)
 
 .faq-header
   text-align: center
@@ -232,8 +231,8 @@ $ct-text: rgba(0,0,0,.82)
   gap: 16px
   justify-items: stretch
   justify-content: center
-  align-items: center 
-  margin-top: 120px
+  align-items: center
+  margin-top: 8px
 
 .faq-item
   width: 100%
@@ -259,15 +258,10 @@ $ct-text: rgba(0,0,0,.82)
   height: 56px
   border-radius: 16px
   background: $ct-red
+  color: #fff
   display: grid
   place-items: center
   box-shadow: 0 10px 22px rgba(255, 59, 59, .25)
-
-.faq-leftIcon__img
-  width: 24px
-  height: 24px
-  display: block
-  filter: brightness(0) invert(1)
 
 .faq-bar
   width: 100%
