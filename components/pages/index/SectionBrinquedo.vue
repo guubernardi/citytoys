@@ -2,17 +2,30 @@
   <section
     ref="secEl"
     class="secao-brinquedos"
+    :class="{ 'secao-tema': temaAtivo }"
     id="brinquedos"
     aria-label="Brinquedos para alugar no Rio de Janeiro"
     data-anim="section-in"
   >
     <div class="container">
       <header class="cabecalho-secao" id="brinquedos-cabecalho" data-anim="fade-up">
-        <p class="mini-texto" id="brinquedos-kicker">
+        <!-- Na campanha: varal curto por cima do título, fazendo a ponte com o hero. -->
+        <VaralBandeirinhas v-if="temaAtivo" class="varal-secao" :gomos="2" />
+
+        <p v-if="temaAtivo" class="mini-texto mini-texto--tema" id="brinquedos-kicker">
+          <SvgIcone nome="presente" :tamanho="16" />
+          {{ copy.seloBrinquedos }}
+        </p>
+        <p v-else class="mini-texto" id="brinquedos-kicker">
           <span class="pontinho">•</span> Os queridinhos da festa <span class="pontinho">•</span>
         </p>
 
-        <h2 class="titulo-secao" id="brinquedos-titulo">Veja nossos brinquedos mais alugados</h2>
+        <h2 class="titulo-secao" id="brinquedos-titulo">
+          Veja nossos
+          <LetrasColoridas v-if="temaAtivo" texto="brinquedos" fundo="claro" />
+          <template v-else>brinquedos</template>
+          mais alugados
+        </h2>
         <p class="subtitulo-secao" id="brinquedos-subtitulo">Escolha uma categoria ou veja todos 😄</p>
 
         <div
@@ -74,8 +87,8 @@
             />
             <span class="etiqueta" :class="toy.etiquetaClass">{{ toy.etiquetaLabel }}</span>
             <span v-if="toy.destaque" class="selo-destaque">
-              <SvgIcone nome="estrela" :tamanho="14" />
-              Mais alugado
+              <SvgIcone :nome="temaAtivo ? 'presente' : 'estrela'" :tamanho="14" />
+              {{ temaAtivo ? copy.seloDestaque : 'Mais alugado' }}
             </span>
           </div>
 
@@ -113,6 +126,9 @@
       <div v-if="temMais && !mostrarTodos" class="ver-todos-wrap">
         <button type="button" class="btn-ver-todos" @click="mostrarTodos = true">
           Ver todos os brinquedos ({{ brinquedosOrdenados.length }})
+          <svg v-if="temaAtivo" class="btn-ver-todos__seta" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </button>
       </div>
     </div>
@@ -129,6 +145,14 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dimensaoImagem } from '~/helpers/dimensoesImagens.js'
 import { jsonLdCatalogoBrinquedos, scriptJsonLd } from '~/helpers/seo.js'
+import { useTemaSazonal } from '~/composables/useTemaSazonal'
+import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
+import VaralBandeirinhas from '~/components/global/tema/VaralBandeirinhas.vue'
+
+// Na temporada de Dia das Crianças a seção ganha moldura de festa (varal,
+// título colorido, confete no fundo). Fotos, etiquetas e o botão do WhatsApp
+// ficam iguais: é aqui que a pessoa escolhe o brinquedo.
+const { temaAtivo, copy } = useTemaSazonal()
 
 type CategoriaId = 'todos' | 'grande' | 'medio' | 'pequeno'
 
@@ -351,6 +375,38 @@ const brinquedos = ref<Toy[]>([
     capText: 'Até 6 crianças',
     imageSrc: '/images/futebol-sabao-4x8.webp',
     imageAlt: 'Futebol de Sabão 4x8 — brinquedo inflável médio para eventos no Rio de Janeiro'
+  },
+  {
+    id: 'toy-ping-pong',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Ping Pong',
+    schemaCategory: 'Mesa de jogos - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade: livre',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/ping-pong.webp',
+    imageAlt: 'Mesa de ping pong com raquetes e bolinhas, para alugar em festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-sinuca',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Sinuca',
+    schemaCategory: 'Mesa de jogos - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade: livre',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/sinuca.webp',
+    imageAlt: 'Mesa de sinuca com tacos e bolas, para alugar em festas no Rio de Janeiro'
   },
   {
     id: 'toy-guerra-cotonete',
@@ -881,6 +937,130 @@ $ct-navy: #002f55
   &:hover
     background: $ct-blue
     color: #fff
+
+/* ---- tema sazonal (Dia das Crianças) ---- */
+/* Tudo abaixo depende da classe .secao-tema na <section>, que entra e sai
+   junto com a campanha (composables/useTemaSazonal.ts). */
+
+/* Confete bem clarinho no fundo branco: aparece entre os cards, nunca por
+   cima das fotos (os cards têm fundo próprio). */
+.secao-tema
+  background-image: var(--tema-confete-fundo)
+  background-size: 240px 240px
+
+/* Respiro liso atrás do cabeçalho, que se desfaz nas bordas: o confete do
+   fundo fica em volta do título e dos filtros, nunca atrás das letras. */
+.secao-tema .cabecalho-secao
+  background: radial-gradient(ellipse 70% 90% at center, #ffffff 62%, rgba(255,255,255,0) 100%)
+
+/* corda cinza-azulada: a branca padrão sumiria no fundo branco */
+.varal-secao
+  --varal-corda: #b9c7d8
+  width: min(760px, 92%)
+  margin: 0 auto 14px
+
+.mini-texto--tema
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  color: #d62f35
+
+.secao-tema .selo-destaque
+  background: linear-gradient(90deg, #ffd23f, #ffb347)
+
+/* Borda colorida no hover. A borda tem 2px transparentes o tempo todo, então
+   trocar a cor não muda o tamanho do card nem empurra a grade. */
+.secao-tema .card-brinquedo
+  border: 2px solid transparent
+  background: linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(#eef2f7, #eef2f7) border-box
+
+  &:hover
+    border-color: transparent
+    background: linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(120deg, #ff3b3b, #ffd23f, #2ecc71, #2b74eb, #a45cff) border-box
+
+/* "Ver todos" colorido, correndo como a faixa do topo. Sem amarelo no
+   gradiente: o texto é branco e precisa ler bem.
+   No hover ele "pula": sobe com efeito de mola, ganha brilho colorido em
+   volta, um reflexo atravessa o botão e a setinha quica pra baixo (é ali
+   embaixo que a lista abre). */
+.secao-tema .btn-ver-todos
+  position: relative
+  overflow: hidden
+  border-color: transparent
+  background: linear-gradient(90deg, #2b74eb, #a45cff, #ff3b3b, #2b74eb)
+  background-size: 200% 100%
+  color: #ffffff
+  box-shadow: 0 6px 16px rgba(43,116,235,.22)
+  animation: tema-correr-gradiente 10s linear infinite
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease
+
+  /* reflexo de luz, escondido à esquerda até o hover */
+  &::after
+    content: ""
+    position: absolute
+    top: 0
+    bottom: 0
+    left: -60%
+    width: 55%
+    background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%)
+    transform: skewX(-20deg)
+    pointer-events: none
+
+  &:hover
+    background: linear-gradient(90deg, #2b74eb, #a45cff, #ff3b3b, #2b74eb)
+    background-size: 200% 100%
+    color: #ffffff
+    transform: translateY(-4px) scale(1.05)
+    box-shadow: 0 14px 30px rgba(164,92,255,.38), 0 6px 14px rgba(255,59,59,.25)
+
+    &::after
+      animation: btn-reflexo .8s ease
+
+    .btn-ver-todos__seta
+      animation: seta-quicar .9s ease-in-out infinite
+
+  /* no celular não tem hover: o toque dá uma afundadinha de resposta */
+  &:active
+    transform: translateY(-1px) scale(.97)
+
+  &:focus-visible
+    outline: 3px solid #ffd23f
+    outline-offset: 3px
+
+.btn-ver-todos__seta
+  width: 18px
+  height: 18px
+
+  path
+    fill: none
+    stroke: currentColor
+    stroke-width: 2.6
+    stroke-linecap: round
+    stroke-linejoin: round
+
+@keyframes btn-reflexo
+  from
+    left: -60%
+  to
+    left: 120%
+
+@keyframes seta-quicar
+  0%, 100%
+    transform: translateY(0)
+  50%
+    transform: translateY(4px)
+
+@media (prefers-reduced-motion: reduce)
+  .secao-tema .btn-ver-todos
+    animation: none
+    transition: box-shadow .2s ease
+
+    &:hover
+      transform: none
+
+      &::after,
+      .btn-ver-todos__seta
+        animation: none
 
 @media (max-width: 640px)
   .chips-categorias

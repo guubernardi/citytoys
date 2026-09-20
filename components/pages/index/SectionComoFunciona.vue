@@ -3,6 +3,7 @@
   <section
     ref="secEl"
     class="secao-como-funciona"
+    :class="{ 'secao-tema': temaAtivo }"
     id="como-funciona"
     aria-label="Como funciona o aluguel"
     aria-labelledby="como-funciona-titulo"
@@ -17,8 +18,20 @@
 
     <div class="container">
       <header class="cabecalho-funciona" id="como-funciona-cabecalho" data-reveal>
-        <p class="kicker-funciona">Passo a passo</p>
-        <h2 class="titulo-funciona" id="como-funciona-titulo">Alugar com a City Toys é muito fácil!</h2>
+        <p class="kicker-funciona" :class="{ 'kicker-funciona--tema': temaAtivo }">
+          <SvgIcone v-if="temaAtivo" nome="presente" :tamanho="15" />
+          Passo a passo
+        </p>
+
+        <!-- O <span> junta tudo num item só do flex do h2 (senão o espaço antes
+             de "fácil" some). &nbsp; mantém "City Toys" sempre na mesma linha. -->
+        <h2 class="titulo-funciona" id="como-funciona-titulo">
+          <span>
+            Alugar com a City&nbsp;Toys é muito
+            <LetrasColoridas v-if="temaAtivo" texto="fácil" fundo="claro" />
+            <template v-else>fácil</template>!
+          </span>
+        </h2>
         <p class="subtitulo-funciona" id="como-funciona-subtitulo">Escolha, agende e a gente cuida do resto 😉</p>
       </header>
 
@@ -64,12 +77,14 @@
 
                 <div class="chat-body">
                   <div class="bolha bolha-out">
-                    Oi! Tem Castelinho pro dia 12? 🎉
+                    {{ temaAtivo ? copy.chatPassoAPasso.pergunta : 'Oi! Tem Castelinho pro dia 12? 🎉' }}
                     <span class="bolha-hora">09:41 ✓✓</span>
                   </div>
-                  <div class="bolha bolha-in">Temos sim! Já reservei a data pra você 🎈</div>
+                  <div class="bolha bolha-in">
+                    {{ temaAtivo ? copy.chatPassoAPasso.resposta : 'Temos sim! Já reservei a data pra você 🎈' }}
+                  </div>
                   <div class="bolha bolha-out">
-                    Perfeito, muito obrigada! 🥳
+                    {{ temaAtivo ? copy.chatPassoAPasso.confirmacao : 'Perfeito, muito obrigada! 🥳' }}
                     <span class="bolha-hora">09:42 ✓✓</span>
                   </div>
                 </div>
@@ -79,6 +94,29 @@
                 <div class="road">
                   <span class="dash"></span>
                 </div>
+
+                <!-- Balões amarrados na traseira da caçamba, voando ao vento. Mesmo
+                     tamanho (240x160) e mesma animação do caminhão, então andam
+                     juntos. Vem antes do <img> pra ficar atrás dele. -->
+                <svg v-if="temaAtivo" class="caminhao-baloes" viewBox="0 0 240 160" aria-hidden="true">
+                  <g class="caminhao-baloes__cacho">
+                    <path class="caminhao-baloes__fio" d="M17,31 Q-6,54 -34,54" />
+                    <path class="caminhao-baloes__fio" d="M17,31 Q0,46 -20,44" />
+                    <path class="caminhao-baloes__fio" d="M17,31 Q6,38 -4,36" />
+
+                    <ellipse cx="-34" cy="40" rx="9" ry="11" fill="#2b74eb" />
+                    <polygon points="-36.5,54 -31.5,54 -34,50" fill="#2b74eb" />
+                    <ellipse cx="-37" cy="36" rx="2.5" ry="3.5" fill="#ffffff" opacity=".55" />
+
+                    <ellipse cx="-20" cy="30" rx="9" ry="11" fill="#ff3b3b" />
+                    <polygon points="-22.5,44 -17.5,44 -20,40" fill="#ff3b3b" />
+                    <ellipse cx="-23" cy="26" rx="2.5" ry="3.5" fill="#ffffff" opacity=".55" />
+
+                    <ellipse cx="-4" cy="22" rx="9" ry="11" fill="#ffd23f" />
+                    <polygon points="-6.5,36 -1.5,36 -4,32" fill="#ffd23f" />
+                    <ellipse cx="-7" cy="18" rx="2.5" ry="3.5" fill="#ffffff" opacity=".6" />
+                  </g>
+                </svg>
 
                 <img class="caminhao" src="/images/caminhao-citytoys.webp" alt="" loading="lazy" decoding="async" />
               </div>
@@ -112,6 +150,13 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useTemaSazonal } from '~/composables/useTemaSazonal'
+import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
+
+// Na temporada de Dia das Crianças os números viram balões, o caminhão sai
+// com balões amarrados e a conversa do passo 2 fala da data. Os três passos
+// continuam iguais: é o que explica como alugar.
+const { temaAtivo, copy } = useTemaSazonal()
 
 type Passo = {
   id: string
@@ -486,6 +531,115 @@ onBeforeUnmount(() => {
 
 .onda-fill
   fill: #0b4aa2
+
+/* ---- tema sazonal (Dia das Crianças) ---- */
+/* Tudo abaixo depende da classe .secao-tema na <section>, que entra e sai
+   junto com a campanha (composables/useTemaSazonal.ts). */
+
+/* a onda do fim emenda com o topo "noite de festa" dos Benefícios */
+.secao-tema .onda-fill
+  fill: var(--tema-noite-topo)
+
+/* mesmo confete clarinho da seção de brinquedos (token em tema-sazonal.sass) */
+.secao-tema
+  background-image: var(--tema-confete-fundo)
+  background-size: 240px 240px
+
+/* Respiro liso atrás do cabeçalho, que se desfaz nas bordas: o confete do
+   fundo fica em volta do título, nunca atrás das letras. */
+.secao-tema .cabecalho-funciona
+  background: radial-gradient(ellipse 70% 90% at center, #eaf1fb 62%, rgba(234,241,251,0) 100%)
+
+.kicker-funciona--tema
+  color: #d62f35
+
+  :deep(svg)
+    vertical-align: -2px
+    margin-right: 4px
+
+/* Números viram balões: cor do passo, brilho, nó e barbante, flutuando.
+   O gradiente vai só no background-image; a cor de cada passo continua
+   vindo do .passo--amarelo/verde/azul. */
+.secao-tema .passo-num
+  position: relative
+  width: 54px
+  height: 62px
+  border-radius: 50% 50% 47% 47% / 55% 55% 45% 45%
+  background-image: radial-gradient(circle at 32% 26%, rgba(255,255,255,.65) 0 9%, rgba(255,255,255,0) 30%), radial-gradient(circle at 68% 78%, rgba(0,0,0,.18), rgba(0,0,0,0) 55%)
+  box-shadow: 0 10px 18px rgba(18,48,98,.18)
+  animation: balao-numero 4.5s ease-in-out infinite
+
+  /* nó */
+  &::after
+    content: ""
+    position: absolute
+    top: 100%
+    left: 50%
+    width: 10px
+    height: 7px
+    margin: -1px 0 0 -5px
+    background-color: inherit
+    clip-path: polygon(50% 0, 100% 100%, 0 100%)
+
+  /* barbante */
+  &::before
+    content: ""
+    position: absolute
+    top: calc(100% + 6px)
+    left: 50%
+    width: 1.5px
+    height: 22px
+    margin-left: -.75px
+    background: rgba(21,38,75,.3)
+
+.secao-tema .passo:nth-child(2) .passo-num
+  animation-delay: -1.5s
+
+.secao-tema .passo:nth-child(3) .passo-num
+  animation-delay: -3s
+
+@keyframes balao-numero
+  0%, 100%
+    transform: translateY(0) rotate(-3deg)
+  50%
+    transform: translateY(-5px) rotate(3deg)
+
+/* balões do caminhão: mesma caixa e mesma animação do <img>, andam juntos */
+.caminhao-baloes
+  position: absolute
+  top: -10px
+  left: -16%
+  width: 240px
+  height: 160px
+  overflow: visible
+  pointer-events: none
+  animation: caminhao-drive 4.8s linear infinite
+
+.caminhao-baloes__fio
+  fill: none
+  stroke: rgba(21,38,75,.45)
+  stroke-width: 1
+
+.caminhao-baloes__cacho
+  transform-box: view-box
+  transform-origin: 17px 31px
+  animation: baloes-vento 1.2s ease-in-out infinite
+
+@keyframes baloes-vento
+  0%, 100%
+    transform: rotate(-4deg)
+  50%
+    transform: rotate(4deg)
+
+@media (max-width: 700px)
+  .secao-tema .passo-num
+    width: 46px
+    height: 53px
+
+@media (prefers-reduced-motion: reduce)
+  .secao-tema .passo-num,
+  .caminhao-baloes__cacho
+    animation: none
 
 @media (max-width: 700px)
   .passo

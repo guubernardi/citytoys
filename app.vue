@@ -15,6 +15,7 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useTemaSazonal } from '~/composables/useTemaSazonal'
 import {
   DESCRICAO_PADRAO,
   IMAGEM_COMPARTILHAMENTO,
@@ -29,8 +30,15 @@ const route = useRoute()
 // Canonical e og:url acompanham a rota atual, sem query nem hash.
 const urlCanonica = computed(() => urlAbsoluta(route.path))
 
+// Tema sazonal: a classe no <html> liga a paleta da campanha
+// (assets/css/tema-sazonal.sass) e a barra do navegador acompanha.
+// Fora da janela do tema as duas voltam ao padrão sozinhas.
+const { temaAtivo } = useTemaSazonal()
+const classeTema = computed(() => (temaAtivo.value ? 'tema-sazonal' : ''))
+const corTema = computed(() => (temaAtivo.value ? '#2b74eb' : '#2D3A7A'))
+
 useHead({
-  htmlAttrs: { lang: 'pt-BR' },
+  htmlAttrs: { lang: 'pt-BR', class: classeTema },
 
   titleTemplate: titulo => (titulo ? `${titulo} | ${NOME_EMPRESA}` : `${NOME_EMPRESA} | Aluguel de Brinquedos Infláveis no Rio de Janeiro`),
 
@@ -57,7 +65,7 @@ useHead({
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'HandheldFriendly', content: 'true' },
 
-    { name: 'theme-color', content: '#2D3A7A' },
+    { name: 'theme-color', content: corTema },
     { name: 'msapplication-TileColor', content: '#2D3A7A' },
     { name: 'msapplication-navbutton-color', content: '#2D3A7A' },
 

@@ -1,0 +1,51 @@
+// Tema sazonal — Dia das Crianças.
+//
+// Nada aqui tem efeito sozinho: tudo depende da classe .tema-sazonal, que o
+// app.vue põe no <html> só enquanto a campanha está no ar (ver
+// composables/useTemaSazonal.ts). Fora da janela, o site fica idêntico ao que
+// era antes — esse arquivo vira peso morto de alguns bytes.
+//
+// Aqui moram só os TOKENS e os keyframes compartilhados. O visual de cada
+// peça continua no <style scoped> do seu componente, como no resto do projeto.
+
+.tema-sazonal
+  // Paleta da campanha — reaproveita as cores que o site já usa, pra não
+  // brigar com o azul do Nav nem com o amarelo dos CTAs.
+  --tema-amarelo: #ffd23f
+  --tema-azul: #2b74eb
+  --tema-vermelho: #ff3b3b
+  --tema-verde: #00c2c7
+  --tema-rosa: #ff6fae
+  --tema-navy: #052a54
+
+  // Faixa do topo: gradiente festivo que corre devagar.
+  --tema-faixa-bg: linear-gradient(90deg, #2b74eb, #00c2c7, #ffd23f, #ff6fae, #2b74eb)
+  --tema-faixa-texto: #ffffff
+
+  // Altura da faixa. O Nav soma isso no --menu-h ao medir o header, então
+  // mexer aqui reacomoda o hero inteiro sem precisar tocar em mais nada.
+  --tema-faixa-h: 44px
+
+  // Cor do topo da seção Benefícios na campanha ("noite de festa"). A onda do
+  // fim do Passo a passo pinta com essa mesma cor pra emenda não aparecer.
+  --tema-noite-topo: #1a2f8a
+
+  // Confete bem clarinho pra fundo de seção (240x240, repete). Usado pelas
+  // seções de brinquedos e passo a passo com background-size: 240px 240px.
+  --tema-confete-fundo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Crect x='20' y='30' width='6' height='16' rx='3' fill='%23ff3b3b' opacity='.22' transform='rotate(25 23 38)'/%3E%3Ccircle cx='122' cy='42' r='4' fill='%232b74eb' opacity='.2'/%3E%3Crect x='190' y='74' width='6' height='16' rx='3' fill='%232ecc71' opacity='.24' transform='rotate(-30 193 82)'/%3E%3Cpath d='M70 104l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z' fill='%23ffd23f' opacity='.55'/%3E%3Ccircle cx='204' cy='160' r='3.5' fill='%23ff9a00' opacity='.3'/%3E%3Crect x='140' y='188' width='6' height='16' rx='3' fill='%23a45cff' opacity='.2' transform='rotate(40 143 196)'/%3E%3Ccircle cx='32' cy='196' r='4' fill='%2300c2c7' opacity='.24'/%3E%3Cpath d='M150 118l2.5 6 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5z' fill='%23ff6fae' opacity='.3'/%3E%3C/svg%3E")
+
+@media (max-width: 600px)
+  .tema-sazonal
+    --tema-faixa-h: 56px
+
+// ---- keyframes compartilhados ----
+
+// Gradiente da faixa correndo de lado.
+@keyframes tema-correr-gradiente
+  0%
+    background-position: 0% 50%
+  100%
+    background-position: 200% 50%
+
+// Menos movimento (prefers-reduced-motion) é tratado em cada componente do
+// tema, junto das próprias animações.

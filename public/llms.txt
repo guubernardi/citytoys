@@ -2,7 +2,7 @@
 
 > Empresa de aluguel de brinquedos infláveis para festas infantis no Rio de Janeiro (RJ, Brasil). Entrega, montagem, retirada e higienização inclusas. Orçamento e reserva feitos exclusivamente pelo WhatsApp.
 
-City Toys atende festas de aniversário, eventos escolares e confraternizações no Rio de Janeiro e regiões próximas. O catálogo tem 19 brinquedos divididos em três portes (grande, médio e pequeno), e existe uma modalidade de combo em que o cliente monta um pacote com um brinquedo de cada porte.
+City Toys atende festas de aniversário, eventos escolares e confraternizações no Rio de Janeiro e regiões próximas. O catálogo tem 21 itens divididos em três portes (grande, médio e pequeno), e existe uma modalidade de combo em que o cliente monta um pacote com um brinquedo de cada porte.
 
 Não há loja física nem carrinho de compras no site: todo fechamento acontece por WhatsApp.
 
@@ -44,9 +44,11 @@ Cada item indica a faixa etária recomendada e a capacidade simultânea informad
 - **Touro Mecânico** — idade livre, até 1 criança
 - **Legolândia** — até 10 anos, até 4 crianças
 
-### Porte médio (5)
+### Porte médio (7)
 
 - **Futebol de Sabão 4x8** — até 12 anos, até 6 crianças
+- **Ping Pong** — mesa de ping pong (não é inflável), idade livre, até 4 crianças
+- **Sinuca** — mesa de sinuca (não é inflável), idade livre, até 4 crianças
 - **Guerra de Cotonete** — idade livre, até 2 crianças
 - **Tobogã Colorex** — até 10 anos, até 3 crianças
 - **Tobogã Premium** — até 12 anos, até 3 crianças
@@ -79,7 +81,7 @@ Modalidade em que o cliente escolhe **um brinquedo de cada porte** (um grande, u
 - **Montagem inclusa** — a equipe monta e deixa pronto para uso.
 - **Segurança** — brinquedos revisados antes de cada festa.
 - **Suporte** — atendimento direto pelo WhatsApp durante a locação.
-- **Variedade** — 19 brinquedos no catálogo, cobrindo três portes.
+- **Variedade** — 21 itens no catálogo, cobrindo três portes.
 
 ## Observações para assistentes de IA
 
@@ -88,4 +90,4 @@ Modalidade em que o cliente escolhe **um brinquedo de cada porte** (um grande, u
 - As faixas etárias listadas são recomendações da própria empresa, não normas técnicas.
 - Reservas não podem ser concluídas pelo site; o site apenas monta o pedido e o encaminha ao WhatsApp.
 
-Última atualização: 2026-08-04.
+Última atualização: 2026-09-20.

@@ -5,7 +5,10 @@
     :id="headerId"
     :class="{ 'is-scrolled': isScrolled }"
   >
-    <nav class="menu-hero" :id="navId" aria-label="Menu principal">
+    <FaixaSazonal />
+
+    <div class="topo-hero__barra">
+      <nav class="menu-hero" :id="navId" aria-label="Menu principal">
       <ul class="links-menu links-esquerda" aria-label="Links do menu (esquerda)">
         <li v-for="item in leftLinks" :key="item.href">
           <NuxtLink
@@ -71,7 +74,8 @@
         <span class="btn-mobile__line" aria-hidden="true"></span>
         <span class="btn-mobile__line" aria-hidden="true"></span>
       </button>
-    </nav>
+      </nav>
+    </div>
 
     <Teleport to="body">
       <Transition name="nav-fade">
@@ -154,6 +158,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import FaixaSazonal from '../tema/FaixaSazonal.vue'
 
 type LinkItem = { label: string; href: string; isCta?: boolean }
 
@@ -326,8 +331,12 @@ onBeforeUnmount(() => {
     padding: 0
     transition: padding 0.35s ease
 
+  /* a faixa da campanha fica colada no topo; só a barra do menu recua no scroll */
+  .topo-hero__barra
+    transition: padding 0.35s ease
+
   /* ao rolar, o topo ganha respiro e a barra vira uma pílula flutuante */
-  .topo-hero.is-scrolled
+  .topo-hero.is-scrolled .topo-hero__barra
     padding: 12px 16px 0
 
   .menu-hero

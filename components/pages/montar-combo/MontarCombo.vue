@@ -205,6 +205,11 @@
           </template>
         </div>
 
+        <p v-if="mesFechado" class="cal__aviso">
+          <strong>Outubro</strong> não entra no combo da semana. Para festas nesse mês,
+          <a :href="linkWhatsOutubro" target="_blank" rel="noopener">fale com a gente no WhatsApp</a>.
+        </p>
+
         <div class="cal__rodape">
           <button class="cal__btn" type="button" @click="irHoje">Hoje</button>
           <button class="cal__btn cal__btn--ghost" type="button" @click="limparData">Limpar</button>
@@ -416,14 +421,17 @@ function isOutubro(m0: number) {
   return m0 === MES_OUTUBRO
 }
 
-/** soma meses pulando Outubro */
-function addMonthsSkippingOct(delta: number) {
-  let d = new Date(viewYear.value, viewMonth.value, 1)
+/**
+ * Navega os meses um a um.
+ *
+ * Outubro continua fora do combo, mas agora aparece no calendário com os dias
+ * desabilitados e um aviso. Antes o mês era pulado em silêncio: quem clicava
+ * na seta em Setembro caía em Novembro sem entender o que tinha acontecido — e
+ * ia embora em vez de chamar no WhatsApp.
+ */
+function addMonths(delta: number) {
+  const d = new Date(viewYear.value, viewMonth.value, 1)
   d.setMonth(d.getMonth() + delta)
-
-  if (isOutubro(d.getMonth())) {
-    d.setMonth(d.getMonth() + (delta >= 0 ? 1 : -1))
-  }
 
   viewMonth.value = d.getMonth()
   viewYear.value = d.getFullYear()
@@ -496,25 +504,19 @@ const semanaLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 const viewMonth = ref<number>(new Date().getMonth())
 const viewYear = ref<number>(new Date().getFullYear())
 
-function ensureNotOctoberOnView() {
-  if (isOutubro(viewMonth.value)) {
-    viewMonth.value = 10 // Novembro
-  }
-}
-
 function syncViewToSelected() {
   if (!dataEvento.value) return
 
+  // Cinto de segurança: nenhum dia de Outubro é selecionável, mas se algum
+  // chegar aqui (estado antigo, link colado), some com ele.
   if (isOutubro(monthFromISO(dataEvento.value))) {
     dataEvento.value = ''
-    ensureNotOctoberOnView()
     return
   }
 
   const d = parseISO(dataEvento.value)
   viewMonth.value = d.getMonth()
   viewYear.value = d.getFullYear()
-  ensureNotOctoberOnView()
 }
 
 watch(dataEvento, () => {
@@ -523,13 +525,25 @@ watch(dataEvento, () => {
 
 const mesLabel = computed(() => `${meses[viewMonth.value]} ${viewYear.value}`)
 
+// Outubro não entra no combo da semana. O mês aparece no calendário, mas com
+// todos os dias desabilitados e um aviso que encaminha a pessoa pro WhatsApp
+// em vez de deixá-la sem saída.
+const mesFechado = computed(() => isOutubro(viewMonth.value))
+
+const linkWhatsOutubro = computed(() => {
+  const msg =
+    'Olá! Quero alugar brinquedo para uma festa em outubro 🎈\n\n' + 'Data: ____\n' + 'Bairro: ____'
+
+  return `https://wa.me/${WHATS_NUMERO}?text=${encodeURIComponent(msg)}`
+})
+
 function prevMonth() {
-  addMonthsSkippingOct(-1)
+  addMonths(-1)
   if (calAberto.value) nextTick(updateCalPos)
 }
 
 function nextMonth() {
-  addMonthsSkippingOct(1)
+  addMonths(1)
   if (calAberto.value) nextTick(updateCalPos)
 }
 
@@ -547,8 +561,6 @@ type CalCell = {
 const calendarCells = computed<(CalCell | null)[]>(() => {
   const y = viewYear.value
   const m = viewMonth.value
-
-  if (isOutubro(m)) return Array.from({ length: 42 }, () => null)
 
   const first = new Date(y, m, 1)
   const daysInMonth = new Date(y, m + 1, 0).getDate()
@@ -598,11 +610,11 @@ function selecionarDia(iso: string) {
 function irHoje() {
   const now = new Date()
 
+  // Em Outubro não existe "hoje" selecionável: leva a vista até o mês, onde o
+  // aviso explica o porquê, em vez de escolher uma data que ninguém pediu.
   if (isOutubro(now.getMonth())) {
-    const iso = isoFromYMD(now.getFullYear(), 10, 1)
-    const d = parseISO(iso)
-    dataEvento.value = d.getTime() < minDateObj.value.getTime() ? dataMinima.value : iso
-    fecharCalendar()
+    viewMonth.value = now.getMonth()
+    viewYear.value = now.getFullYear()
     return
   }
 
@@ -700,7 +712,6 @@ function onDocKeyDown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
-  ensureNotOctoberOnView()
   document.addEventListener('pointerdown', onDocPointerDown)
   document.addEventListener('keydown', onDocKeyDown)
 })
@@ -819,6 +830,38 @@ const brinquedos = ref<Brinquedo[]>([
     capText: 'Até 6 crianças',
     imageSrc: '/images/futebol-sabao-4x8.webp',
     imageAlt: 'Futebol de Sabão 4x8 — brinquedo inflável médio para eventos no Rio de Janeiro'
+  },
+  {
+    id: 'toy-ping-pong',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-azul',
+    name: 'Ping Pong',
+    schemaCategory: 'Mesa de jogos - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade: livre',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/ping-pong.webp',
+    imageAlt: 'Mesa de ping pong com raquetes e bolinhas, para alugar em festas no Rio de Janeiro'
+  },
+  {
+    id: 'toy-sinuca',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-azul',
+    name: 'Sinuca',
+    schemaCategory: 'Mesa de jogos - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade: livre',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 4 crianças',
+    capText: 'Até 4 crianças',
+    imageSrc: '/images/sinuca.webp',
+    imageAlt: 'Mesa de sinuca com tacos e bolas, para alugar em festas no Rio de Janeiro'
   },
   {
     id: 'toy-guerra-cotonete',
@@ -1470,6 +1513,21 @@ function handleWhatsClick(e: MouseEvent) {
     opacity: .35
     cursor: not-allowed
     transform: none !important
+
+/* Aviso de mês fechado — só aparece com a vista do calendário em Outubro. */
+.cal__aviso
+  margin: 0
+  padding: 10px 14px
+  border-top: 1px solid rgba(19, 26, 59, .08)
+  background: rgba(255, 154, 0, .10)
+  color: #8A4B00
+  font-size: 12.5px
+  font-weight: 700
+  line-height: 1.4
+
+  a
+    color: #00A884
+    font-weight: 1000
 
 .cal__rodape
   display: flex
