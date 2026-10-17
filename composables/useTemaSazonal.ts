@@ -11,9 +11,10 @@ import { useState } from '#app'
 const WHATS_NUMERO = '5521984848699'
 
 // Janela da campanha, no fuso do Rio. Os dois extremos entram.
-// O fim é 13/10 (um dia depois do feriado) pra pegar quem busca de última hora.
+// O fim era 13/10 (um dia depois do feriado); em 17/10 foi estendido até 31/10
+// pra campanha virar "mês das crianças" e cobrir outubro inteiro.
 const INICIO = '2026-09-19'
-const FIM = '2026-10-13'
+const FIM = '2026-10-31'
 
 /**
  * Copy da campanha, num lugar só.
@@ -26,32 +27,32 @@ const FIM = '2026-10-13'
  * "outubro esgotado", depois de confirmar a agenda real com o cliente.
  */
 export const COPY_TEMA = {
-  faixa: 'Dia das Crianças chegando! As datas de outubro estão sob consulta.',
+  faixa: 'Mês das Crianças na City Toys! As datas de outubro estão sob consulta.',
   faixaCta: 'Garantir minha data',
-  faixaCurta: 'Dia das Crianças · datas sob consulta',
+  faixaCurta: 'Mês das Crianças · datas sob consulta',
 
   // Título do hero na campanha: "Feliz" + "Dia das" na fita + "Crianças" em letras coloridas.
   tituloTag: 'Feliz',
   tituloFita: 'Dia das',
   tituloDestaque: 'Crianças',
   //   = espaço que não quebra linha: "City Toys" nunca fica partido em duas linhas.
-  subtituloHero: 'Dia das Crianças chegando e a diversão tá aqui na City Toys. Garanta já os brinquedos da sua festa!',
+  subtituloHero: 'O mês das crianças continua e a diversão tá aqui na City Toys. Garanta já os brinquedos da sua festa!',
 
   // Seção de brinquedos: selo acima do título e selo dos brinquedos em destaque.
-  seloBrinquedos: 'Especial Dia das Crianças',
-  seloDestaque: 'Top Dia das Crianças',
+  seloBrinquedos: 'Especial Mês das Crianças',
+  seloDestaque: 'Top Mês das Crianças',
 
   // Conversa de exemplo do "Passo a passo" (passo 2). A City Toys responde que
   // vai conferir, sem prometer data: outubro está sob consulta.
   chatPassoAPasso: {
-    pergunta: 'Oi! Quero um Castelinho pra festa do Dia das Crianças 🎉',
+    pergunta: 'Oi! Quero um Castelinho pra uma festa em outubro 🎉',
     resposta: 'Oba! Me passa a data e o bairro que eu já confiro 🎈',
     confirmacao: 'Show! Te mando agora 🥳'
   },
 
-  faqPergunta: 'Dá pra alugar no Dia das Crianças?',
+  faqPergunta: 'Ainda dá pra alugar em outubro?',
   faqResposta:
-    'O Dia das Crianças é a data mais concorrida do ano e a nossa agenda de outubro fecha cedo. ' +
+    'Outubro é o mês das crianças, o mais concorrido do ano, e a nossa agenda fecha cedo. ' +
     'Confirme a disponibilidade pelo WhatsApp o quanto antes: se o dia que você quer já estiver ' +
     'fechado, a gente te ajuda a encaixar a festa na semana seguinte.'
 }
@@ -82,7 +83,7 @@ export function useTemaSazonal() {
   const linkWhatsTema = computed(() => {
     const msg =
       'Olá! Vim pelo site da City Toys 🎈\n' +
-      'Quero alugar brinquedo para o Dia das Crianças.\n\n' +
+      'Vi a campanha do Mês das Crianças e quero alugar brinquedo.\n\n' +
       'Data que tenho em mente: ____\n' +
       'Bairro: ____'
 
