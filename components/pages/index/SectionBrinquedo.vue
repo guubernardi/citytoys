@@ -9,48 +9,51 @@
   >
     <div class="container">
       <header class="cabecalho-secao" id="brinquedos-cabecalho" data-anim="fade-up">
-        <!-- Na campanha: varal curto por cima do título, fazendo a ponte com o hero. -->
-        <VaralBandeirinhas v-if="temaAtivo" class="varal-secao" :gomos="2" />
+        <!-- Varal de luzinhas por cima do título: só no Natal. -->
+        <img
+          v-if="temaAtivo"
+          class="varal-luzes"
+          src="/images/natal/brinquedos-varal-luzes.svg"
+          alt=""
+          width="640"
+          height="90"
+          loading="lazy"
+          decoding="async"
+        />
 
-        <p v-if="temaAtivo" class="mini-texto mini-texto--tema" id="brinquedos-kicker">
-          <SvgIcone nome="presente" :tamanho="16" />
-          {{ copy.seloBrinquedos }}
-        </p>
-        <p v-else class="mini-texto" id="brinquedos-kicker">
-          <span class="pontinho">•</span> Os queridinhos da festa <span class="pontinho">•</span>
+        <p class="olho-secao" id="brinquedos-kicker">
+          <SvgIcone :nome="temaAtivo ? 'presente' : 'estrela'" :tamanho="16" />
+          {{ temaAtivo ? copy.seloBrinquedos : 'Os queridinhos da festa' }}
         </p>
 
         <h2 class="titulo-secao" id="brinquedos-titulo">
-          Veja nossos
-          <LetrasColoridas v-if="temaAtivo" texto="brinquedos" fundo="claro" />
-          <template v-else>brinquedos</template>
-          mais alugados
+          Veja nossos <span class="titulo-secao__destaque">brinquedos</span> mais alugados
         </h2>
-        <p class="subtitulo-secao" id="brinquedos-subtitulo">Escolha uma categoria ou veja todos 😄</p>
-
-        <div
-          class="chips-categorias"
-          id="brinquedos-filtros"
-          role="tablist"
-          aria-label="Categorias de brinquedos"
-          data-anim="fade-up"
-        >
-          <button
-            v-for="c in categorias"
-            :key="c.id"
-            class="chip"
-            :class="[`chip--${c.id}`, { 'chip-ativo': activeCat === c.id }]"
-            type="button"
-            role="tab"
-            :data-cat="c.id"
-            :aria-selected="activeCat === c.id ? 'true' : 'false'"
-            aria-controls="brinquedos-grade"
-            @click="activeCat = c.id"
-          >
-            {{ c.label }}
-          </button>
-        </div>
+        <p class="subtitulo-secao" id="brinquedos-subtitulo">Escolha uma categoria ou veja todos</p>
       </header>
+
+      <div
+        class="chips-categorias"
+        id="brinquedos-filtros"
+        role="tablist"
+        aria-label="Categorias de brinquedos"
+        data-anim="fade-up"
+      >
+        <button
+          v-for="c in categorias"
+          :key="c.id"
+          class="chip"
+          :class="[`chip--${c.id}`, { 'chip-ativo': activeCat === c.id }]"
+          type="button"
+          role="tab"
+          :data-cat="c.id"
+          :aria-selected="activeCat === c.id ? 'true' : 'false'"
+          aria-controls="brinquedos-grade"
+          @click="activeCat = c.id"
+        >
+          {{ c.label }}
+        </button>
+      </div>
 
       <div
         class="grade-brinquedos"
@@ -87,7 +90,7 @@
             />
             <span class="etiqueta" :class="toy.etiquetaClass">{{ toy.etiquetaLabel }}</span>
             <span v-if="toy.destaque" class="selo-destaque">
-              <SvgIcone :nome="temaAtivo ? 'presente' : 'estrela'" :tamanho="14" />
+              <SvgIcone nome="estrela" :tamanho="14" />
               {{ temaAtivo ? copy.seloDestaque : 'Mais alugado' }}
             </span>
           </div>
@@ -97,12 +100,12 @@
 
             <ul class="infos-brinquedo" aria-label="Informações do brinquedo">
               <li>
-                <SvgIcone class="icone-info" nome="bebe" :tamanho="18" />
+                <SvgIcone class="icone-info" nome="emoji-feliz" :tamanho="16" />
                 <span>{{ toy.ageText }}</span>
               </li>
 
               <li>
-                <SvgIcone class="icone-info" nome="usuarios" :tamanho="18" />
+                <SvgIcone class="icone-info" nome="usuarios" :tamanho="16" />
                 <span>{{ toy.capText }}</span>
               </li>
             </ul>
@@ -116,7 +119,7 @@
               :aria-label="`Quero alugar ${toy.name} no WhatsApp`"
               data-anim="cta-pop"
             >
-              <SvgIcone class="icone-whats" nome="whatsapp" :tamanho="22" />
+              <SvgIcone class="icone-whats" nome="whatsapp" :tamanho="20" />
               Quero alugar
             </a>
           </div>
@@ -126,17 +129,9 @@
       <div v-if="temMais && !mostrarTodos" class="ver-todos-wrap">
         <button type="button" class="btn-ver-todos" @click="mostrarTodos = true">
           Ver todos os brinquedos ({{ brinquedosOrdenados.length }})
-          <svg v-if="temaAtivo" class="btn-ver-todos__seta" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
+          <SvgIcone class="btn-ver-todos__seta" nome="chevron-baixo" :tamanho="18" />
         </button>
       </div>
-    </div>
-
-    <div class="onda-brinquedo" aria-hidden="true">
-      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <path d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z" fill="#eaf1fb" />
-      </svg>
     </div>
   </section>
 </template>
@@ -146,12 +141,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dimensaoImagem } from '~/helpers/dimensoesImagens.js'
 import { jsonLdCatalogoBrinquedos, scriptJsonLd } from '~/helpers/seo.js'
 import { useTemaSazonal } from '~/composables/useTemaSazonal'
-import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
-import VaralBandeirinhas from '~/components/global/tema/VaralBandeirinhas.vue'
 
-// Na temporada de Dia das Crianças a seção ganha moldura de festa (varal,
-// título colorido, confete no fundo). Fotos, etiquetas e o botão do WhatsApp
-// ficam iguais: é aqui que a pessoa escolhe o brinquedo.
+// O layout da seção é o mesmo o ano todo. No Natal entram o varal de luzinhas,
+// o olho "Especial de Natal", o selo "Top do Natal" nos destaques e o degradê
+// vermelho → verde no "Ver todos". Fotos, etiquetas e o botão do WhatsApp ficam
+// iguais: é aqui que a pessoa escolhe o brinquedo.
 const { temaAtivo, copy } = useTemaSazonal()
 
 type CategoriaId = 'todos' | 'grande' | 'medio' | 'pequeno'
@@ -636,151 +630,161 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="sass" scoped>
-$ct-blue: #2b74eb
-$ct-teal: #00c2c7
-$ct-red: #ff3b3b
-$ct-orange: #ff9800
-$ct-yellow: #ffd742
-$ct-navy: #002f55
+// Tons da arte que não estão nos tokens globais.
+$vermelho-claro: #e5343a
+$vermelho-escuro: #b8202c
+$sombra-card: rgba(18, 48, 98, .08)
 
 .secao-brinquedos
   position: relative
   z-index: 5
   margin-top: -1px
-  font-family: var(--fonte)
-  --onda-h: clamp(56px, 8vw, 110px)
-  padding: 70px 0 calc(30px + var(--onda-h))
+  padding: 64px 0 110px
   background-color: #ffffff
+  font-family: var(--fonte)
+  /* os cards entram deslizando de lado (reveal): sem esse corte, o deslocamento
+     inicial vaza da tela e cria rolagem horizontal no celular. "clip" não vira
+     container de rolagem; "hidden" fica de reserva pra navegador antigo. */
+  overflow-x: hidden
+  overflow-x: clip
 
-.onda-brinquedo
-  position: absolute
-  left: 0
-  right: 0
-  bottom: -1px
-  z-index: 1
-  line-height: 0
-  pointer-events: none
-
-  svg
-    display: block
-    width: 100%
-    height: var(--onda-h)
+/* no Natal o varal ocupa o respiro de cima */
+.secao-tema
+  padding-top: 20px
 
 .container
   position: relative
   z-index: 1
-  max-width: var(--largura-max)
+  max-width: calc(1280px + 2 * var(--container-px))
   margin: 0 auto
   padding: 0 var(--container-px)
 
+/* ---- cabeçalho ---- */
 .cabecalho-secao
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 10px
   text-align: center
-  margin-bottom: 34px
 
-.mini-texto
+.varal-luzes
+  display: block
+  width: min(640px, 100%)
+  height: auto
+  margin-bottom: 16px
+
+.olho-secao
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin: 0
+  color: var(--cor-vermelho)
   font-weight: 900
-  color: #5a8bb0
   font-size: 13px
-  letter-spacing: .6px
-  margin-bottom: 10px
+  letter-spacing: .1em
   text-transform: uppercase
 
-.pontinho
-  margin: 0 6px
-
 .titulo-secao
-  font-size: clamp(26px, 4vw, 38px)
-  color: $ct-navy
-  font-weight: 1000
-  margin-bottom: 10px
+  margin: 0
+  color: var(--cor-navy)
+  font-weight: 900
+  font-size: clamp(28px, 3.06vw, 44px)
+  line-height: 1.2
+
+.titulo-secao__destaque
+  color: var(--cor-vermelho)
 
 .subtitulo-secao
-  color: #587992
+  margin: 0
+  color: var(--cor-texto-suave)
   font-weight: 800
-  font-size: 16px
-  margin-bottom: 26px
+  font-size: 16.5px
 
+/* ---- filtros ---- */
 .chips-categorias
-  display: inline-flex
+  display: flex
   flex-wrap: wrap
   justify-content: center
-  gap: 12px
-  padding: 10px
+  gap: 6px
+  width: fit-content
+  max-width: 100%
+  margin: 26px auto 0
+  padding: 8px
+  border: 1px solid rgba(0,0,0,.07)
   border-radius: 999px
-  background: rgba(255, 255, 255, .80)
-  border: 1px solid rgba(0,0,0,.05)
+  background: #ffffff
+  box-shadow: 0 6px 18px rgba(18,48,98,.06)
 
 .chip
+  padding: 9px 20px
   border: 0
-  cursor: pointer
-  padding: 10px 22px
   border-radius: 999px
-  font-weight: 1000
-  font-size: 14px
-  letter-spacing: .2px
-  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, opacity .18s ease
+  font-family: var(--fonte)
+  font-weight: 900
+  font-size: 14.5px
+  line-height: 1.38
+  cursor: pointer
   user-select: none
-  outline: none
-  color: $ct-navy
-  background: rgba(0,0,0,.06)
+  transition: box-shadow .18s ease, filter .18s ease
 
   &:hover
-    transform: scale(1.05)
-    filter: brightness(.96) saturate(1.06)
+    filter: brightness(.94)
 
   &:focus-visible
-    box-shadow: 0 0 0 4px rgba(43, 116, 235, .25)
+    outline: 3px solid rgba(43,116,235,.45)
+    outline-offset: 2px
 
-/* cores por categoria */
+/* cores por categoria (as mesmas das etiquetas dos cards) */
 .chip--todos
   background: rgba(0,0,0,.06)
-  color: $ct-navy
+  color: var(--cor-navy)
+  --cor-chip: var(--cor-navy)
 
 .chip--grande
-  background: $ct-teal
+  background: var(--cor-vermelho)
   color: #ffffff
+  --cor-chip: var(--cor-vermelho)
 
 .chip--medio
-  background: $ct-red
+  background: var(--cor-verde-acao)
   color: #ffffff
+  --cor-chip: var(--cor-verde-acao)
 
 .chip--pequeno
-  background: $ct-orange
-  color: #ffffff
+  background: var(--cor-laranja)
+  color: var(--cor-navy)
+  --cor-chip: var(--cor-laranja)
 
+/* categoria escolhida: anel da própria cor em volta */
 .chip-ativo
-  transform: scale(1.04)
-  filter: brightness(1.02) saturate(1.06)
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--cor-chip)
 
+/* ---- grade ---- */
 .grade-brinquedos
   display: grid
-  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr))
-  gap: 28px
-  margin-top: 34px
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  gap: 25px
+  margin-top: 26px
 
 .card-brinquedo
   position: relative
   display: flex
   flex-direction: column
-  background: #fff
-  border: 1px solid #eef2f7
-  border-radius: 24px
   overflow: hidden
-  box-shadow: 0 12px 30px rgba(18, 48, 98, .08)
+  border: 1px solid var(--cor-borda)
+  border-radius: 24px
+  background: #ffffff
+  box-shadow: 0 12px 30px $sombra-card
 
   --rx: 0px
-  --ry: 0px
-  transform: translateX(var(--rx)) translateY(var(--ry))
+  transform: translateX(var(--rx))
   opacity: 1
   will-change: transform, opacity
-  transition: transform .55s ease, opacity .55s ease, box-shadow .3s ease, border-color .3s ease
+  transition: transform .55s ease, opacity .55s ease, box-shadow .3s ease
 
+  /* hover só reforça a sombra: o card não se mexe */
   &:hover
-    box-shadow: 0 22px 44px rgba(18, 48, 98, .16)
-    border-color: #e3ebf5
-
-    .foto-card img
-      transform: scale(1.05)
+    box-shadow: 0 22px 44px rgba(18,48,98,.16)
 
 [data-reveal]
   opacity: 0
@@ -802,93 +806,97 @@ $ct-navy: #002f55
 .foto-card
   position: relative
   width: 100%
-  aspect-ratio: 16 / 11
+  aspect-ratio: 410 / 282
   overflow: hidden
-  background: #f4f7fb
+  background: var(--cor-chip-fundo)
 
   img
+    display: block
     width: 100%
     height: 100%
     object-fit: cover
-    display: block
-    transition: transform .4s ease
 
 .etiqueta
   position: absolute
-  top: 14px
-  left: 14px
-  color: #fff
-  padding: 7px 16px
-  font-weight: 900
-  font-size: .82rem
-  letter-spacing: .3px
-  border-radius: 999px
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .18)
+  top: 16px
+  left: 16px
   z-index: 2
+  padding: 5px 12px
+  border-radius: 999px
+  font-weight: 900
+  font-size: 13px
+  line-height: 1.36
 
-/* cores da etiqueta batem com os chips de categoria */
+/* cores da etiqueta batem com os filtros */
 .etiqueta-grande
-  background: $ct-teal
+  background: var(--cor-vermelho)
+  color: #ffffff
 
 .etiqueta-medio
-  background: $ct-red
+  background: var(--cor-verde-acao)
+  color: #ffffff
 
 .etiqueta-pequeno
-  background: $ct-orange
+  background: var(--cor-laranja)
+  color: var(--cor-navy)
 
 .selo-destaque
   position: absolute
-  top: 14px
+  top: 16px
   right: 14px
   z-index: 2
   display: inline-flex
   align-items: center
   gap: 6px
-  background: #ffd23f
-  color: #052a54
-  font-weight: 900
-  font-size: .76rem
-  letter-spacing: .2px
-  padding: 6px 12px
+  padding: 5px 12px
   border-radius: 999px
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .18)
+  background: linear-gradient(90deg, var(--cor-dourado), #ffb347)
+  color: var(--cor-navy)
+  font-weight: 900
+  font-size: 12.5px
+  line-height: 1.36
+  box-shadow: 0 6px 16px rgba(0,0,0,.18)
+
+  :deep(.edusites-icone)
+    color: var(--cor-vermelho)
 
 .corpo-card
+  flex: 1
   display: flex
   flex-direction: column
-  gap: 16px
-  padding: 22px 22px 24px
-  flex: 1
+  gap: 14px
+  padding: 20px 24px 24px
 
 .nome-brinquedo
-  font-size: 1.4rem
-  font-weight: 1000
-  color: $ct-navy
-  line-height: 1.15
   margin: 0
+  color: var(--cor-navy)
+  font-weight: 900
+  font-size: 22.5px
+  line-height: 1.36
 
 .infos-brinquedo
-  list-style: none
-  padding: 0
-  margin: 0
   display: flex
   flex-wrap: wrap
-  gap: 10px
+  gap: 8px
+  margin: 0
+  padding: 0
+  list-style: none
 
   li
     display: inline-flex
     align-items: center
-    gap: 8px
-    background: #f4f7fb
-    color: #4a5b70
-    font-weight: 800
-    font-size: .9rem
-    padding: 8px 12px
+    gap: 6px
+    padding: 7px 12px
     border-radius: 999px
+    background: var(--cor-chip-fundo)
+    color: var(--cor-chip-texto)
+    font-weight: 800
+    font-size: 14px
+    line-height: 1.36
 
   .icone-info
-    color: $ct-navy
     flex: 0 0 auto
+    color: var(--cor-chip-texto)
 
 .btn-card-whats
   margin-top: auto
@@ -897,186 +905,131 @@ $ct-navy: #002f55
   justify-content: center
   gap: 10px
   width: 100%
-  padding: 14px
-  background: #43d38d
-  color: #fff
-  font-weight: 900
-  font-size: 1.05rem
-  text-decoration: none
+  padding: 15px 28px
   border-radius: 999px
-  transition: background .2s ease, transform .2s ease
+  background: var(--cor-verde-acao)
+  color: #ffffff
+  font-weight: 900
+  font-size: 17px
+  line-height: 1.36
+  text-decoration: none
+  filter: drop-shadow(0 8px 10px rgba(21,128,61,.22))
+  transition: background .2s ease
 
   &:hover
-    background: #ff3b3b
+    background: #116b33
+
+  &:focus-visible
+    outline: 3px solid rgba(21,128,61,.45)
+    outline-offset: 3px
 
 .icone-whats
-  width: 22px
-  height: 22px
-  display: inline-block
-  color: #fff
+  color: #ffffff
 
+/* ---- ver todos ---- */
 .ver-todos-wrap
   display: flex
   justify-content: center
-  margin-top: 44px
+  margin-top: 26px
 
+// Degradê não anima no hover (o fundo "pulava"). Por isso o degradê fica num
+// ::before por cima da cor de hover e só some com fade: hover só escurece.
 .btn-ver-todos
-  cursor: pointer
-  display: inline-flex
-  align-items: center
-  gap: 8px
-  border: 2px solid $ct-blue
-  background: #fff
-  color: $ct-blue
-  font-weight: 900
-  font-size: 1rem
-  padding: 14px 32px
-  border-radius: 999px
-  transition: background .2s ease, color .2s ease
-
-  &:hover
-    background: $ct-blue
-    color: #fff
-
-/* ---- tema sazonal (Dia das Crianças) ---- */
-/* Tudo abaixo depende da classe .secao-tema na <section>, que entra e sai
-   junto com a campanha (composables/useTemaSazonal.ts). */
-
-/* Confete bem clarinho no fundo branco: aparece entre os cards, nunca por
-   cima das fotos (os cards têm fundo próprio). */
-.secao-tema
-  background-image: var(--tema-confete-fundo)
-  background-size: 240px 240px
-
-/* Respiro liso atrás do cabeçalho, que se desfaz nas bordas: o confete do
-   fundo fica em volta do título e dos filtros, nunca atrás das letras. */
-.secao-tema .cabecalho-secao
-  background: radial-gradient(ellipse 70% 90% at center, #ffffff 62%, rgba(255,255,255,0) 100%)
-
-/* corda cinza-azulada: a branca padrão sumiria no fundo branco */
-.varal-secao
-  --varal-corda: #b9c7d8
-  width: min(760px, 92%)
-  margin: 0 auto 14px
-
-.mini-texto--tema
-  display: inline-flex
-  align-items: center
-  gap: 6px
-  color: #d62f35
-
-.secao-tema .selo-destaque
-  background: linear-gradient(90deg, #ffd23f, #ffb347)
-
-/* Borda colorida no hover. A borda tem 2px transparentes o tempo todo, então
-   trocar a cor não muda o tamanho do card nem empurra a grade. */
-.secao-tema .card-brinquedo
-  border: 2px solid transparent
-  background: linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(#eef2f7, #eef2f7) border-box
-
-  &:hover
-    border-color: transparent
-    background: linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(120deg, #ff3b3b, #ffd23f, #2ecc71, #2b74eb, #a45cff) border-box
-
-/* "Ver todos" colorido, correndo como a faixa do topo. Sem amarelo no
-   gradiente: o texto é branco e precisa ler bem.
-   No hover ele "pula": sobe com efeito de mola, ganha brilho colorido em
-   volta, um reflexo atravessa o botão e a setinha quica pra baixo (é ali
-   embaixo que a lista abre). */
-.secao-tema .btn-ver-todos
   position: relative
-  overflow: hidden
-  border-color: transparent
-  background: linear-gradient(90deg, #2b74eb, #a45cff, #ff3b3b, #2b74eb)
-  background-size: 200% 100%
+  isolation: isolate
+  display: inline-flex
+  align-items: center
+  gap: 10px
+  padding: 15px 30px
+  border: 0
+  border-radius: 999px
+  background: $vermelho-escuro
   color: #ffffff
-  box-shadow: 0 6px 16px rgba(43,116,235,.22)
-  animation: tema-correr-gradiente 10s linear infinite
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease
+  font-family: var(--fonte)
+  font-weight: 900
+  font-size: 16.5px
+  line-height: 1.38
+  cursor: pointer
+  box-shadow: 0 8px 20px rgba(214,47,53,.25)
 
-  /* reflexo de luz, escondido à esquerda até o hover */
-  &::after
-    content: ""
+  &::before
+    content: ''
     position: absolute
-    top: 0
-    bottom: 0
-    left: -60%
-    width: 55%
-    background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%)
-    transform: skewX(-20deg)
-    pointer-events: none
+    inset: 0
+    z-index: -1
+    border-radius: inherit
+    background: linear-gradient(90deg, $vermelho-claro, var(--cor-vermelho))
+    transition: opacity .25s ease
 
-  &:hover
-    background: linear-gradient(90deg, #2b74eb, #a45cff, #ff3b3b, #2b74eb)
-    background-size: 200% 100%
-    color: #ffffff
-    transform: translateY(-4px) scale(1.05)
-    box-shadow: 0 14px 30px rgba(164,92,255,.38), 0 6px 14px rgba(255,59,59,.25)
-
-    &::after
-      animation: btn-reflexo .8s ease
-
-    .btn-ver-todos__seta
-      animation: seta-quicar .9s ease-in-out infinite
-
-  /* no celular não tem hover: o toque dá uma afundadinha de resposta */
-  &:active
-    transform: translateY(-1px) scale(.97)
+  &:hover::before
+    opacity: 0
 
   &:focus-visible
-    outline: 3px solid #ffd23f
+    outline: 3px solid var(--cor-dourado)
     outline-offset: 3px
 
+/* no Natal o botão ganha o degradê vermelho → verde da arte (nó 21:1143 do Figma) */
+.secao-tema .btn-ver-todos
+  background: linear-gradient(90deg, $vermelho-escuro, var(--cor-verde-acao))
+
+  &::before
+    background: linear-gradient(90deg, $vermelho-claro, var(--cor-verde))
+
 .btn-ver-todos__seta
-  width: 18px
-  height: 18px
+  color: #ffffff
 
-  path
-    fill: none
-    stroke: currentColor
-    stroke-width: 2.6
-    stroke-linecap: round
-    stroke-linejoin: round
-
-@keyframes btn-reflexo
-  from
-    left: -60%
-  to
-    left: 120%
-
-@keyframes seta-quicar
-  0%, 100%
-    transform: translateY(0)
-  50%
-    transform: translateY(4px)
-
-@media (prefers-reduced-motion: reduce)
-  .secao-tema .btn-ver-todos
-    animation: none
-    transition: box-shadow .2s ease
-
-    &:hover
-      transform: none
-
-      &::after,
-      .btn-ver-todos__seta
-        animation: none
+/* ---- responsivo ---- */
+@media (max-width: 980px)
+  .grade-brinquedos
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 20px
 
 @media (max-width: 640px)
+  .secao-brinquedos
+    padding-bottom: 72px
+
+  /* deslocamento menor do reveal no celular */
+  [data-reveal]
+    --rx: -14px
+
+  .reveal-right[data-reveal]
+    --rx: 14px
+
+  .is-inview[data-reveal]
+    --rx: 0px
+
   .chips-categorias
-    padding: 10px
     border-radius: 24px
 
-  .chip
-    width: 100%
-    max-width: 260px
+  .grade-brinquedos
+    grid-template-columns: minmax(0, 1fr)
+    max-width: 460px
+    margin-left: auto
+    margin-right: auto
 
   .corpo-card
     padding: 18px 18px 20px
 
   .nome-brinquedo
-    font-size: 1.25rem
+    font-size: 20px
 
   .btn-card-whats
-    font-size: 1rem
+    font-size: 16px
+
+  .btn-ver-todos
+    padding: 14px 24px
+    font-size: 15.5px
+
+@media (max-width: 480px)
+  .titulo-secao
+    font-size: 26px
+
+  /* os quatro filtros cabem numa linha só a partir de 360px */
+  .chips-categorias
+    gap: 4px
+    padding: 6px
+
+  .chip
+    padding: 8px 11px
+    font-size: 13px
 </style>

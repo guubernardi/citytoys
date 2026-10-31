@@ -1,37 +1,75 @@
 <template>
   <div class="footer-wrapper">
-    <footer class="rodape" :class="{ 'rodape--tema': temaAtivo }" id="contato" aria-label="Rodapé com informações de contato">
-      <div class="rodape__brilho" aria-hidden="true"></div>
+    <footer
+      class="rodape"
+      :class="{ 'rodape--natal': temaAtivo, 'rodape--folga-barra': folgaBarra }"
+      :style="{ '--rodape-cor-curva': corCurva }"
+      id="contato"
+      aria-label="Rodapé com informações de contato"
+    >
+      <!-- Topo: curva (fundo da seção de cima entrando em arco) e, no Natal, o
+           varal de luzes acompanhando a curva. Os dois ficam no mesmo bloco pra
+           escalar juntos; no celular o bloco fica mais largo que a tela e é
+           cortado nas laterais, pras lâmpadas não ficarem minúsculas. -->
+      <div class="rodape__topo" aria-hidden="true">
+        <svg class="rodape__curva" viewBox="0 0 1440 70" preserveAspectRatio="none" focusable="false">
+          <path d="M0 0H1440V70C960 3.33 480 3.33 0 70V0Z" />
+        </svg>
+
+        <img
+          v-if="temaAtivo"
+          class="rodape__varal"
+          src="/images/natal/rodape-varal-luzes.svg"
+          alt=""
+          width="1440"
+          height="130"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
 
       <div class="container">
-        <div class="rodape__grade">
+        <div class="rodape__colunas">
           <!-- marca -->
           <div class="rodape__marca">
-            <img class="rodape__logo" src="/images/logo-citytoys.svg" alt="City Toys" width="180" height="92" />
+            <img
+              class="rodape__logo"
+              src="/images/logo-citytoys.svg"
+              alt="City Toys"
+              width="150"
+              height="104"
+              loading="lazy"
+              decoding="async"
+            />
 
             <p class="rodape__desc">Soluções em diversão, praticidade e magia para festas infantis no RJ.</p>
+
+            <p v-if="temaAtivo" class="rodape__boas-festas">
+              <img src="/images/natal/rodape-brilho.svg" alt="" aria-hidden="true" width="14" height="14" loading="lazy" decoding="async" />
+              Boas festas da equipe City Toys!
+            </p>
           </div>
 
           <!-- atalhos -->
-          <nav class="rodape__bloco" aria-label="Navegação do rodapé">
+          <nav class="rodape__bloco rodape__bloco--navegue" aria-label="Navegação do rodapé">
             <h2 class="rodape__titulo">Navegue</h2>
 
             <ul class="rodape__links">
               <li v-for="l in links" :key="l.href">
-                <NuxtLink v-if="l.href.startsWith('/')" :to="l.href">{{ l.label }}</NuxtLink>
-                <a v-else :href="l.href">{{ l.label }}</a>
+                <NuxtLink v-if="ehRota(l.href)" :to="l.href">{{ l.label }}</NuxtLink>
+                <a v-else :href="hrefSecao(l.href)" @click="irParaSecao($event, l.href)">{{ l.label }}</a>
               </li>
             </ul>
           </nav>
 
           <!-- contato -->
-          <div class="rodape__bloco">
+          <div class="rodape__bloco rodape__bloco--contato">
             <h2 class="rodape__titulo">Fale com a gente</h2>
 
             <ul class="rodape__contatos">
               <li>
                 <a class="rodape__contato" :href="linkWhats" target="_blank" rel="noopener">
-                  <span class="rodape__ico rodape__ico--whats"><SvgIcone nome="whatsapp" :tamanho="20" /></span>
+                  <span class="rodape__ico rodape__ico--whats"><SvgIcone nome="whatsapp" :tamanho="18" /></span>
                   <span class="rodape__contato-texto">
                     <strong>WhatsApp</strong>
                     <small>{{ TELEFONE_VISIVEL }}</small>
@@ -41,7 +79,7 @@
 
               <li>
                 <a class="rodape__contato" :href="`mailto:${EMAIL_CONTATO}`">
-                  <span class="rodape__ico rodape__ico--email"><SvgIcone nome="envelope-1" :tamanho="20" /></span>
+                  <span class="rodape__ico rodape__ico--email"><SvgIcone nome="envelope-2" :tamanho="18" /></span>
                   <span class="rodape__contato-texto">
                     <strong>E-mail</strong>
                     <small>{{ EMAIL_CONTATO }}</small>
@@ -51,7 +89,7 @@
 
               <li>
                 <a class="rodape__contato" :href="INSTAGRAM_URL" target="_blank" rel="noopener">
-                  <span class="rodape__ico rodape__ico--insta"><SvgIcone nome="instagram" :tamanho="20" /></span>
+                  <span class="rodape__ico rodape__ico--insta"><SvgIcone nome="instagram" :tamanho="18" /></span>
                   <span class="rodape__contato-texto">
                     <strong>Instagram</strong>
                     <small>@city_toysbrinquedos</small>
@@ -60,7 +98,6 @@
               </li>
             </ul>
           </div>
-
         </div>
 
         <div class="rodape__base">
@@ -68,9 +105,7 @@
 
           <p>
             Site feito por
-            <NuxtLink to="http://gustavobernardi.com/" target="_blank" rel="noopener noreferrer" class="rodape__dev">
-              Gustavo Bernardi
-            </NuxtLink>
+            <a href="http://gustavobernardi.com/" target="_blank" rel="noopener noreferrer" class="rodape__dev">Gustavo Bernardi</a>
           </p>
         </div>
       </div>
@@ -90,13 +125,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTemaSazonal } from '~/composables/useTemaSazonal'
 import { EMAIL_CONTATO, INSTAGRAM_URL, WHATS_NUMERO } from '~/helpers/seo.js'
 
-const { temaAtivo } = useTemaSazonal()
+// corCurva: cor da seção logo acima do rodapé, que desce em arco sobre o azul.
+// Na home é o creme da chamada final; no /montar-combo, o fundo claro do combo.
+// folgaBarra: reserva espaço embaixo pra uma barra fixa na base da tela (a do
+// carrinho no /montar-combo) não cobrir o fim do rodapé.
+withDefaults(defineProps<{ corCurva?: string; folgaBarra?: boolean }>(), {
+  corCurva: 'var(--cor-creme)',
+  folgaBarra: false
+})
 
-// Contato e bairros vêm do helpers/seo.js, que já é a fonte única do site.
+const { temaAtivo } = useTemaSazonal()
+const route = useRoute()
+const router = useRouter()
+
+// Contato vem do helpers/seo.js, que já é a fonte única do site.
 const TELEFONE_VISIVEL = '+55 21 98484-8699'
 
 const linkWhats = `https://wa.me/${WHATS_NUMERO}?text=${encodeURIComponent(
@@ -117,120 +164,202 @@ const links = [
 ]
 
 const anoAtual = computed(() => new Date().getFullYear())
+
+/* ---- links de seção (#...) funcionando nas duas páginas ---- */
+// Na home a âncora é da própria página; em outra página (ex.: /montar-combo)
+// o link leva pra home já na seção. Mesmo comportamento do Nav.
+
+const naHome = computed(() => route.path === '/')
+
+function ehRota(href: string) {
+  return href.startsWith('/')
+}
+
+function hrefSecao(hash: string) {
+  return naHome.value ? hash : `/${hash}`
+}
+
+function reduzMovimento() {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
+}
+
+function rolarAteSecao(hash: string) {
+  const el = document.querySelector<HTMLElement>(hash)
+  if (!el) return
+
+  const alturaMenu = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--menu-h')) || 76
+  const y = el.getBoundingClientRect().top + window.scrollY - alturaMenu - 10
+  window.scrollTo({ top: Math.max(0, y), behavior: reduzMovimento() ? 'auto' : 'smooth' })
+}
+
+async function irParaSecao(e: MouseEvent, hash: string) {
+  // ctrl/cmd + clique abre em outra aba normalmente
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+  e.preventDefault()
+
+  if (!naHome.value) {
+    await router.push({ path: '/', hash })
+    await nextTick()
+    requestAnimationFrame(() => requestAnimationFrame(() => rolarAteSecao(hash)))
+    return
+  }
+
+  rolarAteSecao(hash)
+}
 </script>
 
 <style lang="sass" scoped>
-$fundo: #052a54
-$acento: #ffd23f
-$claro: #cbd7e8
-$apagado: #8fa3bd
+// Tons de texto do rodapé no Figma (sem variável global)
+$texto-claro: #cbd7e8
+$texto-apagado: #8fa3bd
+$texto-base: #6f86a3
+$titulo: #f8fafc
 
 .rodape
   position: relative
-  /* Sem a antiga linha dourada do topo: a onda no fim do FAQ já faz a divisão,
-     e uma linha reta logo abaixo dela virava uma segunda divisória. */
-  padding: 56px 0 22px
-  background: linear-gradient(180deg, #{$fundo} 0%, #04203f 100%)
-  color: #f8fafc
+  /* sem varal: só a curva (70px no desenho) + respiro */
+  padding: max(110px, 7.6vw) 0 36px
+  background: var(--cor-navy)
+  color: $titulo
   font-family: var(--fonte, sans-serif)
-  overflow: hidden
+  /* o bloco da curva + varal é mais largo que a tela no celular: corta só na
+     horizontal, na borda da tela (as luzes continuam "pra fora" dela) */
+  overflow-x: clip
 
-/* brilho suave no topo, pra não ficar um bloco azul chapado */
-.rodape__brilho
+/* com o varal (130px no desenho) o conteúdo desce um pouco mais */
+.rodape--natal
+  padding-top: max(150px, 10.4vw)
+
+.rodape--folga-barra
+  padding-bottom: 130px
+
+/* ---- curva + varal ---- */
+.rodape__topo
+  position: absolute
+  top: 0
+  left: 50%
+  width: max(100%, 1440px)
+  aspect-ratio: 1440 / 130
+  transform: translateX(-50%)
+  pointer-events: none
+
+.rodape__curva
+  position: absolute
+  top: -1px
+  left: 0
+  display: block
+  width: 100%
+  /* 70 de 130 do bloco, como no desenho (+1px pra não sobrar fresta) */
+  height: calc(100% * 70 / 130 + 1px)
+
+  path
+    fill: var(--rodape-cor-curva, var(--cor-creme))
+
+.rodape__varal
   position: absolute
   inset: 0
-  pointer-events: none
-  background: radial-gradient(60% 70% at 18% 0%, rgba(255,210,63,.10), rgba(255,210,63,0) 60%), radial-gradient(50% 60% at 82% 6%, rgba(0,194,199,.12), rgba(0,194,199,0) 60%)
+  display: block
+  width: 100%
+  height: 100%
 
 .container
   position: relative
   z-index: 1
-  max-width: var(--largura-max)
+  max-width: calc(1280px + var(--container-px) * 2)
   margin: 0 auto
   padding: 0 var(--container-px)
 
-.rodape__grade
-  display: grid
-  grid-template-columns: 1.6fr 1fr 1.4fr
-  gap: 44px
-  padding-bottom: 38px
+/* ---- colunas ---- */
+.rodape__colunas
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: 40px
 
 /* ---- marca ---- */
+.rodape__marca
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  gap: 16px
+  width: 340px
+  max-width: 100%
+
 .rodape__logo
-  width: 180px
-  height: auto
   display: block
+  width: 150px
+  height: auto
 
 .rodape__desc
-  margin: 16px 0 0
-  max-width: 320px
-  color: $apagado
-  font-size: .95rem
-  line-height: 1.6
+  margin: 0
+  color: $texto-apagado
+  font-size: 15px
+  line-height: 1.55
 
-/* ---- títulos das colunas ---- */
+.rodape__boas-festas
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin: 0
+  padding: 8px 14px
+  border: 1px solid rgba(255, 210, 63, .3)
+  border-radius: 999px
+  background: rgba(255, 210, 63, .12)
+  color: var(--cor-dourado)
+  font-size: 14px
+  font-weight: 700
+
+  img
+    display: block
+    flex: none
+
+/* ---- títulos das colunas, com o tracinho colorido embaixo ---- */
 .rodape__titulo
-  position: relative
-  margin: 0 0 18px
-  padding-bottom: 10px
-  font-size: .95rem
+  margin: 0
+  color: $titulo
+  font-size: 14px
   font-weight: 900
-  letter-spacing: .6px
+  letter-spacing: .84px
   text-transform: uppercase
 
   &::after
     content: ""
-    position: absolute
-    left: 0
-    bottom: 0
-    width: 28px
+    display: block
+    width: 26px
     height: 3px
-    border-radius: 999px
-    background: linear-gradient(90deg, #{$acento}, #00c2c7)
+    margin-top: 12px
+    border-radius: 2px
+    background: var(--rodape-acento)
+
+.rodape__bloco--navegue
+  --rodape-acento: var(--cor-vermelho)
+
+.rodape__bloco--contato
+  --rodape-acento: var(--cor-verde)
 
 /* ---- atalhos ---- */
 .rodape__links
   display: flex
   flex-direction: column
-  gap: 10px
-  margin: 0
+  gap: 12px
+  margin: 12px 0 0
   padding: 0
   list-style: none
 
   a
-    position: relative
     display: inline-block
-    padding-left: 0
-    color: $claro
-    font-size: .95rem
+    color: $texto-claro
+    font-size: 15px
     text-decoration: none
-    transition: color .25s ease, padding-left .25s ease
+    transition: color .25s ease
 
-    /* bolinha que aparece no hover */
-    &::before
-      content: ""
-      position: absolute
-      top: 50%
-      left: 0
-      width: 6px
-      height: 6px
-      margin-top: -3px
-      border-radius: 50%
-      background: $acento
-      opacity: 0
-      transform: scale(.4)
-      transition: opacity .25s ease, transform .25s ease
-
+    /* hover só troca a cor */
     &:hover
-      color: #ffffff
-      padding-left: 16px
-
-      &::before
-        opacity: 1
-        transform: scale(1)
+      color: var(--cor-dourado)
 
     &:focus-visible
-      outline: 3px solid rgba(255,210,63,.6)
+      outline: 3px solid rgba(255, 210, 63, .6)
       outline-offset: 3px
       border-radius: 6px
 
@@ -238,8 +367,8 @@ $apagado: #8fa3bd
 .rodape__contatos
   display: flex
   flex-direction: column
-  gap: 10px
-  margin: 0
+  gap: 14px
+  margin: 14px 0 0
   padding: 0
   list-style: none
 
@@ -247,58 +376,54 @@ $apagado: #8fa3bd
   display: flex
   align-items: center
   gap: 12px
-  padding: 8px
-  border-radius: 14px
-  color: $claro
+  border-radius: 12px
+  color: $texto-claro
   text-decoration: none
-  transition: background .25s ease, transform .25s ease, color .25s ease
+  transition: color .25s ease
 
+  /* hover só troca cor/fundo, nada se mexe */
   &:hover
-    background: rgba(255,255,255,.06)
-    color: #ffffff
-    transform: translateX(3px)
+    color: var(--cor-branco)
 
   &:focus-visible
-    outline: 3px solid rgba(255,210,63,.6)
-    outline-offset: 2px
+    outline: 3px solid rgba(255, 210, 63, .6)
+    outline-offset: 4px
 
 .rodape__ico
   flex: none
   display: grid
   place-items: center
-  width: 40px
-  height: 40px
-  border-radius: 12px
-  background: rgba(255,255,255,.07)
-  transition: background .25s ease, color .25s ease
+  width: 36px
+  height: 36px
+  border-radius: 10px
+  background: rgba(255, 255, 255, .07)
+  transition: background .25s ease
 
 .rodape__ico--whats
   color: #43d38d
 
 .rodape__ico--email
-  color: $acento
+  color: var(--cor-dourado)
 
 .rodape__ico--insta
-  color: #ff6fae
+  color: #ff9ecb
 
 .rodape__contato:hover .rodape__ico
-  background: currentColor
-
-  :deep(svg)
-    color: #052a54
+  background: rgba(255, 255, 255, .14)
 
 .rodape__contato-texto
   display: flex
   flex-direction: column
+  gap: 1px
   min-width: 0
 
   strong
-    font-size: .95rem
+    font-size: 15px
     font-weight: 900
 
   small
-    color: $apagado
-    font-size: .85rem
+    color: $texto-apagado
+    font-size: 13.5px
     overflow-wrap: anywhere
 
 /* ---- base ---- */
@@ -308,24 +433,28 @@ $apagado: #8fa3bd
   justify-content: space-between
   flex-wrap: wrap
   gap: 10px
-  /* espaço à direita pro botão flutuante do WhatsApp não cobrir o crédito */
-  padding: 20px 90px 0 0
-  border-top: 1px solid rgba(255,255,255,.08)
-  color: #6f86a3
-  font-size: .82rem
+  margin-top: 36px
+  padding: 36px 0 0
+  border-top: 1px solid rgba(255, 255, 255, .1)
+  color: $texto-base
+  font-size: 13px
 
   p
     margin: 0
 
 .rodape__dev
-  color: $apagado
-  text-decoration: none
-  border-bottom: 1px dotted #64748b
-  transition: color .25s ease, border-color .25s ease
+  color: $texto-apagado
+  text-decoration: underline
+  text-underline-offset: 2px
+  transition: color .25s ease
 
   &:hover
-    color: $acento
-    border-bottom-style: solid
+    color: var(--cor-dourado)
+
+  &:focus-visible
+    outline: 3px solid rgba(255, 210, 63, .6)
+    outline-offset: 2px
+    border-radius: 4px
 
 /* ---- botão flutuante do WhatsApp ---- */
 .whatsapp-float
@@ -342,11 +471,12 @@ $apagado: #8fa3bd
   color: #ffffff
   box-shadow: 0 4px 20px rgba(37,211,102,.4)
   z-index: 100
-  transition: transform .3s ease
+  transition: background .25s ease
   animation: pulsar-whats 3s infinite
 
+  /* hover: verde um pouco mais escuro, sem crescer */
   &:hover
-    transform: scale(1.08)
+    background: #1ebe5a
 
   &:focus-visible
     outline: 3px solid rgba(255,255,255,.9)
@@ -358,16 +488,15 @@ $apagado: #8fa3bd
   right: calc(100% + 12px)
   padding: 8px 14px
   border-radius: 999px
-  background: #052a54
+  background: var(--cor-navy)
   color: #ffffff
   font-size: .85rem
   font-weight: 800
   white-space: nowrap
   box-shadow: 0 10px 22px rgba(3,20,54,.28)
   opacity: 0
-  transform: translateX(8px)
   pointer-events: none
-  transition: opacity .25s ease, transform .25s ease
+  transition: opacity .25s ease
 
   &::after
     content: ""
@@ -377,13 +506,12 @@ $apagado: #8fa3bd
     width: 8px
     height: 8px
     margin-top: -4px
-    background: #052a54
+    background: var(--cor-navy)
     clip-path: polygon(0 0, 100% 50%, 0 100%)
 
 .whatsapp-float:hover .whatsapp-float__balao,
 .whatsapp-float:focus-visible .whatsapp-float__balao
   opacity: 1
-  transform: translateX(0)
 
 @keyframes pulsar-whats
   0%
@@ -393,53 +521,86 @@ $apagado: #8fa3bd
   100%
     box-shadow: 0 0 0 0 rgba(37,211,102,0)
 
-/* ---- responsivo ---- */
-@media (max-width: 1000px)
-  .rodape__grade
-    grid-template-columns: 1fr 1fr
-    gap: 34px
+/* conteúdo encostando na lateral da tela: espaço à direita pro botão flutuante
+   do WhatsApp não cobrir o crédito */
+@media (max-width: 1440px)
+  .rodape__base
+    padding-right: 90px
 
-@media (max-width: 620px)
+/* ---- tablet ---- */
+@media (max-width: 980px)
+  .rodape__colunas
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 40px 32px
+
+  .rodape__marca
+    grid-column: 1 / -1
+    width: auto
+    max-width: 420px
+
+/* curva e varal: bloco mais estreito, as lâmpadas ficam menores e a curva
+   aparece mais (senão no celular só sobraria o miolo quase reto) */
+@media (max-width: 768px)
+  .rodape__topo
+    width: max(100%, 1000px)
+
+  .rodape
+    padding-top: 84px
+
+  .rodape--natal
+    padding-top: 116px
+
+@media (max-width: 480px)
+  .rodape__topo
+    width: 800px
+
+  .rodape
+    padding-top: 72px
+
+  .rodape--natal
+    padding-top: 100px
+
+/* ---- celular ---- */
+@media (max-width: 640px)
   .rodape
     /* folga embaixo: no fim da página o botão flutuante fica em cima do texto */
-    padding: 44px 0 86px
+    padding-bottom: 86px
 
-  .rodape__base
-    padding: 20px 0 0
+  /* no celular a barra do carrinho vira duas linhas e fica mais alta */
+  .rodape--folga-barra
+    padding-bottom: 190px
 
-  .rodape__grade
+  .rodape__colunas
     grid-template-columns: 1fr
-    gap: 30px
+    gap: 34px
     text-align: center
 
-  .rodape__logo,
-  .rodape__desc
+  .rodape__marca
+    align-items: center
     margin-inline: auto
 
   .rodape__titulo::after
-    left: 50%
-    margin-left: -14px
+    margin-inline: auto
 
-  .rodape__links a:hover
-    padding-left: 0
+  .rodape__links
+    align-items: center
 
-  .rodape__links a::before
-    display: none
+  /* bloco centralizado, mas com os ícones alinhados numa coluna só */
+  .rodape__contatos
+    align-items: flex-start
+    width: fit-content
+    max-width: 100%
+    margin-inline: auto
 
   .rodape__contato
-    justify-content: center
     text-align: left
 
   .rodape__base
+    flex-direction: column
     justify-content: center
+    padding: 28px 0 0
     text-align: center
-
-/* ---- tema sazonal (Dia das Crianças) ---- */
-.rodape--tema .rodape__brilho
-  background-image: var(--tema-confete-fundo), radial-gradient(60% 70% at 18% 0%, rgba(255,210,63,.10), rgba(255,210,63,0) 60%), radial-gradient(50% 60% at 82% 6%, rgba(0,194,199,.12), rgba(0,194,199,0) 60%)
-  background-size: 240px 240px, auto, auto
-  /* no azul-escuro o confete fica muito mais forte do que nas seções claras */
-  opacity: .32
 
 /* ---- menos movimento ---- */
 @media (prefers-reduced-motion: reduce)
@@ -449,6 +610,7 @@ $apagado: #8fa3bd
 
   .rodape__contato,
   .rodape__links a,
+  .rodape__ico,
   .whatsapp-float__balao
     transition: none
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Nav from '../../components/global/nav/Nav.vue';
 import MontarCombo from '../../components/pages/montar-combo/MontarCombo.vue';
+import Footer from '../../components/pages/index/Footer.vue';
 import { jsonLdBreadcrumb, scriptJsonLd } from '~/helpers/seo.js';
 
 const tituloPagina = 'Monte seu Combo de Brinquedos'
@@ -31,4 +32,5 @@ useHead({
 <template>
     <Nav/>
     <MontarCombo/>
+    <Footer cor-curva="var(--cor-neve)" folga-barra />
 </template>

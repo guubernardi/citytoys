@@ -35,7 +35,8 @@ const urlCanonica = computed(() => urlAbsoluta(route.path))
 // Fora da janela do tema as duas voltam ao padrão sozinhas.
 const { temaAtivo } = useTemaSazonal()
 const classeTema = computed(() => (temaAtivo.value ? 'tema-sazonal' : ''))
-const corTema = computed(() => (temaAtivo.value ? '#2b74eb' : '#2D3A7A'))
+// Na campanha, a barra do navegador acompanha o vermelho da faixa de Natal.
+const corTema = computed(() => (temaAtivo.value ? '#b8202c' : '#2D3A7A'))
 
 useHead({
   htmlAttrs: { lang: 'pt-BR', class: classeTema },

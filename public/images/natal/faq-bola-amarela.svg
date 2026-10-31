@@ -1,0 +1,17 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="64" height="118" viewBox="0 0 64 118" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Bola">
+<g id="Vector">
+<path d="M32 0V44Z" fill="black"/>
+<path d="M32 0V44" stroke-width="1.6" stroke="#C9A227"/>
+</g>
+<path id="Vector_2" d="M36.5 44H27.5C26.1193 44 25 45.1193 25 46.5V51.5C25 52.8807 26.1193 54 27.5 54H36.5C37.8807 54 39 52.8807 39 51.5V46.5C39 45.1193 37.8807 44 36.5 44Z" fill="#E2B93B"/>
+<path id="Vector_3" d="M32 114C48.5685 114 62 100.569 62 84C62 67.4315 48.5685 54 32 54C15.4315 54 2 67.4315 2 84C2 100.569 15.4315 114 32 114Z" fill="url(#paint0_radial_0_96)"/>
+<path id="Vector_4" d="M17.8054 82.8468C20.7912 84.9376 25.9852 82.6716 29.4064 77.7856C32.8276 72.8996 33.1805 67.2439 30.1946 65.1532C27.2088 63.0624 22.0148 65.3284 18.5936 70.2144C15.1724 75.1004 14.8195 80.7561 17.8054 82.8468Z" fill="white" fill-opacity="0.35"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_96" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 73.2) scale(48)">
+<stop stop-color="#FFE27A"/>
+<stop offset="1" stop-color="#D49A00"/>
+</radialGradient>
+</defs>
+</svg>

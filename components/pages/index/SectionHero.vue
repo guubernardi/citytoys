@@ -1,43 +1,35 @@
 <template>
-  <section class="hero" id="inicio" aria-label="Seção principal" :class="{ 'is-loaded': loaded }">
-    <div class="fundo-hero" aria-hidden="true"></div>
-    <div class="scrim-hero" aria-hidden="true"></div>
+  <section
+    class="hero"
+    :class="{ 'is-loaded': carregado, 'hero--tema': temaAtivo }"
+    id="inicio"
+    aria-label="Seção principal"
+  >
+    <!-- Fundo: no Natal, a arte com os infláveis enfeitados e o foguete de gorro;
+         fora da campanha, a foto de sempre. É <img> (e não background) pra entrar
+         cedo na fila de download: é o maior elemento da dobra (LCP). -->
+    <img
+      class="fundo-hero"
+      :class="{ 'fundo-hero--padrao': !temaAtivo }"
+      :src="fundo.src"
+      :srcset="fundo.srcset"
+      :sizes="fundo.srcset ? '(max-aspect-ratio: 1/1) 190vh, 100vw' : undefined"
+      :width="fundo.largura"
+      :height="fundo.altura"
+      alt=""
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="sombra-topo" aria-hidden="true"></div>
 
-    <div v-if="temaAtivo" class="enfeites-tema" aria-hidden="true">
-      <!-- Varal de ponta a ponta, logo abaixo do menu. -->
-      <VaralBandeirinhas class="varal-hero" />
-
-      <!-- Cacho de balões no céu à esquerda (o fundo já tem um à direita). -->
-      <div class="cacho">
-        <svg class="cacho__fios" viewBox="0 0 120 190">
-          <path d="M29,75 Q38,130 59,182" />
-          <path d="M59,61 L59,182" />
-          <path d="M89,79 Q80,130 59,182" />
-        </svg>
-        <span class="balao balao--a"></span>
-        <span class="balao balao--c"></span>
-        <span class="balao balao--b"></span>
-      </div>
-
-      <!-- Balões subindo pelas laterais, sem cruzar a coluna do texto. -->
-      <span class="balao balao--subindo balao--subindo-1"><span class="balao__fio"></span></span>
-      <span class="balao balao--subindo balao--subindo-2"><span class="balao__fio"></span></span>
-
-      <!-- No celular não cabe o cacho: fica um balão solto entre o varal e o selo. -->
-      <span class="balao balao--solto"><span class="balao__fio"></span></span>
-
+    <!-- Pontinhos de luz no céu: só no Natal. -->
+    <div v-if="temaAtivo" class="pontos-luz" aria-hidden="true">
       <span
-        v-for="(c, i) in confetes"
-        :key="`confete-${i}`"
-        class="confete"
-        :class="[`confete--${c.forma}`, { 'confete--mobile': c.mobile }]"
-        :style="{
-          '--top': `${c.top}%`,
-          '--left': `${c.left}%`,
-          '--cor': c.cor,
-          '--giro': `${c.giro}deg`,
-          '--atraso': `${-i * 0.4}s`
-        }"
+        v-for="(p, i) in pontosLuz"
+        :key="`ponto-${i}`"
+        class="ponto-luz"
+        :style="{ '--x': `${p.x}%`, '--y': `${p.y}%`, '--tam': `${p.tam}px`, '--atraso': `${-i * 0.7}s` }"
       ></span>
     </div>
 
@@ -47,89 +39,77 @@
         Aluguel de brinquedos infláveis · Rio de Janeiro
       </span>
 
-      <!-- Na campanha o título vira "Feliz Dia das Crianças" em letras de inflável.
-           É texto de verdade (não imagem): nítido, legível pelo Google e quebra
-           certinho no celular. -->
-      <h1 v-if="temaAtivo" class="titulo-hero titulo-tema" id="hero-titulo">
-        <!-- Os {{ ' ' }} garantem "Feliz Dia das Crianças" com espaço pro Google e
-             leitores de tela; dentro de flex, espaço sozinho não ocupa lugar na tela. -->
-        <span class="titulo-tema__topo">
-          <span class="titulo-tema__tag">{{ copy.tituloTag }}</span>{{ ' ' }}
-          <span class="titulo-tema__fita">{{ copy.tituloFita }}<svg class="sol" viewBox="0 0 64 64" aria-hidden="true">
-              <g class="sol__raios">
-                <line v-for="k in 8" :key="k" x1="32" y1="3" x2="32" y2="11" :transform="`rotate(${k * 45} 32 32)`" />
-              </g>
-              <circle class="sol__corpo" cx="32" cy="32" r="15" />
-              <circle class="sol__olho" cx="26.5" cy="29" r="2" />
-              <circle class="sol__olho" cx="37.5" cy="29" r="2" />
-              <path class="sol__sorriso" d="M25 36 Q32 42 39 36" />
-            </svg></span>
-        </span>{{ ' ' }}
+      <!-- Na campanha o título vira "Feliz Natal": etiqueta amarela + letras de
+           inflável com gorro no "N". É texto de verdade (não imagem): nítido,
+           legível pelo Google e quebra certinho no celular. -->
+      <h1 v-if="temaAtivo" class="titulo-hero titulo-natal" id="hero-titulo">
+        <!-- O {{ ' ' }} garante "Feliz Natal" com espaço pro Google e leitores de
+             tela; dentro de flex, o espaço sozinho não ocupa lugar na tela. -->
+        <span class="titulo-natal__tag">{{ copy.tituloTag }}</span>{{ ' ' }}
+        <span class="titulo-natal__palavra">
+          <span
+            v-for="(l, i) in letrasDestaque"
+            :key="`letra-${i}`"
+            class="letra-natal"
+            :data-letra="l.letra"
+            :style="{ '--de': l.de, '--ate': l.ate, '--giro': `${l.giro}deg` }"
+          ><span class="letra-natal__face">{{ l.letra }}</span></span>
 
-        <span class="titulo-tema__letras">
-          <LetrasColoridas :texto="copy.tituloDestaque" />
-
-          <svg
-            v-for="lado in ['esquerda', 'direita']"
-            :key="`brilho-${lado}`"
-            class="brilho"
-            :class="`brilho--${lado}`"
-            viewBox="0 0 40 40"
-            aria-hidden="true"
-          >
-            <path d="M8,11 L18,3" />
-            <path d="M10,20 L25,20" />
-            <path d="M8,29 L18,37" />
-          </svg>
+          <img class="gorro-natal" src="/images/natal/hero-gorro.svg" alt="" width="150" height="125" />
+          <img class="brilho-titulo brilho-titulo--dourado" src="/images/natal/hero-brilho-dourado.svg" alt="" width="42" height="42" />
+          <img class="brilho-titulo brilho-titulo--branco" src="/images/natal/hero-brilho-branco.svg" alt="" width="28" height="28" />
+          <img class="brilho-titulo brilho-titulo--esquerda" src="/images/natal/hero-brilho-branco.svg" alt="" width="28" height="28" />
         </span>
       </h1>
 
-      <h1 v-else class="titulo-hero" id="hero-titulo">
+      <h1 v-else class="titulo-hero titulo-padrao" id="hero-titulo">
         A diversão
         <span class="destaque">decola aqui</span>
       </h1>
 
+      <!-- O texto inteiro fica no fluxo (transparente) reservando a altura final;
+           a versão "digitando" corre por cima. Assim nada pula de lugar enquanto
+           a frase aparece, e o texto completo segue lá pro Google e pra leitor de tela. -->
       <p class="subtitulo-hero" id="hero-subtitulo">
-        <span class="sr-only">{{ fullText }}</span>
-        <span class="subtitulo-digitado" aria-hidden="true">{{ typedText }}</span>
-        <span class="cursor-digitando" aria-hidden="true"></span>
+        <span class="subtitulo-hero__texto">{{ textoCompleto }}</span>
+        <span class="subtitulo-hero__digitado" aria-hidden="true">{{ textoDigitado }}<span class="cursor-digitando"></span></span>
       </p>
 
       <div class="acoes-hero" id="hero-acoes">
         <a
-          class="botao botao-whats"
+          class="botao botao-orcamento"
           id="hero-cta-whats"
+          :href="linkOrcamento"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://wa.me/5521984848699?text=Oi%21%20Quero%20um%20or%C3%A7amento%20%F0%9F%98%8A%0AData%3A%20____%0ABairro%3A%20____%0ABrinquedo%3A%20____"
           aria-label="Fazer orçamento no WhatsApp"
+          @click="aoClicarOrcamento"
         >
-          <SvgIcone nome="whatsapp" :tamanho="24" />
+          <SvgIcone nome="whatsapp" :tamanho="20" />
           Fazer orçamento
         </a>
 
-        <button
-          type="button"
-          class="botao botao-combo"
-          id="hero-cta-combo"
-          @click="irParaCombo"
-          aria-label="Monte seu combo"
-        >
-          <SvgIcone nome="foguete" :tamanho="22" />
+        <NuxtLink class="botao botao-combo" id="hero-cta-combo" to="/montar-combo">
+          <SvgIcone nome="foguete" :tamanho="20" />
           Monte seu combo
-        </button>
+        </NuxtLink>
       </div>
 
-      <ul class="provas-hero" aria-label="Diferenciais">
-        <li><SvgIcone nome="check" :tamanho="16" /> Higienizado</li>
-        <li><SvgIcone nome="check" :tamanho="16" /> Montagem inclusa</li>
-        <li><SvgIcone nome="check" :tamanho="16" /> Entrega em todo o RJ</li>
+      <ul class="provas-hero" id="hero-provas" aria-label="Diferenciais">
+        <li v-for="p in provas" :key="p.texto">
+          <span class="provas-hero__icone" :class="`provas-hero__icone--${p.cor}`" aria-hidden="true">
+            <img v-if="p.imagem" :src="p.imagem" alt="" width="14" height="14" />
+            <SvgIcone v-else :nome="p.icone" :tamanho="14" />
+          </span>
+          {{ p.texto }}
+        </li>
       </ul>
     </div>
 
-    <div class="onda-hero" aria-hidden="true">
-      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <path d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z" fill="#ffffff" />
+    <!-- Curva da base: o hero "desce" no meio e entra no branco da seção seguinte. -->
+    <div class="curva-hero" aria-hidden="true">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+        <path d="M0 0C480 80 960 80 1440 0V60H0V0Z" fill="#ffffff" />
       </svg>
     </div>
   </section>
@@ -138,91 +118,124 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useTemaSazonal } from '~/composables/useTemaSazonal'
-import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
-import VaralBandeirinhas from '~/components/global/tema/VaralBandeirinhas.vue'
 
-// O título da página é definido em pages/index.vue — um componente de seção
+// O título da página é definido em pages/index.vue: um componente de seção
 // não deve sobrescrever o <title> do documento.
 
-const loaded = ref(false)
+const carregado = ref(false)
 
-// Na temporada de Dia das Crianças o hero troca o título e a frase digitada,
-// e ganha bandeirinhas, confetes e balões por cima do fundo de sempre.
-const { temaAtivo, copy } = useTemaSazonal()
+// O layout do hero é o mesmo o ano todo. No Natal entram o fundo natalino, o
+// título "Feliz Natal" com gorro, os brilhos e a frase de fim de ano.
+const { temaAtivo, copy, linkWhatsTema, registrarCliqueTema } = useTemaSazonal()
 
-// Confetes em posições fixas, nas laterais e em volta do título, nunca em
-// cima do texto. No celular o texto ocupa a largura toda, então lá ficam só
-// os marcados como "mobile": todos na faixa livre entre o varal e o selo.
-type Confete = { top: number; left: number; cor: string; giro: number; forma: 'fita' | 'bolinha' | 'estrela'; mobile?: boolean }
+// A arte de Natal do Figma só existe em 1376x768. A versão de 2560 passou por
+// upscale com IA (EDSR 2x) pra não borrar em tela grande; telas menores ficam
+// com a de 1376, mais leve. No celular o hero é mais alto que largo e a imagem
+// cobre pela altura, por isso o sizes pede ~190vh em tela em pé.
+const fundo = computed(() =>
+  temaAtivo.value
+    ? {
+        src: '/images/natal/hero-fundo.webp',
+        srcset: '/images/natal/hero-fundo.webp 1376w, /images/natal/hero-fundo-2560.webp 2560w',
+        largura: 1376,
+        altura: 768
+      }
+    : { src: '/images/fundo-hero.webp', srcset: undefined, largura: 1672, altura: 941 }
+)
 
-const confetes: Confete[] = [
-  { top: 33, left: 12, cor: '#ffd23f', giro: 20, forma: 'estrela' },
-  { top: 38, left: 21, cor: '#ff3b3b', giro: -30, forma: 'fita' },
-  { top: 50, left: 14, cor: '#2b74eb', giro: 0, forma: 'bolinha' },
-  { top: 61, left: 23, cor: '#2ecc71', giro: 45, forma: 'fita' },
-  { top: 30, left: 27, cor: '#ff9a00', giro: -15, forma: 'estrela', mobile: true },
-  { top: 72, left: 8, cor: '#a45cff', giro: 10, forma: 'estrela' },
-  { top: 31, left: 90, cor: '#2ecc71', giro: -20, forma: 'estrela', mobile: true },
-  { top: 40, left: 78, cor: '#ffd23f', giro: 35, forma: 'fita' },
-  { top: 52, left: 86, cor: '#ff3b3b', giro: 0, forma: 'bolinha' },
-  { top: 62, left: 76, cor: '#2b74eb', giro: -40, forma: 'fita' },
-  { top: 26, left: 69, cor: '#ff3b3b', giro: 15, forma: 'estrela', mobile: true },
-  { top: 73, left: 92, cor: '#ff9a00', giro: 25, forma: 'fita' }
+// Pontinhos de luz no céu, nas posições da arte (em % do hero).
+const pontosLuz = [
+  { x: 90.3, y: 20.5, tam: 8 },
+  { x: 16, y: 31.3, tam: 6 },
+  { x: 86.8, y: 36.1, tam: 4 },
+  { x: 4.2, y: 24.1, tam: 6 }
 ]
 
-const fullText = computed(() =>
+// Letras de inflável: cada uma com seu degradê (claro em cima, forte embaixo)
+// e uma inclinação diferente, como na arte. As cores repetem se a palavra crescer.
+const CORES_LETRAS = [
+  { de: '#ff8a8a', ate: '#e5343a' },
+  { de: '#7ef0ad', ate: '#1e9e57' },
+  { de: '#fff3b0', ate: '#ffc531' },
+  { de: '#9fd0ff', ate: '#2b74eb' }
+]
+const GIROS_LETRAS = [6, -4, 3, -5, 4]
+
+const letrasDestaque = computed(() =>
+  Array.from(copy.tituloDestaque).map((letra, i) => ({
+    letra,
+    ...CORES_LETRAS[i % CORES_LETRAS.length],
+    giro: GIROS_LETRAS[i % GIROS_LETRAS.length]
+  }))
+)
+
+const LINK_ORCAMENTO_PADRAO =
+  'https://wa.me/5521984848699?text=Oi%21%20Quero%20um%20or%C3%A7amento%20%F0%9F%98%8A%0AData%3A%20____%0ABairro%3A%20____%0ABrinquedo%3A%20____'
+
+// Na campanha o orçamento sai com a mensagem de Natal (o lead já chega identificado).
+const linkOrcamento = computed(() => (temaAtivo.value ? linkWhatsTema.value : LINK_ORCAMENTO_PADRAO))
+
+function aoClicarOrcamento() {
+  if (temaAtivo.value) registrarCliqueTema('hero-orcamento')
+}
+
+type Prova = { texto: string; cor: 'dourado' | 'vermelho' | 'verde' | 'azul'; icone?: string; imagem?: string }
+
+const provas: Prova[] = [
+  { texto: 'Nota 4,97 dos pais', cor: 'dourado', icone: 'estrela' },
+  { texto: '+3 mil festas', cor: 'vermelho', imagem: '/images/natal/hero-icone-festa.svg' },
+  { texto: 'Montagem inclusa', cor: 'verde', icone: 'check-limpo' },
+  { texto: 'Entrega em todo o RJ', cor: 'azul', icone: 'caminhao-entrega' }
+]
+
+const textoCompleto = computed(() =>
   temaAtivo.value ? copy.subtituloHero : 'Escolha seu brinquedo e prepare a contagem regressiva!'
 )
 
-const typedText = ref('')
+const textoDigitado = ref('')
 
 let tmr: number | null = null
 
-function prefersReducedMotion() {
+function prefereMenosMovimento() {
   if (typeof window === 'undefined') return false
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function typeWriter(text: string) {
-  if (prefersReducedMotion()) {
-    typedText.value = text
+function digitar(texto: string) {
+  if (prefereMenosMovimento()) {
+    textoDigitado.value = texto
     return
   }
 
-  typedText.value = ''
+  textoDigitado.value = ''
   let i = 0
 
   const tick = () => {
-    typedText.value += text.charAt(i)
+    textoDigitado.value += texto.charAt(i)
     i++
 
-    if (i >= text.length) {
+    if (i >= texto.length) {
       tmr = null
       return
     }
 
-    const ch = text.charAt(i - 1)
+    const ch = texto.charAt(i - 1)
     const base = 26
-    const jitter = Math.floor(Math.random() * 26)
-    const extra = ch === '!' || ch === '?' || ch === '.' ? 220 : ch === ',' ? 120 : 0
+    const variacao = Math.floor(Math.random() * 26)
+    const pausa = ch === '!' || ch === '?' || ch === '.' ? 220 : ch === ',' ? 120 : 0
 
-    tmr = window.setTimeout(tick, base + jitter + extra)
+    tmr = window.setTimeout(tick, base + variacao + pausa)
   }
 
   tmr = window.setTimeout(tick, 180)
 }
 
-function irParaCombo() {
-  if (import.meta.server) return
-  window.location.href = '/montar-combo'
-}
-
 onMounted(() => {
   requestAnimationFrame(() => {
-    loaded.value = true
+    carregado.value = true
   })
 
-  typeWriter(fullText.value)
+  digitar(textoCompleto.value)
 })
 
 onBeforeUnmount(() => {
@@ -234,21 +247,25 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="sass">
+// Tons da arte que não estão nos tokens globais.
+$vermelho-claro: #e5343a
+$vermelho-escuro: #b8202c
+$azul-acao: #2b74eb
+
 .hero
   position: relative
+  isolation: isolate
   overflow: hidden
   font-family: var(--fonte)
+  background: var(--cor-noite)
 
-  /* altura da onda de transição (reaproveitada no <svg> abaixo) */
-  --onda-h: clamp(56px, 8vw, 110px)
+  /* altura da curva da base (reaproveitada no <svg>) */
+  --curva-h: clamp(28px, 4.2vw, 60px)
 
-  /* espaço pro menu overlay (topo) e pra faixa da onda (base) */
-  padding-top: var(--menu-h, 76px)
-  padding-bottom: var(--onda-h)
-
-  /* imagem enquadrada em 100vh na dobra; a onda fica na faixa abaixo (só no scroll) */
+  /* o menu fixo (faixa + barra) fica por cima: o conteúdo começa abaixo dele */
   min-height: 100vh
-  height: calc(100vh + var(--onda-h))
+  min-height: 100svh
+  padding: calc(var(--menu-h, 76px) + 24px) 16px calc(var(--curva-h) + 44px)
 
   display: flex
   align-items: center
@@ -256,32 +273,46 @@ onBeforeUnmount(() => {
 
 .fundo-hero
   position: absolute
-  /* A caixa sobe meia onda acima do hero (o overflow do hero corta) e desce até
-     o fim da faixa da onda: a imagem fica centrada perto da dobra e SEMPRE cobre
-     a faixa da onda. O jeito antigo (puxar o background-position pra cima)
-     deixava um vão sem imagem embaixo em telas mais altas, que aparecia como
-     uma faixa cinza atrás da onda. */
-  inset: calc(var(--onda-h) / -2) 0 0 0
-  background-image: url("/images/fundo-hero.webp")
-  background-size: cover
-  background-position: center
-  background-repeat: no-repeat
-  z-index: 0
+  inset: 0
+  z-index: -2
+  width: 100%
+  height: 100%
+  object-fit: cover
+  object-position: center
 
-.scrim-hero
+/* escurece o topo pra o menu ler bem sobre o céu */
+.sombra-topo
   position: absolute
   inset: 0
-  z-index: 1
+  z-index: -1
   pointer-events: none
-  /* topo levemente escurecido pro menu, respiro no meio, base pros botões */
-  background: linear-gradient(180deg, rgba(4,22,60,.34) 0%, rgba(4,22,60,.10) 22%, rgba(4,22,60,0) 46%, rgba(4,22,60,.16) 78%, rgba(4,22,60,.30) 100%)
+  background: linear-gradient(180deg, rgba(6,18,61,.6) 0%, rgba(6,18,61,.15) 22%, rgba(6,18,61,0) 60%)
 
-  &::after
-    content: ""
-    position: absolute
-    inset: 0
-    /* leve foco atrás do texto sem apagar a imagem */
-    background: radial-gradient(60% 55% at 50% 46%, rgba(2,18,52,.28) 0%, rgba(2,18,52,0) 70%)
+/* ---- pontinhos de luz (Natal) ---- */
+.pontos-luz
+  position: absolute
+  inset: 0
+  z-index: -1
+  pointer-events: none
+
+.ponto-luz
+  position: absolute
+  left: var(--x)
+  top: var(--y)
+  width: var(--tam)
+  height: var(--tam)
+  border-radius: 50%
+  background: #ffffff
+  filter: blur(.3px)
+  box-shadow: 0 0 6px rgba(255,255,255,.7)
+  animation: ponto-piscar 3.2s ease-in-out infinite
+  animation-delay: var(--atraso)
+
+@keyframes ponto-piscar
+  0%, 100%
+    opacity: 1
+  50%
+    opacity: .35
 
 /* ---- animação de entrada ---- */
 .conteudo-hero
@@ -302,74 +333,78 @@ onBeforeUnmount(() => {
   transform: translateY(12px)
   transition: opacity .55s ease, transform .55s ease
 
-.hero.is-loaded .selo-hero
-  opacity: 1
-  transform: translateY(0)
-  transition-delay: .05s
+.hero.is-loaded
+  .selo-hero
+    opacity: 1
+    transform: none
+    transition-delay: .05s
 
-.hero.is-loaded .titulo-hero
-  opacity: 1
-  transform: translateY(0)
-  transition-delay: .12s
+  .titulo-hero
+    opacity: 1
+    transform: none
+    transition-delay: .12s
 
-.hero.is-loaded .subtitulo-hero
-  opacity: 1
-  transform: translateY(0)
-  transition-delay: .20s
+  .subtitulo-hero
+    opacity: 1
+    transform: none
+    transition-delay: .2s
 
-.hero.is-loaded .acoes-hero
-  opacity: 1
-  transform: translateY(0)
-  transition-delay: .28s
+  .acoes-hero
+    opacity: 1
+    transform: none
+    transition-delay: .28s
 
-.hero.is-loaded .provas-hero
-  opacity: 1
-  transform: translateY(0)
-  transition-delay: .36s
-
-@media (prefers-reduced-motion: reduce)
-  .conteudo-hero,
-  .selo-hero,
-  .titulo-hero,
-  .subtitulo-hero,
-  .acoes-hero,
   .provas-hero
-    transition: none !important
-    transform: none !important
-    opacity: 1 !important
+    opacity: 1
+    transform: none
+    transition-delay: .36s
 
 /* ---- conteúdo ---- */
 .conteudo-hero
   position: relative
-  z-index: 3
-  width: min(920px, 92vw)
-  padding: clamp(28px, 4vw, 54px) 16px
-  text-align: center
-
+  z-index: 1
+  width: min(1000px, 100%)
   display: flex
   flex-direction: column
   align-items: center
-  gap: 18px
+  gap: 20px
+  text-align: center
+
+  /* foco escuro e suave atrás do texto, sem apagar a imagem */
+  &::before
+    content: ""
+    position: absolute
+    left: 50%
+    top: 50%
+    z-index: -1
+    width: min(1000px, 160vw)
+    height: 94%
+    transform: translate(-50%, -54%)
+    background: radial-gradient(closest-side, rgba(10,20,80,.42), rgba(10,20,80,0))
+    pointer-events: none
 
 .selo-hero
   display: inline-flex
   align-items: center
+  justify-content: center
   gap: 8px
-  padding: 8px 16px
+  padding: 8px 18px
+  border: 1px solid rgba(255,255,255,.34)
   border-radius: 999px
   background: rgba(255,255,255,.16)
-  border: 1px solid rgba(255,255,255,.34)
   backdrop-filter: blur(6px)
   -webkit-backdrop-filter: blur(6px)
   color: #ffffff
   font-weight: 700
-  font-size: clamp(12px, 1.4vw, 14px)
-  letter-spacing: .2px
-  text-shadow: 0 1px 8px rgba(3,18,50,.35)
+  font-size: 14.5px
+  line-height: 1.3
 
 .titulo-hero
   margin: 0
   color: #ffffff
+
+/* ---- título padrão (fora da campanha) ---- */
+.titulo-padrao
   font-weight: 800
   font-size: clamp(38px, 7vw, 82px)
   line-height: 1.02
@@ -378,29 +413,132 @@ onBeforeUnmount(() => {
 
   .destaque
     display: block
-    color: #ffd23f
-    text-shadow: 0 4px 18px rgba(0,0,0,.30), 0 2px 2px rgba(120,72,0,.28)
+    color: var(--cor-dourado)
+    text-shadow: 0 4px 18px rgba(0,0,0,.3), 0 2px 2px rgba(120,72,0,.28)
 
-.subtitulo-hero
-  margin: 2px 0 0
-  color: rgba(255,255,255,.96)
-  font-weight: 600
-  font-size: clamp(16px, 2.3vw, 22px)
-  line-height: 1.35
-  max-width: 560px
-  min-height: 1.35em
-  text-shadow: 0 2px 12px rgba(3,20,54,.45)
+/* ---- título de Natal: "Feliz" + NATAL em letras de inflável ---- */
+/* Tudo do título escala a partir de --tam-natal (210px na arte de 1440). */
+.titulo-natal
+  --tam-natal: clamp(62px, 14.6vw, 210px)
+  display: flex
+  flex-direction: column
+  align-items: center
+  font-weight: 900
+  line-height: 1
 
-.sr-only
+.titulo-natal__tag
+  position: relative
+  z-index: 2
+  display: inline-block
+  margin-bottom: calc(var(--tam-natal) * -.05)
+  padding: .18em .65em
+  border-radius: .35em
+  background: var(--cor-dourado)
+  color: var(--cor-navy)
+  font-size: clamp(18px, 2.36vw, 34px)
+  line-height: 1.36
+  letter-spacing: .04em
+  text-transform: uppercase
+  transform: rotate(-5deg)
+  box-shadow: 0 6px 16px rgba(3,20,54,.3)
+
+.titulo-natal__palavra
+  position: relative
+  display: inline-flex
+  font-size: var(--tam-natal)
+  line-height: 1
+
+.letra-natal
+  position: relative
+  display: inline-block
+  padding: 0 .045em
+  text-transform: uppercase
+  transform: rotate(var(--giro))
+
+  /* Camada de trás: a mesma letra em azul-marinho, com contorno grosso, volume
+     embaixo e sombra. A letra colorida fica por cima. O "/ ''" tira a cópia do
+     leitor de tela; navegador antigo ignora essa linha e usa a de cima. */
+  &::before
+    content: attr(data-letra)
+    content: unquote('attr(data-letra) / ""')
+    position: absolute
+    inset: 0
+    padding: inherit
+    color: var(--cor-navy)
+    -webkit-text-stroke: .1em var(--cor-navy)
+    filter: drop-shadow(0 .057em 0 var(--cor-navy)) drop-shadow(0 .07em .1em rgba(3,20,54,.35))
+
+.letra-natal__face
+  position: relative
+  display: inline-block
+  color: var(--ate)
+  background: linear-gradient(180deg, var(--de), var(--ate))
+  -webkit-background-clip: text
+  background-clip: text
+  -webkit-text-fill-color: transparent
+
+/* Gorro de Papai Noel encaixado no "N" (medidas em em: acompanha o tamanho da palavra). */
+.gorro-natal
   position: absolute
-  left: -9999px
-  top: auto
-  width: 1px
-  height: 1px
-  overflow: hidden
+  left: -.094em
+  top: -.139em
+  z-index: 2
+  width: .714em
+  height: .595em
+  transform: rotate(-16deg)
+  pointer-events: none
 
-.subtitulo-digitado
-  white-space: normal
+.brilho-titulo
+  position: absolute
+  pointer-events: none
+  animation: brilho-piscar 2.4s ease-in-out infinite
+
+.brilho-titulo--dourado
+  left: calc(100% - .048em)
+  top: .086em
+  width: .2em
+  height: .2em
+
+.brilho-titulo--branco
+  left: calc(100% + .124em)
+  top: -.01em
+  width: .114em
+  height: .114em
+  animation-delay: -.8s
+
+.brilho-titulo--esquerda
+  left: -.333em
+  top: .81em
+  width: .133em
+  height: .133em
+  animation-delay: -1.6s
+
+@keyframes brilho-piscar
+  0%, 100%
+    opacity: 1
+    transform: scale(1)
+  50%
+    opacity: .45
+    transform: scale(.78)
+
+/* ---- subtítulo digitado ---- */
+.subtitulo-hero
+  position: relative
+  margin: 0
+  max-width: 640px
+  color: #ffffff
+  font-weight: 600
+  font-size: clamp(17px, 1.53vw, 22px)
+  line-height: 1.4
+  text-shadow: 0 2px 10px rgba(3,20,54,.45)
+
+.subtitulo-hero__texto
+  color: transparent
+  text-shadow: none
+
+.subtitulo-hero__digitado
+  position: absolute
+  inset: 0
 
 .cursor-digitando
   display: inline-block
@@ -416,78 +554,118 @@ onBeforeUnmount(() => {
   50%
     opacity: 0
 
-@media (prefers-reduced-motion: reduce)
-  .cursor-digitando
-    animation: none
-
-/* ---- botões (sistema único) ---- */
+/* ---- botões ---- */
 .acoes-hero
-  margin-top: 6px
   display: flex
   flex-wrap: wrap
-  gap: 14px
   justify-content: center
-  align-items: center
+  gap: 16px
 
 .botao
   display: inline-flex
   align-items: center
   justify-content: center
   gap: 10px
-  min-height: 56px
-  padding: 0 clamp(28px, 3.5vw, 40px)
-  border: none
+  padding: 17px 32px
+  border: 0
   border-radius: 999px
   font-family: var(--fonte)
   font-weight: 800
-  font-size: clamp(15px, 1.9vw, 18px)
-  letter-spacing: .2px
-  cursor: pointer
+  font-size: 18px
+  line-height: 1.4
   text-decoration: none
-  transition: all 0.4s ease
+  cursor: pointer
+  transition: background .25s ease, color .25s ease
 
-  &:active
-    transform: translateY(0) scale(.98)
+  &:focus-visible
+    outline: 3px solid #ffffff
+    outline-offset: 3px
 
-.botao-whats
-  background: #2b74eb
+/* hover só troca a cor (padrão do site: nada de botão subindo ou crescendo) */
+// Degradê não anima pra cor sólida (o fundo "pulava" no hover). O degradê
+// mora num ::before por cima do vermelho escuro e só some com fade.
+.botao-orcamento
+  position: relative
+  isolation: isolate
+  background: $vermelho-escuro
   color: #ffffff
+  box-shadow: 0 10px 24px rgba(138,15,23,.35)
 
-  &:hover
-    background: #ff3b3b
+  &::before
+    content: ''
+    position: absolute
+    inset: 0
+    z-index: -1
+    border-radius: inherit
+    background: linear-gradient(180deg, $vermelho-claro, $vermelho-escuro)
+    transition: opacity .25s ease
+
+  &:hover::before
+    opacity: 0
 
 .botao-combo
-  background: #ffd23f
-  color: #052a54
+  background: var(--cor-dourado)
+  color: var(--cor-navy)
+  box-shadow: 0 10px 24px rgba(122,90,0,.3)
 
   &:hover
-    background: #2b74eb
+    background: $azul-acao
     color: #ffffff
 
 /* ---- provas sociais ---- */
 .provas-hero
-  margin: 6px 0 0
-  padding: 0
+  margin: 0
+  padding: 10px 22px
   list-style: none
   display: flex
   flex-wrap: wrap
   justify-content: center
-  gap: 8px 22px
+  gap: 10px 26px
+  border-radius: 999px
+  background: rgba(5,18,61,.38)
+  backdrop-filter: blur(7px)
+  -webkit-backdrop-filter: blur(7px)
 
   li
     display: inline-flex
     align-items: center
-    gap: 6px
-    color: rgba(255,255,255,.94)
+    gap: 8px
+    color: #ffffff
     font-weight: 700
-    font-size: clamp(13px, 1.5vw, 15px)
-    text-shadow: 0 1px 8px rgba(3,18,50,.4)
+    font-size: 15.5px
+    line-height: 1.25
+    white-space: nowrap
 
-    :deep(svg)
-      color: #46e39b
+.provas-hero__icone
+  flex: 0 0 auto
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  width: 24px
+  height: 24px
+  border-radius: 50%
+  color: #ffffff
 
-/* ---- onda de transição pra seção de brinquedos ---- */
-.onda-hero
+  img
+    display: block
+    width: 14px
+    height: 14px
+
+.provas-hero__icone--dourado
+  background: var(--cor-dourado)
+  color: var(--cor-navy)
+
+.provas-hero__icone--vermelho
+  background: $vermelho-claro
+
+.provas-hero__icone--verde
+  background: var(--cor-verde-acao)
+
+.provas-hero__icone--azul
+  background: $azul-acao
+
+/* ---- curva da base ---- */
+.curva-hero
   position: absolute
   left: 0
   right: 0
@@ -499,345 +677,69 @@ onBeforeUnmount(() => {
   svg
     display: block
     width: 100%
-    height: var(--onda-h)
+    height: var(--curva-h)
 
-/* ---- enfeites do tema sazonal (Dia das Crianças) ---- */
-/* Ficam atrás do conteúdo (z-index 2 < 3) pra não disputar leitura com o texto. */
-.enfeites-tema
-  position: absolute
-  inset: 0
-  z-index: 2
-  pointer-events: none
-  overflow: hidden
-
-/* ---- balões ---- */
-/* Tamanho em "em": cada grupo ajusta o font-size e o balão inteiro escala junto. */
-.balao
-  position: absolute
-  width: 4.6em
-  height: 5.6em
-  border-radius: 50% 50% 47% 47% / 55% 55% 45% 45%
-  /* brilho em cima à esquerda + sombra embaixo à direita = volume de balão */
-  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.7) 0 9%, rgba(255,255,255,0) 30%), radial-gradient(circle at 68% 78%, rgba(0,0,0,.2), rgba(0,0,0,0) 55%), var(--cor)
-  box-shadow: 0 10px 20px rgba(3,20,54,.18)
-
-  /* nó */
-  &::after
-    content: ""
-    position: absolute
-    top: 100%
-    left: 50%
-    width: .9em
-    height: .55em
-    margin: -.1em 0 0 -.45em
-    background: var(--cor)
-    clip-path: polygon(50% 0, 100% 100%, 0 100%)
-
-.balao__fio
-  position: absolute
-  top: calc(100% + .4em)
-  left: 50%
-  width: 1px
-  height: 4em
-  background: rgba(255,255,255,.75)
-
-/* Cacho de três balões com os fios se juntando embaixo. */
-.cacho
-  position: absolute
-  top: 23%
-  left: 3%
-  width: 12em
-  height: 19em
-  font-size: clamp(8px, .6vw, 12px)
-  transform-origin: 50% 100%
-  animation: cacho-balancar 6s ease-in-out infinite
-
-.cacho__fios
-  position: absolute
-  inset: 0
-  width: 100%
-  height: 100%
-  overflow: visible
-
-  path
-    fill: none
-    stroke: rgba(255,255,255,.8)
-    stroke-width: 1.2
-
-.balao--a
-  --cor: var(--tema-vermelho, #ff3b3b)
-  top: 1.4em
-  left: 0
-  transform: rotate(-12deg)
-
-.balao--b
-  --cor: var(--tema-amarelo, #ffd23f)
-  top: 0
-  left: 3.6em
-
-.balao--c
-  --cor: var(--tema-azul, #2b74eb)
-  top: 1.8em
-  left: 7.2em
-  transform: rotate(12deg)
-
-@keyframes cacho-balancar
-  0%, 100%
-    transform: translateY(0) rotate(-2deg)
-  50%
-    transform: translateY(-8px) rotate(2deg)
-
-/* Balões subindo pelas laterais, de baixo até sumir no alto. */
-.balao--subindo
-  top: 100%
-  font-size: clamp(7px, .55vw, 10px)
-  animation: balao-subir 18s linear infinite
-
-.balao--subindo-1
-  --cor: var(--tema-rosa, #ff6fae)
-  left: 1.5%
-  animation-delay: -5s
-
-.balao--subindo-2
-  --cor: var(--tema-verde, #00c2c7)
-  right: 2.5%
-  animation-duration: 23s
-  animation-delay: -14s
-
-@keyframes balao-subir
-  0%
-    transform: translate(0, 0)
-    opacity: 0
-  6%
-    opacity: 1
-  50%
-    transform: translate(18px, -60vh)
-  94%
-    opacity: 1
-  100%
-    transform: translate(-6px, -125vh)
-    opacity: 0
-
-/* Balão solto: só no celular, onde o cacho não cabe. */
-.balao--solto
-  --cor: var(--tema-vermelho, #ff3b3b)
-  display: none
-  top: 25%
-  left: 5%
-  font-size: 6px
-  animation: cacho-balancar 6s ease-in-out infinite
-
-/* No celular (e no tablet em pé) o texto ocupa a largura toda: sai o cacho
-   e os balões que sobem, fica só o balão solto longe do texto. */
-@media (max-width: 768px)
-  .cacho,
-  .balao--subindo
-    display: none
-
-  .balao--solto
-    display: block
-
-/* ---- título da campanha: "Feliz Dia das Crianças" ---- */
-.titulo-tema
-  display: flex
-  flex-direction: column
-  align-items: center
-  gap: clamp(6px, 1vw, 12px)
-  text-shadow: none
-
-.titulo-tema__topo
-  display: inline-flex
-  align-items: center
-  gap: clamp(8px, 1.2vw, 14px)
-
-.titulo-tema__tag
-  display: inline-block
-  padding: .3em .8em
-  border-radius: 8px
-  background: #ffd23f
-  color: #052a54
-  font-size: clamp(14px, 1.9vw, 24px)
-  font-weight: 800
-  line-height: 1
-  text-transform: uppercase
-  letter-spacing: .5px
-  transform: rotate(-8deg)
-  box-shadow: 0 6px 16px rgba(3,20,54,.28)
-
-.titulo-tema__fita
-  position: relative
-  display: inline-block
-  padding: .18em .8em .22em
-  border-radius: 12px
-  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)
-  color: #ffffff
-  font-size: clamp(24px, 4.2vw, 50px)
-  font-weight: 800
-  line-height: 1
-  text-transform: uppercase
-  letter-spacing: .5px
-  text-shadow: 0 2px 0 rgba(0,0,0,.18)
-  transform: rotate(-2deg)
-  box-shadow: 0 8px 22px rgba(3,20,54,.32)
-
-.titulo-tema__letras
-  position: relative
-  display: inline-flex
-  font-size: clamp(52px, 16vw, 132px)
-  font-weight: 800
-  line-height: .95
-  text-transform: uppercase
-  letter-spacing: -1px
-
-/* Sol sorridente no canto da fita "DIA DAS" — em "em" da fita, escala junto. */
-/* Mais pra baixo e pra fora do que o "natural": subindo mais, encosta no selo
-   em telas de ~1024px e no celular. */
-.sol
-  position: absolute
-  top: -.15em
-  right: -1.2em
-  width: 1.3em
-  height: 1.3em
-  overflow: visible
-
-.sol__raios
-  stroke: #ffd23f
-  stroke-width: 4
-  stroke-linecap: round
-  transform-box: view-box
-  transform-origin: 32px 32px
-  animation: sol-girar 14s linear infinite
-
-.sol__corpo
-  fill: #ffd23f
-  stroke: #ffb300
-  stroke-width: 2
-
-.sol__olho
-  fill: #7a4200
-
-.sol__sorriso
-  fill: none
-  stroke: #7a4200
-  stroke-width: 2.5
-  stroke-linecap: round
-
-@keyframes sol-girar
-  to
-    transform: rotate(360deg)
-
-/* Brilhos piscando dos dois lados de "CRIANÇAS", como os risquinhos da arte. */
-.brilho
-  position: absolute
-  top: .12em
-  width: .5em
-  height: .5em
-  overflow: visible
-  animation: brilho-piscar 1.6s ease-in-out infinite
-
-  path
-    fill: none
-    stroke: #ffd23f
-    stroke-width: 4
-    stroke-linecap: round
-
-.brilho--direita
-  right: -.62em
-  animation-delay: -.8s
-
-.brilho--esquerda
-  left: -.62em
-  transform: scaleX(-1)
-
-@keyframes brilho-piscar
-  0%, 100%
-    opacity: .35
-  50%
-    opacity: 1
-
-/* No celular a palavra quase encosta nas bordas: os brilhos chegam mais perto. */
-@media (max-width: 480px)
-  .brilho
-    width: .4em
-    height: .4em
-
-  .brilho--direita
-    right: -.46em
-
-  .brilho--esquerda
-    left: -.46em
-
-/* ---- varal de bandeirinhas ---- */
-/* De ponta a ponta, logo abaixo do menu (no topo ficaria atrás da faixa e do Nav).
-   O desenho e a animação moram em VaralBandeirinhas.vue. */
-.varal-hero
-  position: absolute
-  top: calc(var(--menu-h, 76px) - 6px)
-  left: 0
-  right: 0
-
-/* ---- confetes ---- */
-.confete
-  position: absolute
-  top: var(--top)
-  left: var(--left)
-  width: 10px
-  height: 10px
-  background: var(--cor)
-  opacity: .9
-  transform: rotate(var(--giro))
-  animation: confete-flutuar 5s ease-in-out infinite
-  animation-delay: var(--atraso)
-
-.confete--fita
-  width: 6px
-  height: 18px
-  border-radius: 3px
-
-.confete--bolinha
-  border-radius: 50%
-
-.confete--estrela
-  width: 18px
-  height: 18px
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)
-
-@keyframes confete-flutuar
-  0%, 100%
-    transform: translateY(0) rotate(var(--giro))
-  50%
-    transform: translateY(-10px) rotate(calc(var(--giro) + 30deg))
-
-@media (max-width: 768px)
-  .confete:not(.confete--mobile)
-    display: none
-
-/* Quem pediu menos movimento vê o tema inteiro, só que parado. */
+/* ---- menos movimento: tudo aparece parado ---- */
 @media (prefers-reduced-motion: reduce)
-  .confete,
-  .cacho,
-  .balao--solto,
-  .sol__raios,
-  .brilho
+  .conteudo-hero,
+  .selo-hero,
+  .titulo-hero,
+  .subtitulo-hero,
+  .acoes-hero,
+  .provas-hero
+    transition: none !important
+    transform: none !important
+    opacity: 1 !important
+
+  .ponto-luz,
+  .brilho-titulo,
+  .cursor-digitando
     animation: none
 
-  .balao--subindo
-    display: none
-
 /* ---- responsivo ---- */
-@media (max-width: 768px)
-  .fundo-hero
-    background-position: 50% 42%
+@media (max-width: 980px)
+  .conteudo-hero
+    gap: 18px
 
-  .titulo-hero
+@media (max-width: 768px)
+  .fundo-hero--padrao
+    object-position: 50% 42%
+
+  .titulo-padrao
     font-size: clamp(36px, 12vw, 60px)
+
+@media (max-width: 640px)
+  .hero
+    padding-bottom: calc(var(--curva-h) + 32px)
+
+  .selo-hero
+    padding: 7px 14px
+    font-size: 12.5px
 
   .acoes-hero
     width: 100%
     flex-direction: column
+    align-items: center
+    gap: 12px
 
   .botao
-    width: min(340px, 88vw)
+    width: min(340px, 100%)
+    padding: 15px 24px
+    font-size: 16.5px
+
+  /* as quatro provas viram uma grade 2x2 num cartão arredondado */
+  .provas-hero
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 10px 12px
+    width: min(400px, 100%)
+    padding: 12px 14px
+    border-radius: 20px
+
+    li
+      font-size: 13.5px
+      white-space: normal
+      text-align: left
 
 @media (max-width: 480px)
   .conteudo-hero

@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="129.417" height="102.64" viewBox="0 0 129.417 102.64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Gorro Noel" filter="url(#filter0_d_0_4)">
+<path id="Vector" d="M19.3333 73.6C23 40.48 48.6667 11.04 85.3333 11.04C100 11.04 111 22.08 109.167 40.48C101.833 31.28 90.8333 29.44 83.5 36.8C76.1667 46 78 60.72 81.6667 73.6H19.3333Z" fill="#E5343A"/>
+<path id="Vector_2" opacity="0.6" d="M63.3333 20.24C76.1667 14.72 90.8333 14.72 100 22.08C92.6667 22.08 85.3333 25.76 81.6667 33.12C74.3333 27.6 67 23.92 63.3333 20.24Z" fill="#FF5A5F"/>
+<path id="Vector_3" d="M78.9167 64.4H22.0833C16.5145 64.4 12 68.9309 12 74.52C12 80.1091 16.5145 84.64 22.0833 84.64H78.9167C84.4855 84.64 89 80.1091 89 74.52C89 68.9309 84.4855 64.4 78.9167 64.4Z" fill="white"/>
+<path id="Vector_4" d="M107.333 52.44C112.902 52.44 117.417 47.9091 117.417 42.32C117.417 36.7309 112.902 32.2 107.333 32.2C101.764 32.2 97.25 36.7309 97.25 42.32C97.25 47.9091 101.764 52.44 107.333 52.44Z" fill="white"/>
+</g>
+<defs>
+<filter id="filter0_d_0_4" x="-3.66667" y="-6" width="134" height="116" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="6"/>
+<feGaussianBlur stdDeviation="6"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.227451 0 0 0 0 0.0196078 0 0 0 0 0.0313726 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_4"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_4" result="shape"/>
+</filter>
+</defs>
+</svg>

@@ -12,6 +12,22 @@
   font-display: swap
   src: url('/fonts/nunito-bold.ttf') format('truetype')
 
+// ExtraBold e Black: os títulos e botões do redesign de Natal usam esses pesos.
+// Só o subset latin (cobre á, ã, ç, é...), por isso woff2 de ~16KB cada.
+@font-face
+  font-family: 'nunito'
+  font-weight: 800
+  font-style: normal
+  font-display: swap
+  src: url('/fonts/nunito-800.woff2') format('woff2')
+
+@font-face
+  font-family: 'nunito'
+  font-weight: 900
+  font-style: normal
+  font-display: swap
+  src: url('/fonts/nunito-900.woff2') format('woff2')
+
 :root
   --cor-branco: #FFFFFF
   --cor-preto: #000000
@@ -34,3 +50,21 @@
   // largura máxima do conteúdo (grid da página) — ajuste aqui pra mexer em todas as seções
   --largura-max: 1400px
   --container-px: 20px
+
+  // Paleta do redesign de Natal (variáveis do Figma "City Toys - Natal").
+  // Valem sempre: o layout novo usa essas cores com ou sem o tema ligado.
+  --cor-navy: #052a54
+  --cor-navy-2: #15264b
+  --cor-noite: #0a1a4f
+  --cor-dourado: #ffd23f
+  --cor-vermelho: #d62f35
+  --cor-verde: #1e9e57
+  --cor-verde-acao: #15803d
+  --cor-laranja: #ff9800
+  --cor-texto-suave: #587992
+  --cor-chip-texto: #4a5b70
+  --cor-chip-fundo: #f4f7fb
+  --cor-borda: #e6edf6
+  --cor-gelo: #eef4fb
+  --cor-neve: #f6f9ff
+  --cor-creme: #fff6dc

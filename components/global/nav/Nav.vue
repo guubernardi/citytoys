@@ -370,7 +370,7 @@ onBeforeUnmount(() => {
     color: rgba(255,255,255,.92)
     font-weight: 900
     text-decoration: none
-    font-size: 14px
+    font-size: 14.5px
     padding: 10px 10px
     border-radius: 999px
     transition: all 0.3s
@@ -394,8 +394,9 @@ onBeforeUnmount(() => {
     &:hover
       transform: scale(1.03)
 
+    // no Figma de Natal o logo ocupa a altura toda da barra
     img
-      height: 56px
+      height: 64px
       width: auto
       display: block
   
@@ -403,6 +404,7 @@ onBeforeUnmount(() => {
     display: inline-flex
     align-items: center
     gap: 8px
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .18)
     background: #ffd23f
     color: #052a54 !important
     padding: 10px 20px !important

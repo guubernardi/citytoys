@@ -2,22 +2,30 @@
   <div id="tela">
     <SectionHero/>
     <SectionBrinquedo/>
+    <SectionBannerCombo/>
     <SectionComoFunciona/>
     <SectionBeneficios/>
     <SectionDepoimentos/>
+    <SectionGaleria/>
+    <SectionOndeAtendemos/>
     <SectionFaq/>
+    <SectionChamadaFinal/>
     <Footer/>
   </div>
 </template>
 
 <script setup>
 import Footer from '../components/pages/index/Footer.vue';
+import SectionBannerCombo from '../components/pages/index/SectionBannerCombo.vue';
 import SectionBeneficios from '../components/pages/index/SectionBeneficios.vue';
 import SectionBrinquedo from '../components/pages/index/SectionBrinquedo.vue';
+import SectionChamadaFinal from '../components/pages/index/SectionChamadaFinal.vue';
 import SectionComoFunciona from '../components/pages/index/SectionComoFunciona.vue';
 import SectionDepoimentos from '../components/pages/index/SectionDepoimentos.vue';
 import SectionFaq from '../components/pages/index/SectionFaq.vue';
+import SectionGaleria from '../components/pages/index/SectionGaleria.vue';
 import SectionHero from '../components/pages/index/SectionHero.vue';
+import SectionOndeAtendemos from '../components/pages/index/SectionOndeAtendemos.vue';
 
 definePageMeta({
   layout: 'web'

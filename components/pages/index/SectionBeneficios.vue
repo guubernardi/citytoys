@@ -1,627 +1,554 @@
+<!-- components/pages/index/SectionBeneficios.vue -->
+<!-- "Números e benefícios" (Figma 22:1160). Fundo noite com curvas em cima e
+     embaixo, faixa de números e três cards. O layout é o mesmo com ou sem
+     tema; no Natal entram flocos e brilhos e o subtítulo fala de fim de ano. -->
 <template>
   <section
+    ref="secEl"
     class="secao-beneficios"
     :class="{ 'secao-tema': temaAtivo }"
     id="beneficios"
-    aria-label="Diferenciais da City Toys"
+    aria-labelledby="beneficios-titulo"
   >
-    <div class="onda-divisoria top" aria-hidden="true">
-      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <path
-          d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z"
-          fill="#0B4AA2"
-        />
-      </svg>
-    </div>
+    <!-- O gelo do Passo a passo desce pelas laterais e a noite sobe em arco. -->
+    <svg class="curva curva--topo" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M0 0H1440V80C960 0 480 0 0 80V0Z" />
+    </svg>
 
-    <!-- Noite de festa: fogos de artifício e estrelinhas no fundo azul-escuro.
-         Ficam atrás do conteúdo; os fogos que caem atrás dos cards aparecem
-         desfocados pelo vidro. -->
-    <div v-if="temaAtivo" class="enfeites-beneficios" aria-hidden="true">
-      <svg
-        v-for="(f, i) in fogos"
-        :key="`fogo-${i}`"
-        class="fogo"
-        :class="{ 'fogo--mobile': f.mobile }"
-        viewBox="-50 -50 100 100"
-        :style="{ '--top': `${f.top}%`, '--left': `${f.left}%`, '--tam': `${f.tamanho}px`, '--atraso': `${f.atraso}s` }"
-      >
-        <line
-          v-for="k in 12"
-          :key="`raio-${k}`"
-          x1="0"
-          y1="-14"
-          x2="0"
-          y2="-38"
-          :stroke="f.cores[k % 2]"
-          :transform="`rotate(${k * 30})`"
-        />
-        <circle
-          v-for="k in 12"
-          :key="`ponto-${k}`"
-          cx="0"
-          cy="-46"
-          r="2.6"
-          :fill="f.cores[(k + 1) % 2]"
-          :transform="`rotate(${k * 30 + 15})`"
-        />
-      </svg>
-
-      <span
-        v-for="(e, i) in estrelas"
-        :key="`estrela-${i}`"
-        class="estrelinha"
-        :class="{ 'estrelinha--mobile': e.mobile }"
-        :style="{ '--top': `${e.top}%`, '--left': `${e.left}%`, '--tam': `${e.tamanho}px`, '--atraso': `${e.atraso}s` }"
-      ></span>
-    </div>
+    <template v-if="temaAtivo">
+      <img
+        v-for="(e, i) in enfeites"
+        :key="e.id"
+        class="enfeite"
+        :class="[`enfeite--${e.tipo}`, { 'enfeite--desktop': e.soDesktop }]"
+        :src="e.tipo === 'neve' ? '/images/natal/beneficios-neve.svg' : '/images/natal/beneficios-brilho.svg'"
+        alt=""
+        aria-hidden="true"
+        :width="e.tamanho"
+        :height="e.tamanho"
+        :style="estiloEnfeite(e, i)"
+      />
+    </template>
 
     <div class="container">
-      <header class="cabecalho text-center">
-        <span class="eyebrow" :class="{ 'eyebrow--tema': temaAtivo }">
-          <SvgIcone v-if="temaAtivo" nome="presente" :tamanho="14" />
-          BENEFÍCIOS
-        </span>
+      <header class="cabecalho-beneficios" data-reveal>
+        <p class="olho-beneficios">
+          <img v-if="temaAtivo" class="olho-brilho" src="/images/natal/beneficios-brilho.svg" alt="" aria-hidden="true" width="12" height="12" />
+          <span>Benefícios</span>
+          <img v-if="temaAtivo" class="olho-brilho" src="/images/natal/beneficios-brilho.svg" alt="" aria-hidden="true" width="12" height="12" />
+        </p>
+
         <!-- &nbsp; mantém "City Toys" sempre na mesma linha. -->
-        <h2 class="titulo">
-          Por que a City&nbsp;Toys é
-          <LetrasColoridas v-if="temaAtivo" texto="diferente" fundo="noite" />
-          <template v-else>diferente</template>?
+        <h2 class="titulo-beneficios" id="beneficios-titulo">
+          Por que a City&nbsp;Toys é <span class="titulo-destaque">diferente</span>?
         </h2>
-        <p class="subtitulo">Tudo pensado pra sua festa ser tranquila do começo ao fim.</p>
+        <p class="subtitulo-beneficios">{{ subtitulo }}</p>
       </header>
 
-      <span class="sr-only">No celular, você pode arrastar para o lado para ver mais benefícios.</span>
+      <ul class="numeros" data-reveal aria-label="A City Toys em números">
+        <li v-for="n in numeros" :key="n.id" class="numero">
+          <span class="numero-valor" :class="{ 'numero-valor--destaque': n.destaque }">
+            {{ n.valor }}
+            <span v-if="n.estrela" class="numero-estrela" aria-hidden="true">
+              <SvgIcone nome="estrela" />
+            </span>
+          </span>
+          <span class="numero-rotulo">{{ n.rotulo }}</span>
+        </li>
+      </ul>
 
-      <div ref="trackRef" class="beneficios-grid" @scroll="onScroll">
-        <article
-          v-for="(item, index) in beneficios"
-          :key="index"
-          class="card-beneficio"
-          :class="{ 'is-active': activeIndex === index }"
-          :ref="(el) => setCardRef(el as HTMLElement | null, index)"
+      <ul class="lista-beneficios">
+        <li
+          v-for="(b, i) in beneficios"
+          :key="b.id"
+          class="item-beneficio"
+          :style="{ '--atraso': `${i * 120}ms` }"
+          data-reveal
         >
-          <div class="icon-box">
-            <SvgIcone :nome="item.icone" :tamanho="24" />
-          </div>
-          <div class="content">
-            <h3>{{ item.titulo }}</h3>
-            <p>{{ item.desc }}</p>
-          </div>
-        </article>
-      </div>
-
-      <div class="mobile-controls">
-        <div class="dots">
-          <button
-            v-for="(_, index) in beneficios"
-            :key="index"
-            class="dot"
-            :class="{ active: activeIndex === index }"
-            @click="scrollToIndex(index)"
-            :aria-label="`Ir para benefício ${index + 1}`"
-          ></button>
-        </div>
-      </div>
+          <article class="card-beneficio" :class="`card-beneficio--${b.cor}`">
+            <span class="icone-beneficio" aria-hidden="true">
+              <img :src="b.icone" alt="" width="26" height="26" />
+            </span>
+            <h3 class="card-titulo">{{ b.titulo }}</h3>
+            <p class="card-texto">{{ b.texto }}</p>
+          </article>
+        </li>
+      </ul>
     </div>
 
-    <div class="onda-divisoria bottom" aria-hidden="true">
-      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <path
-          d="M0,40 C420,120 1020,120 1440,40 L1440,120 L0,120 Z"
-          fill="#f7fbff"
-        />
-      </svg>
-    </div>
+    <!-- A noite desce em arco sobre o fundo neve dos Depoimentos. -->
+    <svg class="curva curva--base" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M0 0C480 80 960 80 1440 0V80H0V0Z" />
+    </svg>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useTemaSazonal } from '~/composables/useTemaSazonal'
-import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
 
-// Na temporada de Dia das Crianças o azul-escuro vira noite de festa: fogos,
-// estrelinhas, ícones coloridos e "diferente" em letras de inflável. Os
-// benefícios em si não mudam.
 const { temaAtivo } = useTemaSazonal()
 
-// Posições fixas (sem aleatoriedade) pra sair igual no servidor e no
-// navegador. top/left em % da seção; os marcados "mobile" aparecem no celular.
-type Fogo = { top: number; left: number; tamanho: number; cores: [string, string]; atraso: number; mobile?: boolean }
+const secEl = ref<HTMLElement | null>(null)
 
-const fogos: Fogo[] = [
-  { top: 16, left: 12, tamanho: 130, cores: ['#ffd23f', '#ff6b6b'], atraso: 0, mobile: true },
-  { top: 12, left: 86, tamanho: 110, cores: ['#4ade80', '#22d3ee'], atraso: -1.1, mobile: true },
-  { top: 74, left: 94, tamanho: 150, cores: ['#d8b4fe', '#ff9ecb'], atraso: -2.2 },
-  { top: 80, left: 4, tamanho: 120, cores: ['#ffb347', '#ffd23f'], atraso: -1.7 }
+const subtitulo = computed(() =>
+  temaAtivo.value
+    ? 'Os números falam por nós. E a sua festa de fim de ano fica tranquila do começo ao fim.'
+    : 'Os números falam por nós. E a sua festa fica tranquila do começo ao fim.'
+)
+
+type Numero = { id: string; valor: string; rotulo: string; destaque?: boolean; estrela?: boolean }
+
+// "21" = total de brinquedos do catálogo (array em SectionBrinquedo.vue).
+// Ao incluir ou tirar brinquedo de lá, atualize aqui também.
+const numeros: Numero[] = [
+  { id: 'festas', valor: '+3 mil', rotulo: 'festas realizadas', destaque: true },
+  { id: 'nota', valor: '4,97', rotulo: 'nota média dos pais', estrela: true },
+  { id: 'brinquedos', valor: '21', rotulo: 'brinquedos para alugar' },
+  { id: 'cobertura', valor: 'Todo o RJ', rotulo: 'entrega e montagem' }
 ]
 
-type Estrela = { top: number; left: number; tamanho: number; atraso: number; mobile?: boolean }
+type Beneficio = { id: string; titulo: string; texto: string; icone: string; cor: 'vermelho' | 'verde' | 'amarelo' }
 
-const estrelas: Estrela[] = [
-  { top: 9, left: 28, tamanho: 10, atraso: 0, mobile: true },
-  { top: 22, left: 70, tamanho: 8, atraso: -0.6 },
-  { top: 30, left: 6, tamanho: 12, atraso: -1.2 },
-  { top: 8, left: 58, tamanho: 7, atraso: -1.8, mobile: true },
-  { top: 26, left: 95, tamanho: 9, atraso: -0.9 },
-  { top: 90, left: 30, tamanho: 8, atraso: -1.5, mobile: true },
-  { top: 88, left: 70, tamanho: 10, atraso: -0.3, mobile: true },
-  { top: 50, left: 2, tamanho: 7, atraso: -2.1 }
-]
-
-const trackRef = ref<HTMLElement | null>(null)
-
-const cardRefs = ref<(HTMLElement | null)[]>([])
-function setCardRef(el: HTMLElement | null, index: number) {
-  cardRefs.value[index] = el
-}
-
-const activeIndex = ref(0)
-let scrollTimeout: number | null = null
-
-// Dados
-const beneficios = [
+const beneficios: Beneficio[] = [
   {
+    id: 'higienizacao',
     titulo: 'Higienização Total',
-    desc: 'Tudo lavado e desinfetado. Zero sujeira, zero preocupação.',
-    icone: 'gota'
+    texto: 'Tudo lavado e desinfetado após cada festa. Zero sujeira, zero preocupação.',
+    icone: '/images/natal/beneficios-icone-gota.svg',
+    cor: 'vermelho'
   },
   {
-    titulo: 'Entrega e retirada no horário',
-    desc: 'Chegamos no combinado pra sua festa começar sem correria.',
-    icone: 'relogio'
-  },
-  {
-    titulo: 'Montagem sem dor de cabeça',
-    desc: 'Nossa equipe monta tudo rapidinho e deixa pronto pro uso.',
-    icone: 'ferramenta'
-  },
-  {
+    id: 'seguranca',
     titulo: 'Segurança Garantida',
-    desc: 'Brinquedos revisados antes de cada festa.',
-    icone: 'escudo'
+    texto: 'Brinquedos revisados antes de cada festa, para a criançada brincar tranquila.',
+    icone: '/images/natal/beneficios-icone-escudo.svg',
+    cor: 'verde'
   },
   {
-    titulo: 'Suporte',
-    desc: 'Precisou? Você chama e a gente resolve rápido.',
-    icone: 'headset'
-  },
-  {
-    titulo: 'Variedade',
-    desc: 'Mais de 20 brinquedos disponíveis.',
-    icone: 'quadrados'
+    id: 'suporte',
+    titulo: 'Suporte de verdade',
+    texto: 'Precisou? Você chama no WhatsApp e a gente resolve rápido.',
+    icone: '/images/natal/beneficios-icone-fone.svg',
+    cor: 'amarelo'
   }
 ]
 
-const scrollToIndex = (index: number) => {
-  const track = trackRef.value
-  if (!track) return
-
-  const card = cardRefs.value[index]
-  if (!card) return
-
-  // centraliza o card no viewport do carrossel (mais confiável que "width + gap")
-  const left = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2
-
-  track.scrollTo({
-    left: Math.max(0, left),
-    behavior: 'smooth'
-  })
+// Flocos e brilhos do fundo (só no Natal). Posições do Figma num quadro de
+// 1440px: esquerda em % da largura; topo (ou base) em px. Os marcados
+// soDesktop somem no celular, onde a seção fica bem mais alta.
+type Enfeite = {
+  id: string
+  tipo: 'neve' | 'brilho'
+  esquerda: number
+  topo?: number
+  base?: number
+  tamanho: number
+  opacidade: number
+  soDesktop?: boolean
 }
 
-const onScroll = () => {
-  if (scrollTimeout) window.clearTimeout(scrollTimeout)
+const enfeites: Enfeite[] = [
+  { id: 'neve-1', tipo: 'neve', esquerda: 4.17, topo: 130, tamanho: 38, opacidade: 0.2 },
+  { id: 'neve-2', tipo: 'neve', esquerda: 90.97, topo: 110, tamanho: 54, opacidade: 0.16 },
+  { id: 'brilho-1', tipo: 'brilho', esquerda: 81.94, topo: 250, tamanho: 22, opacidade: 0.8, soDesktop: true },
+  { id: 'brilho-2', tipo: 'brilho', esquerda: 13.89, topo: 300, tamanho: 18, opacidade: 0.7, soDesktop: true },
+  { id: 'neve-3', tipo: 'neve', esquerda: 94.44, topo: 520, tamanho: 30, opacidade: 0.18, soDesktop: true },
+  { id: 'neve-4', tipo: 'neve', esquerda: 2.78, base: 170, tamanho: 46, opacidade: 0.14 },
+  { id: 'brilho-3', tipo: 'brilho', esquerda: 48.61, topo: 110, tamanho: 12, opacidade: 0.6, soDesktop: true },
+  { id: 'brilho-4', tipo: 'brilho', esquerda: 89.58, base: 140, tamanho: 16, opacidade: 0.7 }
+]
 
-  scrollTimeout = window.setTimeout(() => {
-    const track = trackRef.value
-    if (!track) return
-
-    const center = track.scrollLeft + track.offsetWidth / 2
-    const cards = cardRefs.value.filter(Boolean) as HTMLElement[]
-    if (!cards.length) return
-
-    let closestIndex = 0
-    let closestDist = Infinity
-
-    cards.forEach((card, i) => {
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2
-      const dist = Math.abs(center - cardCenter)
-      if (dist < closestDist) {
-        closestDist = dist
-        closestIndex = i
-      }
-    })
-
-    activeIndex.value = closestIndex
-  }, 60)
+function estiloEnfeite(e: Enfeite, i: number) {
+  return {
+    left: `${e.esquerda}%`,
+    top: e.topo != null ? `${e.topo}px` : undefined,
+    bottom: e.base != null ? `${e.base}px` : undefined,
+    opacity: e.opacidade,
+    '--atraso': `${i * -0.7}s`
+  }
 }
 
-onUnmounted(() => {
-  if (scrollTimeout) window.clearTimeout(scrollTimeout)
+let io: IntersectionObserver | null = null
+
+function reduceMotion() {
+  if (typeof window === 'undefined') return true
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
+}
+
+function observeReveals() {
+  const root = secEl.value
+  if (!root) return
+
+  const els = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'))
+    .filter((el) => !el.classList.contains('is-inview'))
+  if (!els.length) return
+
+  if (reduceMotion() || !('IntersectionObserver' in window)) {
+    els.forEach((el) => el.classList.add('is-inview'))
+    return
+  }
+
+  if (!io) {
+    io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-inview')
+          io?.unobserve(entry.target)
+        }),
+      { threshold: 0.12, rootMargin: '0px 0px 160px 0px' }
+    )
+  }
+
+  els.forEach((el) => io!.observe(el))
+}
+
+onMounted(async () => {
+  await nextTick()
+  observeReveals()
+})
+
+onBeforeUnmount(() => {
+  io?.disconnect()
+  io = null
 })
 </script>
 
 <style lang="sass" scoped>
-$cor-bg: var(--bg-azul, #0B4AA2)
-$cor-texto: #ffffff
-$cor-card-bg: rgba(255, 255, 255, 0.10)
-$cor-card-border: rgba(255, 255, 255, 0.15)
+// Cores do Figma que não viraram token global
+$noite-meio: #1a2f8a
+$noite-base: #102766
+$amarelo-escuro: #e0a100
+$estrela-nota: #ffc531
 
 .secao-beneficios
   position: relative
-  background-color: $cor-bg
-  color: $cor-texto
   overflow: hidden
+  padding: 160px 0 170px
+  background: linear-gradient(180deg, var(--cor-noite) 0%, $noite-meio 50%, $noite-base 100%)
+  color: var(--cor-branco)
   font-family: var(--fonte)
+
+.container
+  position: relative
+  z-index: 2
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 22px
+  max-width: calc(1280px + var(--container-px) * 2)
+  margin: 0 auto
+  padding: 0 var(--container-px)
+
+/* ---- curvas ---- */
+.curva
+  position: absolute
+  left: 0
+  z-index: 1
+  display: block
   width: 100%
-  padding: clamp(84px, 8vw, 120px) 0
+  height: 80px
+  pointer-events: none
+
+.curva--topo
+  top: 0
+
+  path
+    fill: var(--cor-gelo)
+
+.curva--base
+  bottom: 0
+
+  path
+    fill: var(--cor-neve)
+
+/* ---- flocos e brilhos (tema) ---- */
+.enfeite
+  position: absolute
+  z-index: 0
+  display: block
+  height: auto
+  pointer-events: none
+
+.enfeite--brilho
+  animation: brilho-piscar 2.8s ease-in-out infinite
+  animation-delay: var(--atraso, 0s)
+
+@keyframes brilho-piscar
+  0%, 100%
+    transform: scale(1)
+  50%
+    transform: scale(.7)
+
+/* ---- cabeçalho ---- */
+.cabecalho-beneficios
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 22px
+  text-align: center
+
+.olho-beneficios
+  display: inline-flex
+  align-items: center
+  gap: 10px
+  margin: 0
+  color: var(--cor-dourado)
+  font-size: 13.5px
+  font-weight: 900
+  letter-spacing: .12em
+  text-transform: uppercase
+
+.olho-brilho
+  display: block
+  width: 12px
+  height: 12px
+
+.titulo-beneficios
+  margin: 0
+  color: var(--cor-branco)
+  font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.75rem)
+  font-weight: 900
+  line-height: 1.2
+  text-wrap: balance
+
+.titulo-destaque
+  color: var(--cor-dourado)
+
+.subtitulo-beneficios
+  max-width: 720px
+  margin: 0
+  color: rgba(255, 255, 255, .85)
+  font-size: clamp(1rem, .9rem + .3vw, 1.0625rem)
+  line-height: 1.45
+
+/* ---- faixa de números ---- */
+.numeros
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  align-items: center
+  width: 100%
+  margin: 0
+  padding: 34px 0
+  list-style: none
+  border: 1px solid rgba(255, 255, 255, .14)
+  border-radius: 28px
+  background: rgba(255, 255, 255, .07)
+  backdrop-filter: blur(10px)
+  -webkit-backdrop-filter: blur(10px)
+
+.numero
+  position: relative
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 4px
+  padding: 0 12px
+  text-align: center
+
+  /* divisória vertical (70px) entre um número e outro */
+  & + .numero::before
+    content: ""
+    position: absolute
+    top: 50%
+    left: 0
+    width: 1px
+    height: 70px
+    background: rgba(255, 255, 255, .16)
+    transform: translateY(-50%)
+
+.numero-valor
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  color: var(--cor-branco)
+  font-size: clamp(2rem, 1.2rem + 1.9vw, 2.875rem)
+  font-weight: 900
+  line-height: 1.2
+  white-space: nowrap
+
+.numero-valor--destaque
+  color: var(--cor-dourado)
+
+/* sem :tamanho o ícone mede 1em: acompanha o número em qualquer tela
+   (26px de estrela para 46px de número, como no Figma) */
+.numero-estrela
+  display: inline-flex
+  color: $estrela-nota
+  font-size: .56em
+
+.numero-rotulo
+  color: rgba(255, 255, 255, .8)
+  font-size: 15.5px
+  font-weight: 600
+  line-height: 1.35
+
+/* ---- cards de benefício ---- */
+.lista-beneficios
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  gap: 25px
+  width: 100%
+  margin: 0
+  padding: 16px 0 0
+  list-style: none
+
+.item-beneficio
+  display: flex
+
+.card-beneficio
+  display: flex
+  flex: 1
+  flex-direction: column
+  align-items: center
+  gap: 12px
+  padding: 32px 28px
+  border: 1px solid rgba(255, 255, 255, .16)
+  border-radius: 24px
+  background: rgba(255, 255, 255, .08)
+  backdrop-filter: blur(10px)
+  -webkit-backdrop-filter: blur(10px)
+  text-align: center
+  transition: background .28s ease, border-color .28s ease
+
+.icone-beneficio
+  display: grid
+  place-items: center
+  width: 60px
+  height: 60px
+  border-radius: 50%
+  background: linear-gradient(180deg, #ff7a7a, var(--cor-vermelho))
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .25)
+
+  img
+    display: block
+    width: 26px
+    height: 26px
+
+.card-beneficio--verde .icone-beneficio
+  background: linear-gradient(180deg, #5ee59a, var(--cor-verde-acao))
+
+.card-beneficio--amarelo .icone-beneficio
+  background: linear-gradient(180deg, #ffe27a, $amarelo-escuro)
+
+.card-titulo
+  margin: 0
+  color: var(--cor-branco)
+  font-size: 20px
+  font-weight: 900
+  line-height: 1.3
+
+.card-texto
+  margin: 0
+  color: rgba(255, 255, 255, .82)
+  font-size: 15.5px
+  line-height: 1.5
+  text-wrap: pretty
+
+// hover do projeto: só o fundo muda, sem deslocar o card
+@media (hover: hover)
+  .card-beneficio:hover
+    border-color: rgba(255, 255, 255, .28)
+    background: rgba(255, 255, 255, .14)
+
+/* ---- revelar no scroll ---- */
+[data-reveal]
+  opacity: 0
+  transform: translateY(24px)
+  transition: opacity .6s ease, transform .6s ease
+  transition-delay: var(--atraso, 0ms)
+
+.is-inview[data-reveal]
+  opacity: 1
+  transform: none
+
+/* ---- responsivo ---- */
+@media (max-width: 980px)
+  .secao-beneficios
+    padding: 112px 0 124px
+
+  .curva
+    height: 48px
+
+  /* números em 2x2: divisória vertical só no meio, horizontal entre linhas */
+  .numeros
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    row-gap: 32px
+    padding: 28px 0
+
+  .numero:nth-child(3)::before
+    display: none
+
+  .numero:nth-child(n + 3)::after
+    content: ""
+    position: absolute
+    top: -16px
+    left: 0
+    right: 0
+    height: 1px
+    background: rgba(255, 255, 255, .16)
+
+@media (max-width: 768px)
+  .lista-beneficios
+    grid-template-columns: minmax(0, 1fr)
+    gap: 16px
+    max-width: 520px
+
+  .enfeite--desktop
+    display: none
+
+@media (max-width: 520px)
+  .secao-beneficios
+    padding: 88px 0 100px
+
+  /* flocos menores e mais pra borda: no celular o título ocupa a largura toda */
+  .enfeite--neve
+    transform: scale(.6)
+    transform-origin: center
+
+  .curva
+    height: 32px
 
   .container
-    width: 100%
-    max-width: var(--largura-max)
-    margin: 0 auto
-    padding: 0 var(--container-px)
-    position: relative
-    z-index: 2
-    display: flex
-    flex-direction: column
-    align-items: center
+    gap: 18px
 
-  .cabecalho
-    margin-bottom: clamp(26px, 3.5vw, 46px)
-    text-align: center
-    max-width: 820px
+  .cabecalho-beneficios
+    gap: 16px
 
-  .eyebrow
-    display: block
-    font-size: .85rem
-    font-weight: 800
-    letter-spacing: 2px
-    text-transform: uppercase
-    opacity: .85
-    margin-bottom: 10px
+  .numeros
+    padding: 22px 0
+    border-radius: 22px
 
-  .titulo
-    font-size: clamp(2rem, 5vw, 3rem)
-    font-weight: 1000
-    margin: 0 0 14px
-    line-height: 1.08
+  .numero
+    padding: 0 8px
 
-  .subtitulo
-    font-size: 1.05rem
-    opacity: .92
-    max-width: 620px
-    margin: 0 auto
+  .numero-valor
+    gap: 6px
+    font-size: 1.625rem
 
-  .sr-only
-    position: absolute !important
-    width: 1px !important
-    height: 1px !important
-    padding: 0 !important
-    margin: -1px !important
-    overflow: hidden !important
-    clip: rect(0,0,0,0) !important
-    white-space: nowrap !important
-    border: 0 !important
-
-  .beneficios-grid
-    width: 100%
-    display: flex
-    gap: 20px
-    overflow-x: auto
-    scroll-snap-type: x mandatory
-    padding-bottom: 18px
-    scroll-behavior: smooth
-    -webkit-overflow-scrolling: touch
-    justify-content: flex-start
-    scrollbar-width: none
-
-    // melhora snap no mobile (primeiro/último não ficam "cortados")
-    scroll-padding-inline: 7.5%
-
-    &::before,
-    &::after
-      content: ''
-      flex: 0 0 7.5%
-
-    &::-webkit-scrollbar
-      display: none
-
-    @media (min-width: 900px)
-      display: grid
-      grid-template-columns: repeat(3, 1fr)
-      overflow-x: visible
-      scroll-snap-type: none
-      justify-content: center
-      align-items: stretch
-
-      &::before,
-      &::after
-        display: none
+  .numero-rotulo
+    font-size: 13.5px
 
   .card-beneficio
-    flex: 0 0 85%
-    max-width: 400px
-    scroll-snap-align: center
-    scroll-snap-stop: always
-    background: $cor-card-bg
-    border: 1px solid $cor-card-border
-    border-radius: 24px
-    padding: 32px 24px
-    display: flex
-    flex-direction: column
-    align-items: center
-    text-align: center
-    // Se o iPhone for birrento com blur, dá pra comentar as 2 linhas abaixo.
-    backdrop-filter: blur(10px)
-    -webkit-backdrop-filter: blur(10px)
-    position: relative
-    overflow: hidden
-    opacity: 1 !important
-    transform: none !important
-    filter: none !important
-    transition: transform .28s cubic-bezier(.2,.9,.2,1), background .28s ease, box-shadow .28s ease, border-color .28s ease
+    padding: 26px 20px
 
-    &:hover
-      background: rgba(255, 255, 255, 0.14)
-      border-color: rgba(255,255,255,.28)
-      transform: translate3d(0, -10px, 0) scale(1.02)
-      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.25)
+  .card-titulo
+    font-size: 18px
 
-      .icon-box
-        transform: translate3d(0, -2px, 0) scale(1.03)
-        background: rgba(255,255,255,.22)
-        border-color: rgba(255,255,255,.30)
-
-        :deep(svg)
-          transform: rotate(-6deg) scale(1.06)
-
-    @media (min-width: 900px)
-      flex: 1
-      max-width: none
-      scroll-snap-stop: normal
-
-  .icon-box
-    width: 66px
-    height: 66px
-    background: rgba(255, 255, 255, 0.18)
-    border: 1px solid rgba(255,255,255,.18)
-    border-radius: 50%
-    display: flex
-    align-items: center
-    justify-content: center
-    margin-bottom: 18px
-    color: #fff
-    transition: transform .28s cubic-bezier(.2,.9,.2,1), background .28s ease, border-color .28s ease
-
-    :deep(svg)
-      width: 24px
-      height: 24px
-      display: block
-      transition: transform .28s cubic-bezier(.2,.9,.2,1)
-
-  .content
-    h3
-      font-size: 1.25rem
-      font-weight: 900
-      margin-bottom: 12px
-
-    p
-      font-size: .95rem
-      line-height: 1.5
-      opacity: .88
-      margin: 0
-
-  .mobile-controls
-    display: flex
-    justify-content: center
-    margin-top: 10px
-    width: 100%
-
-    @media (min-width: 900px)
-      display: none
-
-  .dots
-    display: flex
-    gap: 8px
-    background: rgba(0,0,0,0.2)
-    padding: 8px 12px
-    border-radius: 20px
-
-    .dot
-      width: 8px
-      height: 8px
-      border-radius: 50%
-      border: none
-      background: rgba(255,255,255,0.4)
-      cursor: pointer
-      transition: transform .25s ease, background .25s ease, width .25s ease, border-radius .25s ease
-      padding: 0
-
-      &.active
-        background: #fff
-        transform: scale(1.15)
-        width: 18px
-        border-radius: 6px
-
-  .onda-divisoria
-    position: absolute
-    left: 0
-    width: 100%
-    line-height: 0
-    pointer-events: none
-    z-index: 1
-
-    svg
-      display: block
-      width: 100%
-      height: 60px
-
-      @media (min-width: 768px)
-        height: 100px
-
-    &.top
-      top: 0
-      transform: rotate(180deg)
-
-    &.bottom
-      bottom: 0
-
-/* ---- tema sazonal (Dia das Crianças) ---- */
-/* Tudo abaixo depende da classe .secao-tema na <section>, que entra e sai
-   junto com a campanha (composables/useTemaSazonal.ts). */
-
-/* Fundo "noite de festa": o azul chapado da marca vira um céu que escurece
-   do índigo pro roxo, com brilhos suaves atrás dos fogos de cima. A cor do
-   topo vem do token --tema-noite-topo, que a onda do Passo a passo também usa. */
-/* A 1ª camada garante o topo exatamente na cor da onda do Passo a passo (os
-   brilhos de baixo iam até a borda e desenhavam uma linha reta na emenda). */
-.secao-beneficios.secao-tema
-  background-color: var(--tema-noite-topo)
-  background-image: linear-gradient(180deg, var(--tema-noite-topo) 0, transparent 140px), radial-gradient(circle at 12% 18%, rgba(255,210,63,.16), rgba(255,210,63,0) 28%), radial-gradient(circle at 88% 14%, rgba(34,211,238,.14), rgba(34,211,238,0) 28%), linear-gradient(180deg, var(--tema-noite-topo) 0%, #3a2a9a 55%, #5b2a8e 100%)
-
-  /* A onda de cima é da mesma cor do fundo e só servia pra emendar com o
-     Passo a passo. Por cima do degradê e dos brilhos ela vira uma "segunda
-     onda" aparente, então sai: quem faz a emenda é a onda do Passo a passo. */
-  .onda-divisoria.top
-    display: none
-
-.enfeites-beneficios
-  position: absolute
-  inset: 0
-  z-index: 1
-  pointer-events: none
-  overflow: hidden
-
-/* Fogo de artifício: raios e pontinhos que abrem do centro e somem. O centro
-   fica em --top/--left (a margem negativa desconta metade do tamanho). */
-.fogo
-  position: absolute
-  top: var(--top)
-  left: var(--left)
-  width: var(--tam)
-  height: var(--tam)
-  margin: calc(var(--tam) / -2) 0 0 calc(var(--tam) / -2)
-  overflow: visible
-  opacity: 0
-  animation: fogo-estourar 3.4s ease-out infinite
-  animation-delay: var(--atraso)
-
-  line
-    stroke-width: 3.5
-    stroke-linecap: round
-
-@keyframes fogo-estourar
-  0%
-    transform: scale(.15)
-    opacity: 0
-  12%
-    opacity: 1
-  45%
-    transform: scale(1)
-    opacity: 1
-  75%
-    transform: scale(1.12)
-    opacity: 0
-  100%
-    transform: scale(1.12)
-    opacity: 0
-
-/* Estrelinha de quatro pontas piscando no céu. */
-.estrelinha
-  position: absolute
-  top: var(--top)
-  left: var(--left)
-  width: var(--tam)
-  height: var(--tam)
-  background: #fff6c2
-  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%)
-  animation: estrela-piscar 2.4s ease-in-out infinite
-  animation-delay: var(--atraso)
-
-@keyframes estrela-piscar
-  0%, 100%
-    opacity: .25
-    transform: scale(.7)
-  50%
-    opacity: 1
-    transform: scale(1.15)
-
-.eyebrow--tema
-  color: #ffd23f
-  opacity: 1 !important
-
-  :deep(svg)
-    vertical-align: -2px
-    margin-right: 4px
-
-/* Cada benefício ganha uma cor: o ícone vira bolinha colorida com brilho e,
-   no hover, o card acende na mesma cor. */
-.secao-tema
-  .card-beneficio:nth-child(1)
-    --cor-tema: #00c2c7
-
-  .card-beneficio:nth-child(2)
-    --cor-tema: #ff9a00
-
-  .card-beneficio:nth-child(3)
-    --cor-tema: #ff3b3b
-
-  .card-beneficio:nth-child(4)
-    --cor-tema: #2ecc71
-
-  .card-beneficio:nth-child(5)
-    --cor-tema: #a45cff
-
-  .card-beneficio:nth-child(6)
-    --cor-tema: #ffd23f
-
-  .icon-box
-    background-color: var(--cor-tema)
-    background-image: radial-gradient(circle at 32% 28%, rgba(255,255,255,.55) 0 10%, rgba(255,255,255,0) 34%)
-    border-color: rgba(255,255,255,.35)
-    box-shadow: 0 8px 18px rgba(0,0,0,.18)
-
-  /* no amarelo o ícone branco some: vai azul-marinho */
-  .card-beneficio:nth-child(6) .icon-box
-    color: #052a54
-
-  .card-beneficio:hover
-    border-color: var(--cor-tema)
-    box-shadow: 0 18px 55px rgba(0,0,0,.25), 0 0 34px -8px var(--cor-tema)
-
-    .icon-box
-      background-color: var(--cor-tema)
-      background-image: radial-gradient(circle at 32% 28%, rgba(255,255,255,.55) 0 10%, rgba(255,255,255,0) 34%)
-      border-color: rgba(255,255,255,.5)
-
-  .dots .dot.active
-    background: linear-gradient(90deg, #ffd23f, #ff6b6b, #d8b4fe)
-
-/* No celular não tem hover: quem acende é o card em destaque no carrossel.
-   Os fogos sobem pro alto (acima do título) e diminuem; os de trás dos cards
-   e parte das estrelas saem. */
-@media (max-width: 899px)
-  .secao-tema .card-beneficio.is-active
-    border-color: var(--cor-tema)
-
-  .fogo
-    top: 6%
-    width: calc(var(--tam) * .6)
-    height: calc(var(--tam) * .6)
-    margin: calc(var(--tam) * -.3) 0 0 calc(var(--tam) * -.3)
-
-  .fogo:not(.fogo--mobile),
-  .estrelinha:not(.estrelinha--mobile)
-    display: none
+  .card-texto
+    font-size: 15px
 
 @media (prefers-reduced-motion: reduce)
-  .fogo
-    animation: none
-    opacity: .7
+  [data-reveal]
+    opacity: 1 !important
+    transform: none !important
+    transition: none !important
 
-  .estrelinha
+  .enfeite--brilho
     animation: none
-    opacity: .8
+
+  .card-beneficio,
+  .icone-beneficio
+    transition: none
 </style>

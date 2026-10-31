@@ -1,64 +1,68 @@
-// Tema sazonal do site — hoje, Dia das Crianças.
+// Tema sazonal do site: hoje, Natal.
 //
 // Tudo que a campanha precisa saber mora aqui: quando ela entra, quando sai,
 // os textos que vão pro ar e o link do WhatsApp temático. Fora da janela o
-// site volta sozinho ao visual padrão — não precisa de deploy no dia seguinte
-// ao feriado pra desligar o tema.
+// site volta sozinho ao visual padrão (sem enfeites de Natal), sem precisar de
+// deploy no dia seguinte.
+//
+// O layout das seções é o mesmo com ou sem tema: o tema só liga os enfeites
+// (luzes, gorros, flocos, presentes) e troca a copy pela de fim de ano.
+//
+// Prévia: abrir qualquer página com ?tema=natal liga o tema na hora, mesmo fora
+// da janela. Vale pra navegação inteira (fica no useState).
 
 import { computed } from 'vue'
-import { useState } from '#app'
+import { useRoute, useState } from '#app'
 
 const WHATS_NUMERO = '5521984848699'
 
 // Janela da campanha, no fuso do Rio. Os dois extremos entram.
-// O fim era 13/10 (um dia depois do feriado); em 17/10 foi estendido até 31/10
-// pra campanha virar "mês das crianças" e cobrir outubro inteiro.
-const INICIO = '2026-09-19'
-const FIM = '2026-10-31'
+// Entra no dia seguinte ao fim do tema de Dia das Crianças (31/10) e cobre as
+// festas de fim de ano.
+const INICIO = '2026-11-01'
+const FIM = '2026-12-31'
 
 /**
  * Copy da campanha, num lugar só.
  *
- * ⚠️ ATENÇÃO — esse texto vai público.
- * Ele fala em "sob consulta" de propósito: não afirma que outubro esgotou nem
- * promete data livre. O calendário do /montar-combo bloqueia outubro inteiro
- * (ver MES_OUTUBRO no MontarCombo.vue), mas isso vale só pro combo promocional
- * — não é a agenda da empresa. Só troque por uma afirmação mais forte, do tipo
- * "outubro esgotado", depois de confirmar a agenda real com o cliente.
+ * ⚠️ ATENÇÃO: esse texto vai público.
+ * Ele fala em "sob consulta" de propósito: não afirma que dezembro esgotou nem
+ * promete data livre. Só troque por uma afirmação mais forte depois de
+ * confirmar a agenda real com o cliente.
  */
 export const COPY_TEMA = {
-  faixa: 'Mês das Crianças na City Toys! As datas de outubro estão sob consulta.',
+  faixa: 'Natal chegando! As datas de dezembro estão sob consulta.',
   faixaCta: 'Garantir minha data',
-  faixaCurta: 'Mês das Crianças · datas sob consulta',
+  faixaCurta: 'Natal chegando! Datas sob consulta',
 
-  // Título do hero na campanha: "Feliz" + "Dia das" na fita + "Crianças" em letras coloridas.
+  // Título do hero na campanha: "Feliz" na etiqueta + "Natal" em letras de inflável.
   tituloTag: 'Feliz',
-  tituloFita: 'Dia das',
-  tituloDestaque: 'Crianças',
-  //   = espaço que não quebra linha: "City Toys" nunca fica partido em duas linhas.
-  subtituloHero: 'O mês das crianças continua e a diversão tá aqui na City Toys. Garanta já os brinquedos da sua festa!',
+  tituloFita: '',
+  tituloDestaque: 'Natal',
+  //   = espaço que não quebra linha: "City Toys" nunca fica partido em duas linhas.
+  subtituloHero: 'Natal chegando e a diversão tá aqui na City Toys. Garanta já os brinquedos da sua festa de fim de ano!',
 
   // Seção de brinquedos: selo acima do título e selo dos brinquedos em destaque.
-  seloBrinquedos: 'Especial Mês das Crianças',
-  seloDestaque: 'Top Mês das Crianças',
+  seloBrinquedos: 'Especial de Natal',
+  seloDestaque: 'Top do Natal',
 
   // Conversa de exemplo do "Passo a passo" (passo 2). A City Toys responde que
-  // vai conferir, sem prometer data: outubro está sob consulta.
+  // vai conferir, sem prometer data: dezembro está sob consulta.
   chatPassoAPasso: {
-    pergunta: 'Oi! Quero um Castelinho pra uma festa em outubro 🎉',
-    resposta: 'Oba! Me passa a data e o bairro que eu já confiro 🎈',
-    confirmacao: 'Show! Te mando agora 🥳'
+    pergunta: 'Oi! Quero um Castelinho pra festa de Natal da família 🎄',
+    resposta: 'Oba! Me passa a data e o bairro que eu já confiro 😊',
+    confirmacao: 'Show! Te mando agora 🎅'
   },
 
-  faqPergunta: 'Ainda dá pra alugar em outubro?',
+  faqPergunta: 'Dá pra alugar no Natal?',
   faqResposta:
-    'Outubro é o mês das crianças, o mais concorrido do ano, e a nossa agenda fecha cedo. ' +
-    'Confirme a disponibilidade pelo WhatsApp o quanto antes: se o dia que você quer já estiver ' +
-    'fechado, a gente te ajuda a encaixar a festa na semana seguinte.'
+    'Dá sim! Dezembro é um dos meses mais concorridos do ano e a agenda das festas de fim de ano fecha cedo. ' +
+    'Confirme a disponibilidade pelo WhatsApp o quanto antes: se o dia que você quer já estiver fechado, ' +
+    'a gente te ajuda a encontrar outra data.'
 }
 
 // Data de hoje no fuso do Rio, no formato YYYY-MM-DD.
-// O servidor pode rodar em UTC, mas a virada do tema tem que seguir o Rio —
+// O servidor pode rodar em UTC, mas a virada do tema tem que seguir o Rio:
 // senão o tema entra (ou sai) com algumas horas de diferença do esperado.
 function dataDeHojeNoRio() {
   return new Intl.DateTimeFormat('en-CA', {
@@ -73,17 +77,22 @@ export function useTemaSazonal() {
   // useState serializa no payload o valor calculado no servidor, e o cliente
   // reidrata com ele. Sem isso, uma navegação que atravessa a meia-noite
   // renderizaria server e client com respostas diferentes (mismatch de
-  // hidratação) — datas ISO comparam certinho como string.
+  // hidratação). Datas ISO comparam certinho como string.
   const hoje = useState('tema-sazonal-hoje', dataDeHojeNoRio)
 
-  const temaAtivo = computed(() => hoje.value >= INICIO && hoje.value <= FIM)
+  // ?tema=natal liga a prévia. Lido uma vez só (primeira página carregada) e
+  // guardado no useState, então sobrevive à navegação interna.
+  const route = useRoute()
+  const previa = useState('tema-sazonal-previa', () => route.query.tema === 'natal')
+
+  const temaAtivo = computed(() => previa.value || (hoje.value >= INICIO && hoje.value <= FIM))
 
   // Mensagem única da campanha: já chega no WhatsApp identificada como lead
-  // de Dia das Crianças, sem precisar de parâmetro na URL.
+  // de Natal, sem precisar de parâmetro na URL.
   const linkWhatsTema = computed(() => {
     const msg =
-      'Olá! Vim pelo site da City Toys 🎈\n' +
-      'Vi a campanha do Mês das Crianças e quero alugar brinquedo.\n\n' +
+      'Olá! Vim pelo site da City Toys 🎄\n' +
+      'Vi a campanha de Natal e quero alugar brinquedo.\n\n' +
       'Data que tenho em mente: ____\n' +
       'Bairro: ____'
 
@@ -100,7 +109,7 @@ export function useTemaSazonal() {
 
     dl.push({
       event: 'clique_tema_sazonal',
-      campanha: 'dia-das-criancas',
+      campanha: 'natal',
       local
     })
   }

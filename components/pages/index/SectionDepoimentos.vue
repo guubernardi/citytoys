@@ -1,50 +1,41 @@
 <!-- components/pages/index/SectionDepoimentos.vue -->
 <template>
-  <!-- âncora do link "Depoimentos" do menu -->
-  <div id="depoimentos" aria-hidden="true"></div>
-
   <section
+    id="depoimentos"
     ref="secEl"
-    id="secao-depoimentos"
     class="secao-depoimentos"
-    :class="{ 'secao-tema': temaAtivo }"
     aria-labelledby="depoimentos-titulo"
   >
-    <!-- Rabiscos de fundo: se desenham quando a seção aparece e depois flutuam. -->
-    <div class="rabiscos" aria-hidden="true">
-      <svg
-        v-for="r in rabiscos"
-        :key="r.id"
-        class="rabisco"
-        :class="[`rabisco--${r.id}`, { 'rabisco--mobile': r.mobile }]"
-        :viewBox="r.viewBox"
-        data-reveal
-      >
-        <path :d="r.d" pathLength="1" />
-      </svg>
+    <!-- Enfeites de Natal (estrelas, flocos e presentes): só com o tema ligado. -->
+    <div v-if="temaAtivo" class="enfeites" aria-hidden="true">
+      <img
+        v-for="e in enfeites"
+        :key="e.id"
+        class="enfeite"
+        :class="`enfeite--${e.id}`"
+        :src="e.src"
+        :width="e.tamanho"
+        :height="e.tamanho"
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
     </div>
 
     <div class="container">
-      <header class="cabecalho-depoimentos revelar" data-reveal>
-        <p class="kicker-depoimentos" :class="{ 'kicker-depoimentos--tema': temaAtivo }">
-          <SvgIcone v-if="temaAtivo" nome="presente" :tamanho="15" />
-          O que os pais dizem
-        </p>
-
-        <h2 class="titulo-secao" id="depoimentos-titulo">
-          Depoimentos dos pais
-          <LetrasColoridas v-if="temaAtivo" texto="felizes" fundo="claro" />
-          <template v-else>felizes</template>
+      <header class="cabecalho" data-reveal>
+        <h2 id="depoimentos-titulo" class="titulo">
+          Depoimentos dos pais <span class="destaque">felizes</span>
         </h2>
 
-        <p class="subtitulo-secao">
+        <p class="subtitulo">
           Brinquedo alugado! Mais de 3 mil festas realizadas com alegria e segurança.
         </p>
 
         <!-- Média calculada só com os depoimentos abaixo (não é nota de plataforma). -->
-        <p class="resumo-nota">
-          <strong class="resumo-nota__valor">{{ mediaTexto }}</strong>
-          <span class="estrelas estrelas--resumo" :style="{ '--preenchimento': preenchimento(media) }" aria-hidden="true">
+        <p class="media">
+          <strong class="media__valor">{{ mediaTexto }}</strong>
+          <span class="estrelas estrelas--media" :style="{ '--preenchimento': preenchimento(media) }" aria-hidden="true">
             <span class="estrelas__vazias">
               <svg v-for="n in 5" :key="n" viewBox="0 0 24 24"><path :d="ESTRELA" /></svg>
             </span>
@@ -52,48 +43,32 @@
               <svg v-for="n in 5" :key="n" viewBox="0 0 24 24"><path :d="ESTRELA" /></svg>
             </span>
           </span>
-          <span class="resumo-nota__texto">média dos {{ depoimentos.length }} depoimentos</span>
+          <span class="sr-only">de 5 estrelas,</span>
+          <span class="media__texto">média dos {{ depoimentos.length }} depoimentos</span>
         </p>
       </header>
 
-      <div
-        class="carrossel"
-        :class="{ 'is-pausado': pausado, 'is-autoplay': autoplayLigado }"
-        role="region"
-        aria-roledescription="carrossel"
-        aria-label="Depoimentos de clientes"
-        @pointerenter="aoEntrarPonteiro"
-        @pointerleave="aoSairPonteiro"
-        @focusin="aoFocar"
-        @focusout="foco = false"
-        @keydown.left.prevent="anterior"
-        @keydown.right.prevent="proximo"
-      >
-        <div
-          ref="trilhaEl"
-          class="trilha"
-          tabindex="0"
-          :aria-live="autoplayLigado && !pausado ? 'off' : 'polite'"
-          @scroll="aoRolar"
+      <!-- Desktop: grade 3x2. Celular: fileira com rolagem lateral (scroll-snap). -->
+      <div ref="trilhaEl" class="grade-depoimentos" @scroll.passive="aoRolar">
+        <article
+          v-for="(d, i) in depoimentos"
+          :id="d.id"
+          :key="d.id"
+          :ref="(el) => guardarCartao(el, i)"
+          class="cartao"
+          :style="{
+            '--cor': d.cor,
+            '--cor-avatar-texto': d.corTexto || 'var(--cor-branco)',
+            '--aspas-opacidade': d.opacidadeAspas ?? 0.3,
+            '--atraso': `${(i % 3) * 90}ms`
+          }"
+          :aria-labelledby="`${d.id}-titulo`"
+          data-reveal
         >
-          <article
-            v-for="(d, i) in depoimentos"
-            :key="d.id"
-            :ref="(el) => guardarCartao(el, i)"
-            :id="d.id"
-            class="depo"
-            :class="{ 'is-ativo': i === ativo }"
-            :style="{ '--cor': d.cor, '--cor-texto': d.corTexto || '#ffffff' }"
-            role="group"
-            aria-roledescription="depoimento"
-            :aria-label="`${i + 1} de ${depoimentos.length}`"
-            @click="i !== ativo && irPara(i)"
-          >
-            <svg class="depo__aspas" viewBox="0 0 24 24" aria-hidden="true">
-              <path :d="ASPAS" pathLength="1" />
-            </svg>
+          <span class="cartao__aspas" aria-hidden="true">”</span>
 
-            <div class="depo__nota" :aria-label="`Nota ${d.nota} de 5`">
+          <div class="cartao__conteudo">
+            <div class="cartao__nota">
               <span class="estrelas" :style="{ '--preenchimento': preenchimento(notaNumero(d.nota)) }" aria-hidden="true">
                 <span class="estrelas__vazias">
                   <svg v-for="n in 5" :key="n" viewBox="0 0 24 24"><path :d="ESTRELA" /></svg>
@@ -103,75 +78,76 @@
                 </span>
               </span>
               <strong>{{ d.nota }}</strong>
+              <span class="sr-only">de 5 estrelas</span>
             </div>
 
-            <h3 class="depo__titulo">{{ d.titulo }}</h3>
-            <p class="depo__texto">“{{ d.texto }}”</p>
+            <h3 :id="`${d.id}-titulo`" class="cartao__titulo">{{ d.titulo }}</h3>
+            <p class="cartao__texto">“{{ d.texto }}”</p>
 
-            <footer class="depo__autor">
-              <span class="depo__avatar" aria-hidden="true">
-                <svg class="depo__anel" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" /></svg>
-                {{ d.nome.charAt(0) }}
-              </span>
-
-              <span class="depo__quem">
-                <strong>{{ d.nome }}</strong>
-                <span class="depo__cidade">
-                  <SvgIcone nome="localizacao" :tamanho="14" />
-                  {{ d.cidade }}
+            <footer class="cartao__rodape">
+              <div class="cartao__autor">
+                <span class="avatar" aria-hidden="true">
+                  {{ d.nome.charAt(0) }}
+                  <img
+                    v-if="temaAtivo"
+                    class="avatar__gorro"
+                    src="/images/natal/depoimentos-gorro-noel.svg"
+                    width="38"
+                    height="32"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </span>
-              </span>
 
-              <span class="depo__icone" aria-hidden="true">
-                <SvgIcone :nome="d.icone" :tamanho="22" />
-              </span>
+                <span class="cartao__quem">
+                  <strong class="cartao__nome">{{ d.nome }}</strong>
+                  <span class="cartao__local">
+                    <SvgIcone nome="localizacao" :tamanho="14" />
+                    <span>{{ d.cidade }}</span>
+                  </span>
+                </span>
+              </div>
+
+              <button
+                type="button"
+                class="curtir"
+                :class="{ 'is-curtido': curtidos[d.id] }"
+                :aria-pressed="curtidos[d.id] ? 'true' : 'false'"
+                :aria-label="`Curtir o depoimento de ${d.nome}`"
+                @click="alternarCurtida(d.id)"
+              >
+                <SvgIcone nome="coracao" :tamanho="18" />
+              </button>
             </footer>
-          </article>
-        </div>
-
-        <div class="controles">
-          <button type="button" class="seta" aria-label="Depoimento anterior" @click="anterior">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
-          </button>
-
-          <div class="pontos">
-            <button
-              v-for="(d, i) in depoimentos"
-              :key="`ponto-${d.id}`"
-              type="button"
-              class="ponto"
-              :class="{ 'is-ativo': i === ativo }"
-              :aria-label="`Ver depoimento ${i + 1} de ${depoimentos.length}`"
-              :aria-current="i === ativo ? 'true' : undefined"
-              @click="irPara(i)"
-            >
-              <!-- A barrinha enche no tempo da troca automática; quando termina,
-                   passa pro próximo. Pausa junto com o carrossel. -->
-              <span
-                v-if="autoplayLigado && i === ativo"
-                :key="`progresso-${ativo}`"
-                class="ponto__progresso"
-                @animationend="proximo"
-              ></span>
-            </button>
           </div>
-
-          <button type="button" class="seta" aria-label="Próximo depoimento" @click="proximo">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-          </button>
-        </div>
+        </article>
       </div>
 
-      <div class="cta-depoimentos revelar" data-reveal>
+      <!-- Bolinhas da fileira: só aparecem no celular. -->
+      <div class="pontos">
+        <button
+          v-for="(d, i) in depoimentos"
+          :key="`ponto-${d.id}`"
+          type="button"
+          class="ponto"
+          :class="{ 'is-ativo': i === ativo }"
+          :aria-label="`Ver depoimento ${i + 1} de ${depoimentos.length}`"
+          :aria-current="i === ativo ? 'true' : undefined"
+          @click="irPara(i)"
+        ></button>
+      </div>
+
+      <div class="cta" data-reveal>
         <a
           id="botao-whatsapp"
           class="botao-whats"
-          :href="whatsLink"
+          :href="linkCta"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Abrir WhatsApp para fazer orçamento"
+          @click="aoClicarCta"
         >
-          <SvgIcone nome="whatsapp" :tamanho="22" />
+          <SvgIcone nome="whatsapp" :tamanho="20" />
           <span>Quero fazer meu orçamento no WhatsApp</span>
         </a>
       </div>
@@ -180,14 +156,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
 import { useTemaSazonal } from '~/composables/useTemaSazonal'
-import LetrasColoridas from '~/components/global/tema/LetrasColoridas.vue'
+import { WHATS_NUMERO } from '~/helpers/seo.js'
 
 type Depoimento = {
   id: string
-  icone: string
   nota: string
   titulo: string
   texto: string
@@ -195,59 +170,66 @@ type Depoimento = {
   cidade: string
   cor: string
   corTexto?: string
+  opacidadeAspas?: number
 }
 
-type Rabisco = { id: string; viewBox: string; d: string; mobile?: boolean }
+type Enfeite = {
+  id: string
+  src: string
+  tamanho: number
+}
 
-const { temaAtivo } = useTemaSazonal()
+const { temaAtivo, linkWhatsTema, registrarCliqueTema } = useTemaSazonal()
 
 const secEl = ref<HTMLElement | null>(null)
 const trilhaEl = ref<HTMLElement | null>(null)
 
 const ESTRELA = 'M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'
-const ASPAS =
-  'M4.6 17.3C3.6 16.2 3 15 3 13c0-3.5 2.5-6.6 6-8.2l.9 1.4c-3.3 1.8-4 4.1-4.2 5.6.5-.3 1.2-.4 1.9-.3 1.8.2 3.2 1.6 3.2 3.5a3.5 3.5 0 01-3.5 3.5c-1.1 0-2.1-.5-2.7-1.2zm10 0C13.6 16.2 13 15 13 13c0-3.5 2.5-6.6 6-8.2l.9 1.4c-3.3 1.8-4 4.1-4.2 5.6.5-.3 1.2-.4 1.9-.3 1.8.2 3.2 1.6 3.2 3.5a3.5 3.5 0 01-3.5 3.5c-1.1 0-2.1-.5-2.7-1.2z'
 
-const WHATS_NUMERO = '5521984848699'
 const whatsMsg = 'Olá! Vim pelo site da City Toys, e quero fazer um orçamento 🎉'
 const whatsLink = `https://wa.me/${WHATS_NUMERO}?text=${encodeURIComponent(whatsMsg)}`
 
+// Na campanha o botão leva a mensagem de Natal (lead já chega identificado).
+const linkCta = computed(() => (temaAtivo.value ? linkWhatsTema.value : whatsLink))
+
+function aoClicarCta() {
+  if (temaAtivo.value) registrarCliqueTema('depoimentos')
+}
+
 // Depoimentos reais dos clientes: texto, nome e bairro não mudam.
+// Cores da faixa/avatar seguem o Figma (verde, vermelho, amarelo, azul, verde, vermelho).
 const depoimentos: Depoimento[] = [
   {
     id: 'depoimento-camila',
-    icone: 'coracao',
     nota: '4,9',
     titulo: 'Tudo perfeito!',
     texto: 'A criançada se divertiu bastante. Chegaram no horário certinho e montaram tudo rapidinho.',
     nome: 'Camila S.',
     cidade: 'Barra da Tijuca (RJ)',
-    cor: '#2fb67c'
+    cor: 'var(--cor-verde-acao)'
   },
   {
     id: 'depoimento-fabiana',
-    icone: 'balao-ar',
     nota: '5,0',
     titulo: 'Muito atenciosos!',
     texto: 'A festa foi um sucesso. Com certeza alugaremos novamente!',
     nome: 'Fabiana M.',
     cidade: 'Recreio dos Bandeirantes (RJ)',
-    cor: '#f7c223',
-    corTexto: '#052a54'
+    cor: 'var(--cor-vermelho)'
   },
   {
     id: 'depoimento-dani',
-    icone: 'presente',
     nota: '4,9',
     titulo: 'Atendimento e brinquedos nota 10!',
     texto: 'Vale muito a pena. Meu filho amou!',
     nome: 'Dani A.',
     cidade: 'Tijuca (RJ)',
-    cor: '#d14369'
+    cor: 'var(--cor-dourado)',
+    corTexto: 'var(--cor-navy)',
+    opacidadeAspas: 0.6
   },
   {
     id: 'depoimento-ricardo',
-    icone: 'estrela',
     nota: '5,0',
     titulo: 'A experiência foi excelente!',
     texto: 'Recomendo muito a City Toys, equipe super profissional.',
@@ -257,46 +239,36 @@ const depoimentos: Depoimento[] = [
   },
   {
     id: 'depoimento-livia',
-    icone: 'arco-iris',
     nota: '5,0',
     titulo: 'Excelente serviço!',
     texto: 'Tudo limpo, seguro e de qualidade. Crianças amaram o tobogã!',
     nome: 'Lívia F.',
     cidade: 'Copacabana (RJ)',
-    cor: '#ff8f2d'
+    cor: 'var(--cor-verde-acao)'
   },
   {
     id: 'depoimento-andre',
-    icone: 'bolo',
     nota: '5,0',
     titulo: 'Festa de 6 anos do meu filho foi incrível!',
     texto: 'Os infláveis fizeram sucesso.',
     nome: 'André R.',
     cidade: 'Jacarepaguá (RJ)',
-    cor: '#8b5cf6'
+    cor: 'var(--cor-vermelho)'
   }
 ]
 
-// Rabiscos em traço (desenhados com stroke-dashoffset + pathLength="1").
-const rabiscos: Rabisco[] = [
-  {
-    id: 'coracao',
-    viewBox: '0 0 24 24',
-    d: 'M12 20.5s-7.2-4.4-9.3-8.6C1 8.4 3.1 4.5 7 4.5c2 0 3.4 1 5 2.9 1.6-1.9 3-2.9 5-2.9 3.9 0 6 3.9 4.3 7.4-2.1 4.2-9.3 8.6-9.3 8.6z',
-    mobile: true
-  },
-  { id: 'estrela', viewBox: '0 0 24 24', d: ESTRELA, mobile: true },
-  { id: 'rabisco', viewBox: '0 0 40 16', d: 'M2 10c4-8 7 8 11 0s7 8 11 0 7 8 11 0 3 3 3 3' },
-  {
-    id: 'fala',
-    viewBox: '0 0 24 24',
-    d: 'M5 4.5h14a2.5 2.5 0 012.5 2.5v8a2.5 2.5 0 01-2.5 2.5h-8l-4.5 3.5v-3.5H5A2.5 2.5 0 012.5 15V7A2.5 2.5 0 015 4.5z'
-  },
-  {
-    id: 'balao',
-    viewBox: '0 0 24 30',
-    d: 'M12 2.5c-4.4 0-7.5 3.5-7.5 8s3.6 8.5 7.5 8.5 7.5-4 7.5-8.5-3.1-8-7.5-8zM12 19l-1.4 2h2.8L12 19M12 21c-1.6 2 1.6 3.5 0 5.5s1.2 2.5 0 3.5'
-  }
+// Enfeites do Figma. A posição de cada um fica no CSS (.enfeite--<id>), que
+// também esconde os que encostariam no texto em telas menores.
+const enfeites: Enfeite[] = [
+  { id: 'estrela-1', src: '/images/natal/depoimentos-estrela.svg', tamanho: 16 },
+  { id: 'neve-1', src: '/images/natal/depoimentos-neve.svg', tamanho: 18 },
+  { id: 'estrela-2', src: '/images/natal/depoimentos-estrela.svg', tamanho: 14 },
+  { id: 'neve-2', src: '/images/natal/depoimentos-neve.svg', tamanho: 22 },
+  { id: 'presente-1', src: '/images/natal/depoimentos-presente.svg', tamanho: 16 },
+  { id: 'neve-3', src: '/images/natal/depoimentos-neve.svg', tamanho: 20 },
+  { id: 'estrela-3', src: '/images/natal/depoimentos-estrela.svg', tamanho: 16 },
+  { id: 'presente-2', src: '/images/natal/depoimentos-presente.svg', tamanho: 18 },
+  { id: 'neve-4', src: '/images/natal/depoimentos-neve.svg', tamanho: 18 }
 ]
 
 function notaNumero(nota: string) {
@@ -312,7 +284,15 @@ const media = depoimentos.reduce((soma, d) => soma + notaNumero(d.nota), 0) / de
 // toFixed em vez de toLocaleString: sai igual no servidor e no navegador.
 const mediaTexto = media.toFixed(2).replace('.', ',')
 
-/* ---- carrossel ---- */
+/* ---- curtir (só visual, não salva nada) ---- */
+
+const curtidos = ref<Record<string, boolean>>({})
+
+function alternarCurtida(id: string) {
+  curtidos.value = { ...curtidos.value, [id]: !curtidos.value[id] }
+}
+
+/* ---- fileira do celular: bolinhas acompanham a rolagem ---- */
 
 const cartoes: (HTMLElement | null)[] = []
 function guardarCartao(el: Element | ComponentPublicInstance | null, i: number) {
@@ -320,197 +300,232 @@ function guardarCartao(el: Element | ComponentPublicInstance | null, i: number) 
 }
 
 const ativo = ref(0)
-const hover = ref(false)
-const foco = ref(false)
-const visivel = ref(false)
-const autoplayLigado = ref(false) // liga no onMounted, se a pessoa não pediu menos movimento
-let reduzMovimento = false
+let quadroRolagem = 0
 
-// Pausa com o mouse em cima, com foco dentro (teclado) ou fora da tela.
-const pausado = computed(() => hover.value || foco.value || !visivel.value)
-
-// Só mouse pausa no hover: no toque o "pointerleave" nem sempre chega e o
-// carrossel ficaria parado pra sempre depois do primeiro toque.
-function aoEntrarPonteiro(e: PointerEvent) {
-  if (e.pointerType === 'mouse') hover.value = true
-}
-function aoSairPonteiro(e: PointerEvent) {
-  if (e.pointerType === 'mouse') hover.value = false
-}
-
-// Só foco de teclado pausa. Clicar numa seta com o mouse também foca o botão,
-// e aí a troca automática não voltaria nunca mais.
-function aoFocar(e: FocusEvent) {
-  const alvo = e.target as HTMLElement | null
-  foco.value = !!alvo?.matches?.(':focus-visible')
-}
-
-function centralizar(i: number, suave = true) {
-  const trilha = trilhaEl.value
-  const cartao = cartoes[i]
-  if (!trilha || !cartao) return
-
-  const esquerda = cartao.offsetLeft - (trilha.clientWidth - cartao.offsetWidth) / 2
-  trilha.scrollTo({ left: Math.max(0, esquerda), behavior: suave && !reduzMovimento ? 'smooth' : 'auto' })
-}
-
-function irPara(i: number) {
-  const total = depoimentos.length
-  ativo.value = (i + total) % total
-  centralizar(ativo.value)
-}
-
-const proximo = () => irPara(ativo.value + 1)
-const anterior = () => irPara(ativo.value - 1)
-
-// Quando a pessoa arrasta com o dedo, descobre qual cartão parou no centro.
-let tRolagem: number | null = null
 function aoRolar() {
-  if (tRolagem) window.clearTimeout(tRolagem)
-
-  tRolagem = window.setTimeout(() => {
+  if (quadroRolagem) return
+  quadroRolagem = requestAnimationFrame(() => {
+    quadroRolagem = 0
     const trilha = trilhaEl.value
     if (!trilha) return
 
-    const centro = trilha.scrollLeft + trilha.clientWidth / 2
-    let maisPerto = ativo.value
+    const inicio = trilha.scrollLeft
+    let maisPerto = 0
     let menorDistancia = Infinity
 
     cartoes.forEach((c, i) => {
       if (!c) return
-      const distancia = Math.abs(c.offsetLeft + c.offsetWidth / 2 - centro)
+      const distancia = Math.abs(c.offsetLeft - trilha.offsetLeft - inicio)
       if (distancia < menorDistancia) {
         menorDistancia = distancia
         maisPerto = i
       }
     })
 
+    // no fim da rolagem o último cartão pode não encostar na esquerda
+    if (inicio + trilha.clientWidth >= trilha.scrollWidth - 4) maisPerto = cartoes.length - 1
     ativo.value = maisPerto
-  }, 90)
+  })
 }
 
-function aoRedimensionar() {
-  centralizar(ativo.value, false)
+function irPara(i: number) {
+  const trilha = trilhaEl.value
+  const cartao = cartoes[i]
+  if (!trilha || !cartao) return
+
+  const recuo = parseFloat(getComputedStyle(trilha).scrollPaddingLeft) || 0
+  trilha.scrollTo({
+    left: cartao.offsetLeft - trilha.offsetLeft - recuo,
+    behavior: reduceMotion() ? 'auto' : 'smooth'
+  })
+  ativo.value = i
 }
 
-/* ---- revelar no scroll ---- */
+/* ---- revelar no scroll (padrão do projeto) ---- */
 
-let ioRevelar: IntersectionObserver | null = null
-let ioVisivel: IntersectionObserver | null = null
+let io: IntersectionObserver | null = null
 
-onMounted(() => {
+function reduceMotion() {
+  if (typeof window === 'undefined') return true
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
+}
+
+function observeReveals() {
   const root = secEl.value
   if (!root) return
-
-  reduzMovimento = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
-  autoplayLigado.value = !reduzMovimento
-
-  const itens = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'))
-
-  if (reduzMovimento || !('IntersectionObserver' in window)) {
-    itens.forEach((el) => el.classList.add('is-inview'))
-    visivel.value = true
-  } else {
-    ioRevelar = new IntersectionObserver(
+  const els = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]')).filter(
+    (el) => !el.classList.contains('is-inview')
+  )
+  if (!els.length) return
+  if (reduceMotion() || !('IntersectionObserver' in window)) {
+    els.forEach((el) => el.classList.add('is-inview'))
+    return
+  }
+  if (!io) {
+    io = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return
           entry.target.classList.add('is-inview')
-          ioRevelar?.unobserve(entry.target)
+          io?.unobserve(entry.target)
         }),
       { threshold: 0.12, rootMargin: '0px 0px 160px 0px' }
     )
-    itens.forEach((el) => ioRevelar?.observe(el))
-
-    // A troca automática só anda com a seção na tela.
-    ioVisivel = new IntersectionObserver(([entry]) => (visivel.value = !!entry?.isIntersecting), {
-      threshold: 0.35
-    })
-    ioVisivel.observe(root)
   }
+  els.forEach((el) => io!.observe(el))
+}
 
-  window.addEventListener('resize', aoRedimensionar, { passive: true })
+onMounted(async () => {
+  await nextTick()
+  observeReveals()
 })
 
 onBeforeUnmount(() => {
-  ioRevelar?.disconnect()
-  ioVisivel?.disconnect()
-  ioRevelar = null
-  ioVisivel = null
-  if (tRolagem) window.clearTimeout(tRolagem)
-  window.removeEventListener('resize', aoRedimensionar)
+  io?.disconnect()
+  io = null
+  if (quadroRolagem) cancelAnimationFrame(quadroRolagem)
 })
 </script>
 
 <style lang="sass" scoped>
-$bg: #f7fbff
-$texto: #122042
-$suave: rgba(18, 32, 66, .72)
+$verde-curtir: #e3f7ec
+$verde-curtir-hover: #cdeedb
+$verde-whats-hover: #116a32
+$sombra-cartao: 0 26px 60px rgba(18, 48, 98, .14)
 
-/* O fundo precisa continuar #f7fbff: é a cor das ondas dos Benefícios (em
-   cima) e do FAQ (embaixo). */
 .secao-depoimentos
   position: relative
-  background: $bg
-  color: $texto
-  padding: 84px 0 96px
   overflow: hidden
+  padding: 110px 0
+  background: var(--cor-neve)
+  color: var(--cor-navy-2)
   font-family: var(--fonte)
+  // o menu fixo não cobre o título quando se chega por #depoimentos
+  scroll-margin-top: calc(var(--menu-h, 76px) + 10px)
 
-  .container
-    position: relative
-    z-index: 2
-    max-width: var(--largura-max)
-    margin: 0 auto
-    padding: 0 var(--container-px)
+.container
+  position: relative
+  z-index: 2
+  max-width: calc(1280px + var(--container-px) * 2)
+  margin: 0 auto
+  padding: 0 var(--container-px)
+
+.sr-only
+  position: absolute
+  width: 1px
+  height: 1px
+  margin: -1px
+  padding: 0
+  overflow: hidden
+  clip: rect(0, 0, 0, 0)
+  white-space: nowrap
+  border: 0
+
+/* ---- enfeites de Natal ---- */
+.enfeites
+  position: absolute
+  inset: 0
+  z-index: 1
+  pointer-events: none
+
+.enfeite
+  position: absolute
+  display: block
+  animation: enfeite-flutuar 6s ease-in-out infinite
+
+  &:nth-child(2n)
+    animation-delay: -2s
+
+  &:nth-child(3n)
+    animation-delay: -4s
+
+// posições do Figma (quadro de 1440px): x em % da largura, y em px
+.enfeite--estrela-1
+  left: 4.86%
+  top: 90px
+
+.enfeite--neve-1
+  left: 15.28%
+  top: 40px
+
+.enfeite--estrela-2
+  left: 77.78%
+  top: 60px
+
+.enfeite--neve-2
+  left: 87.5%
+  top: 150px
+
+.enfeite--presente-1
+  left: 95.14%
+  top: 40px
+
+.enfeite--neve-3
+  left: 2.78%
+  top: 330px
+
+.enfeite--estrela-3
+  left: 96.53%
+  top: 330px
+
+.enfeite--presente-2
+  left: 8.33%
+  bottom: 110px
+
+.enfeite--neve-4
+  left: 91.67%
+  bottom: 90px
+
+@keyframes enfeite-flutuar
+  0%, 100%
+    transform: translateY(0) rotate(0deg)
+  50%
+    transform: translateY(-6px) rotate(8deg)
 
 /* ---- cabeçalho ---- */
-.cabecalho-depoimentos
+.cabecalho
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 22px
   text-align: center
-  max-width: 820px
-  margin: 0 auto 10px
 
-.kicker-depoimentos
-  margin: 0 0 8px
-  color: #2b74eb
-  font-size: 13px
-  font-weight: 900
-  letter-spacing: .6px
-  text-transform: uppercase
-
-.titulo-secao
+.titulo
   margin: 0
-  font-size: clamp(1.8rem, 3vw, 2.6rem)
+  color: var(--cor-navy)
+  font-size: clamp(1.9rem, 4vw, 2.75rem)
   font-weight: 900
-  letter-spacing: -0.02em
   line-height: 1.15
 
-.subtitulo-secao
-  margin: 10px 0 0
-  color: $suave
-  font-size: 1.02rem
-  line-height: 1.6
+.destaque
+  color: var(--cor-vermelho)
 
-.resumo-nota
+.subtitulo
+  margin: 0
+  color: var(--cor-texto-suave)
+  font-size: clamp(1rem, 1.4vw, 1.0625rem)
+  line-height: 1.5
+
+.media
   display: inline-flex
   flex-wrap: wrap
   align-items: center
   justify-content: center
-  gap: 8px 10px
-  margin: 18px 0 0
-  padding: 8px 18px
+  gap: 6px 10px
+  margin: 0
+  padding: 9px 18px
   border-radius: 999px
-  background: #ffffff
-  border: 1px solid #e6edf6
-  box-shadow: 0 8px 20px rgba(18,48,98,.06)
+  background: var(--cor-branco)
+  box-shadow: 0 6px 18px rgba(18, 48, 98, .08)
 
-.resumo-nota__valor
-  font-size: 1.1rem
+.media__valor
+  color: var(--cor-navy-2)
+  font-size: 1.0625rem
   font-weight: 900
 
-.resumo-nota__texto
-  color: $suave
-  font-size: .92rem
+.media__texto
+  color: var(--cor-texto-suave)
+  font-size: .90625rem
   font-weight: 700
 
 /* ---- estrelas: fileira cinza + fileira amarela cortada no tamanho da nota ---- */
@@ -521,12 +536,21 @@ $suave: rgba(18, 32, 66, .72)
 .estrelas__vazias,
 .estrelas__cheias
   display: flex
-  gap: 3px
+  gap: 4px
 
   svg
     flex: none
     width: 18px
     height: 18px
+
+.estrelas--media
+  .estrelas__vazias,
+  .estrelas__cheias
+    gap: 3px
+
+  svg
+    width: 16px
+    height: 16px
 
 .estrelas__vazias path
   fill: #e3e8f0
@@ -540,496 +564,357 @@ $suave: rgba(18, 32, 66, .72)
   width: var(--preenchimento)
 
   path
-    fill: #ffc83a
+    fill: #ffc531
 
-/* ---- carrossel ---- */
-.carrossel
-  --largura-cartao: min(640px, 82vw)
-  --vao: 24px
+/* ---- grade de cartões ---- */
+.grade-depoimentos
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  align-items: start
+  gap: 24px
+  margin-top: 40px
+
+.cartao
   position: relative
-  margin-top: 6px
-
-.trilha
-  position: relative
-  display: flex
-  gap: var(--vao)
-  overflow-x: auto
-  scroll-snap-type: x mandatory
-  /* sobra dos lados = metade do que falta pro cartão ocupar tudo: o 1º e o
-     último também conseguem parar no centro */
-  padding: 26px calc((100% - var(--largura-cartao)) / 2) 34px
-  scrollbar-width: none
-  -webkit-overflow-scrolling: touch
-  border-radius: 28px
-  outline: none
-
-  &::-webkit-scrollbar
-    display: none
-
-  &:focus-visible
-    box-shadow: 0 0 0 3px rgba(43,116,235,.35)
-
-@media (min-width: 760px)
-  /* os vizinhos somem suavemente nas bordas */
-  .trilha
-    mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%)
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%)
-
-/* ---- cartão ---- */
-.depo
-  position: relative
-  flex: 0 0 var(--largura-cartao)
-  scroll-snap-align: center
   display: flex
   flex-direction: column
-  gap: 12px
-  padding: 34px 34px 26px
-  border-radius: 28px
-  background: #ffffff
-  border: 1px solid #e6edf6
-  box-shadow: 0 14px 34px rgba(18,48,98,.08)
   overflow: hidden
-  cursor: pointer
-  transform: scale(.9)
-  transition: transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .55s ease
+  border: 1px solid var(--cor-borda)
+  border-radius: 28px
+  background: var(--cor-branco)
+  box-shadow: $sombra-cartao
 
-  /* faixa de cor no topo */
+  // faixa de cor no topo
   &::before
     content: ""
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
+    flex: none
     height: 6px
     background: var(--cor)
 
-  /* Véu dos vizinhos: esmaece o conteúdo mas o cartão continua sólido. Com
-     opacity no cartão inteiro, o confete do fundo aparecia através dele. */
-  &::after
-    content: ""
-    position: absolute
-    inset: 0
-    z-index: 3
-    background: rgba(247,251,255,.62)
-    pointer-events: none
-    transition: opacity .55s ease
-
-  &.is-ativo
-    cursor: default
-    transform: scale(1)
-    box-shadow: 0 26px 60px rgba(18,48,98,.16)
-
-    &::after
-      opacity: 0
-
-/* aspas que se desenham quando o cartão vira destaque */
-.depo__aspas
+.cartao__aspas
   position: absolute
-  top: 22px
-  right: 26px
-  width: 64px
-  height: 64px
-  overflow: visible
-
-  path
-    fill: var(--cor)
-    fill-opacity: 0
-    stroke: var(--cor)
-    stroke-width: .6
-    stroke-dasharray: 1
-    stroke-dashoffset: 1
-    transition: stroke-dashoffset .3s ease, fill-opacity .3s ease
-
-.depo.is-ativo .depo__aspas path
-  stroke-dashoffset: 0
-  fill-opacity: .16
-  transition: stroke-dashoffset 1.2s ease .15s, fill-opacity .6s ease 1.1s
-
-.depo__nota
-  display: flex
-  align-items: center
-  gap: 10px
-
-  strong
-    font-size: 1.05rem
-    font-weight: 900
-
-/* nos cartões as estrelas enchem quando o cartão vira destaque */
-.depo .estrelas__cheias
-  width: 0
-  transition: width .3s ease
-
-.depo.is-ativo .estrelas__cheias
-  width: var(--preenchimento)
-  transition: width .9s cubic-bezier(.2,.8,.2,1) .25s
-
-.depo .estrelas svg
-  width: 20px
-  height: 20px
-
-.depo__titulo
-  margin: 4px 0 0
-  padding-right: 70px
-  font-size: clamp(1.2rem, 1.8vw, 1.45rem)
+  top: 3px
+  left: calc(100% - 82px)
+  color: var(--cor)
+  opacity: var(--aspas-opacidade)
+  font-size: 96px
   font-weight: 900
-  letter-spacing: -0.01em
-  line-height: 1.2
+  line-height: normal
+  pointer-events: none
+  user-select: none
 
-.depo__texto
-  flex: 1
-  margin: 0
-  color: $suave
-  font-size: 1.05rem
-  line-height: 1.65
-
-.depo__autor
-  display: flex
-  align-items: center
-  gap: 14px
-  margin-top: 8px
-  padding-top: 18px
-  border-top: 1px dashed #e3e9f2
-
-/* inicial num círculo da cor do depoimento, com um anel pontilhado girando */
-.depo__avatar
+.cartao__conteudo
   position: relative
-  flex: none
-  display: grid
-  place-items: center
-  width: 50px
-  height: 50px
-  border-radius: 50%
-  background: var(--cor)
-  color: var(--cor-texto)
-  font-size: 1.25rem
-  font-weight: 900
-
-.depo__anel
-  position: absolute
-  inset: -6px
-  width: calc(100% + 12px)
-  height: calc(100% + 12px)
-  animation: anel-girar 14s linear infinite
-
-  circle
-    fill: none
-    stroke: var(--cor)
-    stroke-width: 1.6
-    stroke-dasharray: 3 5
-    stroke-linecap: round
-    opacity: .6
-
-@keyframes anel-girar
-  to
-    transform: rotate(360deg)
-
-.depo__quem
+  flex: 1
   display: flex
   flex-direction: column
-  min-width: 0
+  gap: 14px
+  padding: 26px 34px 30px
 
-  strong
-    font-weight: 900
-
-.depo__cidade
-  display: inline-flex
-  align-items: center
-  gap: 4px
-  color: rgba(18,32,66,.62)
-  font-size: .92rem
-
-.depo__icone
-  flex: none
-  display: grid
-  place-items: center
-  width: 44px
-  height: 44px
-  margin-left: auto
-  border-radius: 14px
-  background: #f4f7fb
-  background: color-mix(in srgb, var(--cor) 14%, #ffffff)
-  color: var(--cor)
-
-.depo.is-ativo .depo__icone
-  animation: icone-balancar 3s ease-in-out infinite
-
-@keyframes icone-balancar
-  0%, 100%
-    transform: rotate(-8deg)
-  50%
-    transform: rotate(8deg) scale(1.06)
-
-/* ---- setas e bolinhas ---- */
-.controles
+.cartao__nota
   display: flex
   align-items: center
-  justify-content: center
-  gap: 14px
+  gap: 4px
 
-.seta
+  strong
+    color: var(--cor-navy-2)
+    font-size: 1.0625rem
+    font-weight: 900
+
+.cartao__titulo
+  margin: 0
+  color: var(--cor-navy-2)
+  font-size: clamp(1.25rem, 1.9vw, 1.5rem)
+  font-weight: 900
+  line-height: 1.2
+
+.cartao__texto
+  margin: 0
+  color: var(--cor-navy-2)
+  font-size: clamp(1rem, 1.3vw, 1.0625rem)
+  line-height: 1.55
+
+.cartao__rodape
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 12px
+  margin-top: auto
+  padding-top: 8px
+
+.cartao__autor
+  display: flex
+  align-items: center
+  gap: 12px
+  min-width: 0
+
+.avatar
+  position: relative
+  flex: none
   display: grid
   place-items: center
   width: 46px
   height: 46px
-  border: 0
   border-radius: 50%
-  background: #ffffff
-  color: $texto
-  box-shadow: 0 8px 20px rgba(18,48,98,.10)
-  cursor: pointer
-  transition: transform .2s ease, background .2s ease, color .2s ease
+  background: var(--cor)
+  color: var(--cor-avatar-texto)
+  font-size: 1.25rem
+  font-weight: 900
 
-  svg
-    width: 20px
-    height: 20px
+// gorro de Papai Noel por cima do avatar (só no tema)
+.avatar__gorro
+  position: absolute
+  top: -23.06px
+  left: -4.73px
+  width: 38px
+  height: 31.667px
+  transform: rotate(-14deg)
+  pointer-events: none
 
-  path
-    fill: none
-    stroke: currentColor
-    stroke-width: 2.4
-    stroke-linecap: round
-    stroke-linejoin: round
+.cartao__quem
+  display: flex
+  flex-direction: column
+  gap: 2px
+  min-width: 0
 
-  &:hover
-    background: #2b74eb
-    color: #ffffff
-    transform: scale(1.08)
+.cartao__nome
+  color: var(--cor-navy-2)
+  font-size: 1rem
+  font-weight: 900
 
-  &:focus-visible
-    outline: 3px solid rgba(43,116,235,.45)
-    outline-offset: 2px
-
-.pontos
+.cartao__local
   display: flex
   align-items: center
-  gap: 8px
+  gap: 4px
+  color: var(--cor-chip-texto)
+  font-size: .875rem
+  line-height: 1.3
 
-.ponto
-  position: relative
-  width: 10px
-  height: 10px
+  :deep(.edusites-icone)
+    flex: none
+
+.curtir
+  flex: none
+  display: grid
+  place-items: center
+  width: 42px
+  height: 42px
   padding: 0
   border: 0
-  border-radius: 999px
-  background: rgba(18,32,66,.18)
-  overflow: hidden
+  border-radius: 12px
+  background: $verde-curtir
+  color: var(--cor-verde)
   cursor: pointer
-  transition: width .35s ease, background .35s ease
+  transition: background .2s ease, color .2s ease
 
-  &.is-ativo
-    width: 38px
-    background: #2b74eb
+  &:hover
+    background: $verde-curtir-hover
 
   &:focus-visible
-    outline: 3px solid rgba(43,116,235,.45)
+    outline: 3px solid rgba(30, 158, 87, .45)
     outline-offset: 2px
 
-/* com troca automática, a bolinha ativa vira barrinha de progresso */
-.carrossel.is-autoplay .ponto.is-ativo
-  background: rgba(43,116,235,.22)
+  &.is-curtido
+    background: var(--cor-verde)
+    color: var(--cor-branco)
 
-.ponto__progresso
-  position: absolute
-  inset: 0
-  background: #2b74eb
-  transform: scaleX(0)
-  transform-origin: left
-  animation: progresso-depoimento 7s linear forwards
+    :deep(.edusites-icone)
+      animation: coracao-pulo .45s ease
 
-.carrossel.is-pausado .ponto__progresso
-  animation-play-state: paused
+@keyframes coracao-pulo
+  0%
+    transform: scale(1)
+  40%
+    transform: scale(1.35)
+  100%
+    transform: scale(1)
 
-@keyframes progresso-depoimento
-  to
-    transform: scaleX(1)
+/* ---- bolinhas (só celular) ---- */
+.pontos
+  display: none
 
 /* ---- CTA ---- */
-.cta-depoimentos
+.cta
   display: flex
   justify-content: center
-  margin-top: 30px
+  margin-top: 22px
 
 .botao-whats
   display: inline-flex
   align-items: center
+  justify-content: center
   gap: 10px
-  padding: 15px 28px
+  padding: 17px 34px
   border-radius: 999px
-  background: #43d38d
-  color: #ffffff
+  background: var(--cor-verde-acao)
+  color: var(--cor-branco)
+  font-size: 1.0625rem
   font-weight: 900
+  text-align: center
   text-decoration: none
-  box-shadow: 0 12px 26px rgba(67,211,141,.28)
-  transition: background .2s ease, transform .25s ease, box-shadow .25s ease
+  filter: drop-shadow(0 8px 10px rgba(21, 128, 61, .25))
+  transition: background .2s ease
+
+  :deep(.edusites-icone)
+    flex: none
+
+  span
+    text-wrap: balance
 
   &:hover
-    background: #ff3b3b
-    box-shadow: 0 14px 30px rgba(255,59,59,.28)
-    transform: translateY(-3px)
+    background: $verde-whats-hover
 
-    :deep(svg)
-      animation: icone-balancar .6s ease-in-out 2
-
-/* ---- rabiscos de fundo ---- */
-.rabiscos
-  position: absolute
-  inset: 0
-  z-index: 1
-  pointer-events: none
-
-.rabisco
-  position: absolute
-  width: var(--tam, 52px)
-  height: auto
-  overflow: visible
-  opacity: .6
-  animation: rabisco-flutuar 7s ease-in-out infinite
-
-  path
-    fill: none
-    stroke: var(--cor)
-    stroke-width: 1.6
-    stroke-linecap: round
-    stroke-linejoin: round
-    stroke-dasharray: 1
-    stroke-dashoffset: 1
-    transition: stroke-dashoffset 1.8s ease .2s
-
-  &.is-inview path
-    stroke-dashoffset: 0
-
-.rabisco--coracao
-  --cor: #ff6fae
-  top: 9%
-  left: 7%
-
-.rabisco--estrela
-  --cor: #f7c223
-  top: 7%
-  right: 9%
-  animation-delay: -2s
-
-.rabisco--rabisco
-  --cor: #2b74eb
-  --tam: 70px
-  top: 24%
-  right: 15%
-  animation-delay: -4s
-
-.rabisco--fala
-  --cor: #2fb67c
-  bottom: 10%
-  left: 6%
-  animation-delay: -1s
-
-.rabisco--balao
-  --cor: #8b5cf6
-  --tam: 44px
-  bottom: 8%
-  right: 7%
-  animation-delay: -3s
-
-@keyframes rabisco-flutuar
-  0%, 100%
-    transform: translateY(0) rotate(-4deg)
-  50%
-    transform: translateY(-10px) rotate(4deg)
+  &:focus-visible
+    outline: 3px solid rgba(21, 128, 61, .45)
+    outline-offset: 3px
 
 /* ---- revelar no scroll ---- */
-.revelar
+[data-reveal]
   opacity: 0
-  transform: translateY(16px)
-  transition: opacity .6s ease, transform .6s ease
+  transform: translateY(18px)
+  transition: opacity .6s ease var(--atraso, 0ms), transform .6s cubic-bezier(.2, .8, .2, 1) var(--atraso, 0ms)
 
-  &.is-inview
+.is-inview[data-reveal]
+  opacity: 1
+  transform: none
+
+/* ---- telas menores ---- */
+@media (max-width: 1240px)
+  .cartao__conteudo
+    padding: 24px 26px 28px
+
+  .cartao__aspas
+    left: calc(100% - 70px)
+
+@media (max-width: 980px)
+  .secao-depoimentos
+    padding: 84px 0
+
+  .grade-depoimentos
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .enfeite--neve-3,
+  .enfeite--estrela-3
+    display: none
+
+// Celular: fileira com rolagem lateral. A fileira vai de ponta a ponta da tela
+// (margem negativa do tamanho do respiro do container), sem rolar a página.
+@media (max-width: 640px)
+  .secao-depoimentos
+    padding: 64px 0 72px
+
+  .cabecalho
+    gap: 16px
+
+  // no celular só ficam os enfeites que não encostam no título nem no botão
+  .enfeite--estrela-1,
+  .enfeite--estrela-2,
+  .enfeite--neve-2
+    display: none
+
+  .enfeite--neve-1
+    top: 22px
+
+  .enfeite--presente-1
+    top: 22px
+    left: auto
+    right: 6%
+
+  .enfeite--presente-2
+    bottom: 26px
+
+  .enfeite--neve-4
+    bottom: 30px
+    left: auto
+    right: 8%
+
+  .media
+    border-radius: 20px
+
+  .grade-depoimentos
+    display: flex
+    align-items: stretch
+    gap: 14px
+    margin: 22px calc(var(--container-px) * -1) 0
+    padding: 18px var(--container-px) 36px
+    overflow-x: auto
+    scroll-snap-type: x mandatory
+    scroll-padding-inline: var(--container-px)
+    scrollbar-width: none
+    -webkit-overflow-scrolling: touch
+
+    &::-webkit-scrollbar
+      display: none
+
+  .cartao
+    flex: 0 0 86%
+    scroll-snap-align: start
+    box-shadow: 0 10px 24px rgba(18, 48, 98, .10)
+
+  // na fileira os cartões já entram visíveis (fora da tela na horizontal o
+  // IntersectionObserver só dispararia quando a pessoa arrastasse)
+  .cartao[data-reveal]
     opacity: 1
     transform: none
 
-/* ---- celular ---- */
-@media (max-width: 759px)
-  .carrossel
-    --largura-cartao: 84vw
-    --vao: 14px
+  .cartao__conteudo
+    gap: 12px
+    padding: 22px 22px 24px
 
-  .depo
-    padding: 28px 22px 22px
-    transform: scale(.94)
+  .cartao__aspas
+    left: calc(100% - 62px)
+    font-size: 80px
 
-  /* no celular o selo da média quebra em duas linhas: pílula muito redonda fica estranha */
-  .resumo-nota
-    border-radius: 20px
+  .pontos
+    display: flex
+    justify-content: center
+    gap: 8px
+    margin-top: 2px
 
-  .depo__aspas
-    top: 18px
-    right: 18px
-    width: 48px
-    height: 48px
+  .ponto
+    width: 9px
+    height: 9px
+    padding: 0
+    border: 0
+    border-radius: 999px
+    background: rgba(21, 38, 75, .18)
+    cursor: pointer
+    transition: width .3s ease, background .3s ease
 
-  .depo__titulo
-    padding-right: 50px
+    &.is-ativo
+      width: 28px
+      background: var(--cor-verde-acao)
 
-  .depo__texto
-    font-size: 1rem
+    &:focus-visible
+      outline: 3px solid rgba(21, 128, 61, .45)
+      outline-offset: 2px
+
+  .cta
+    margin-top: 26px
 
   .botao-whats
-    justify-content: center
     width: 100%
-    text-align: center
+    padding: 16px 22px
+    font-size: 1rem
 
-  .rabisco
-    --tam: 34px
-
-  .rabisco:not(.rabisco--mobile)
-    display: none
-
-  .rabisco--coracao
-    top: 3%
-    left: 5%
-
-  .rabisco--estrela
-    top: 3%
-    right: 6%
-
-/* ---- tema sazonal (Dia das Crianças) ---- */
-/* Tudo abaixo depende da classe .secao-tema, que entra e sai com a campanha
-   (composables/useTemaSazonal.ts). */
-.secao-tema
-  background-image: var(--tema-confete-fundo)
-  background-size: 240px 240px
-
-/* respiro liso atrás do cabeçalho: confete só em volta, nunca atrás do texto */
-.secao-tema .cabecalho-depoimentos
-  background: radial-gradient(ellipse 70% 90% at center, #f7fbff 62%, rgba(247,251,255,0) 100%)
-
-.kicker-depoimentos--tema
-  color: #d62f35
-
-  :deep(svg)
-    vertical-align: -2px
-    margin-right: 4px
-
-.secao-tema .ponto.is-ativo .ponto__progresso
-  background: linear-gradient(90deg, #ffd23f, #ff6b6b, #a45cff)
+@media (max-width: 480px)
+  .botao-whats
+    padding: 15px 18px
+    font-size: .95rem
 
 /* ---- menos movimento: tudo aparece pronto e parado ---- */
 @media (prefers-reduced-motion: reduce)
-  .revelar
-    opacity: 1
-    transform: none
-    transition: none
+  [data-reveal]
+    opacity: 1 !important
+    transform: none !important
+    transition: none !important
 
-  .depo,
-  .depo::after,
-  .depo__aspas path,
-  .depo .estrelas__cheias
-    transition: none
-
-  .rabisco,
-  .depo__anel,
-  .depo.is-ativo .depo__icone
+  .enfeite,
+  .curtir.is-curtido :deep(.edusites-icone)
     animation: none
 
-  .rabisco path
-    stroke-dashoffset: 0
+  .curtir,
+  .botao-whats,
+  .ponto
     transition: none
 </style>
