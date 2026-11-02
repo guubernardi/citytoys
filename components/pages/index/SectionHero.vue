@@ -182,7 +182,7 @@ function aoClicarOrcamento() {
 type Prova = { texto: string; cor: 'dourado' | 'vermelho' | 'verde' | 'azul'; icone?: string; imagem?: string }
 
 const provas: Prova[] = [
-  { texto: 'Nota 4,97 dos pais', cor: 'dourado', icone: 'estrela' },
+  { texto: 'Nota 5 dos pais', cor: 'dourado', icone: 'estrela' },
   { texto: '+3 mil festas', cor: 'vermelho', imagem: '/images/natal/hero-icone-festa.svg' },
   { texto: 'Montagem inclusa', cor: 'verde', icone: 'check-limpo' },
   { texto: 'Entrega em todo o RJ', cor: 'azul', icone: 'caminhao-entrega' }
