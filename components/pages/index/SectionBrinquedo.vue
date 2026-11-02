@@ -435,23 +435,6 @@ const brinquedos = ref<Toy[]>([
     imageAlt: 'Guerra de Cotonete — brinquedo inflável médio para festas no Rio de Janeiro'
   },
   {
-    id: 'toy-toboga-colorex',
-    cat: 'medio',
-    etiquetaLabel: 'Médio',
-    etiquetaClass: 'etiqueta-medio',
-    name: 'Tobogã Colorex',
-    destaque: true,
-    schemaCategory: 'Brinquedo inflável - Médio',
-    ageIcon: idadeIcon,
-    ageAlt: 'Idade mínima: 3+',
-    ageText: 'Até 10 anos',
-    capIcon: capacidadeIcon,
-    capAlt: 'Capacidade: até 3 crianças',
-    capText: 'Até 3 crianças',
-    imageSrc: '/images/colorex2.webp',
-    imageAlt: 'Tobogã Colorex — escorregador inflável médio para eventos no Rio de Janeiro'
-  },
-  {
     id: 'toy-toboga-premium',
     cat: 'medio',
     etiquetaLabel: 'Médio',
