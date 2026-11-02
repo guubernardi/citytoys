@@ -103,7 +103,7 @@ type Numero = { id: string; valor: string; rotulo: string; destaque?: boolean; e
 // Ao incluir ou tirar brinquedo de lá, atualize aqui também.
 const numeros: Numero[] = [
   { id: 'festas', valor: '+3 mil', rotulo: 'festas realizadas', destaque: true },
-  { id: 'nota', valor: '4,97', rotulo: 'nota média dos pais', estrela: true },
+  { id: 'nota', valor: '5', rotulo: 'nota média dos pais', estrela: true },
   { id: 'brinquedos', valor: '21', rotulo: 'brinquedos para alugar' },
   { id: 'cobertura', valor: 'Todo o RJ', rotulo: 'entrega e montagem' }
 ]
