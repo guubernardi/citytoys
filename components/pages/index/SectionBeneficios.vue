@@ -99,12 +99,12 @@ const subtitulo = computed(() =>
 
 type Numero = { id: string; valor: string; rotulo: string; destaque?: boolean; estrela?: boolean }
 
-// "21" = total de brinquedos do catálogo (array em SectionBrinquedo.vue).
+// "22" = total de brinquedos do catálogo (array em SectionBrinquedo.vue).
 // Ao incluir ou tirar brinquedo de lá, atualize aqui também.
 const numeros: Numero[] = [
   { id: 'festas', valor: '+3 mil', rotulo: 'festas realizadas', destaque: true },
   { id: 'nota', valor: '5', rotulo: 'nota média dos pais', estrela: true },
-  { id: 'brinquedos', valor: '21', rotulo: 'brinquedos para alugar' },
+  { id: 'brinquedos', valor: '22', rotulo: 'brinquedos para alugar' },
   { id: 'cobertura', valor: 'Todo o RJ', rotulo: 'entrega e montagem' }
 ]
 

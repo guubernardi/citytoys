@@ -15,6 +15,7 @@ const DIMENSOES = {
   '/images/colrex2.webp': [1536, 1024],
   '/images/crianca-brincando.webp': [1024, 1024],
   '/images/dino.webp': [1536, 1024],
+  '/images/fliperama.webp': [1536, 1024],
   '/images/foguete.png': [2404, 3622],
   '/images/fundo-header.png': [1536, 1024],
   '/images/fundo-hero.png': [1672, 941],

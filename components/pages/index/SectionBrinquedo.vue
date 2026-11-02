@@ -403,6 +403,22 @@ const brinquedos = ref<Toy[]>([
     imageAlt: 'Mesa de sinuca com tacos e bolas, para alugar em festas no Rio de Janeiro'
   },
   {
+    id: 'toy-fliperama',
+    cat: 'medio',
+    etiquetaLabel: 'Médio',
+    etiquetaClass: 'etiqueta-medio',
+    name: 'Fliperama',
+    schemaCategory: 'Jogo eletrônico - Médio',
+    ageIcon: idadeIcon,
+    ageAlt: 'Idade: livre',
+    ageText: 'Livre',
+    capIcon: capacidadeIcon,
+    capAlt: 'Capacidade: até 2 crianças',
+    capText: 'Até 2 crianças',
+    imageSrc: '/images/fliperama.webp',
+    imageAlt: 'Fliperama multijogos com dois controles, para alugar em festas no Rio de Janeiro'
+  },
+  {
     id: 'toy-guerra-cotonete',
     cat: 'medio',
     etiquetaLabel: 'Médio',
